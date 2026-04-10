@@ -1,10 +1,10 @@
 export function IdentityBlock() {
   return (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <h1 className="text-5xl font-bold tracking-tight text-text-primary">
+    <div className="flex flex-col items-center gap-4 sm:gap-6 text-center">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary">
         Alan Szmyt
       </h1>
-      <p className="text-lg text-text-secondary max-w-sm">
+      <p className="text-base sm:text-lg text-text-secondary max-w-sm sm:max-w-md">
         Software engineer focused on building thoughtful, reliable systems.
       </p>
     </div>
