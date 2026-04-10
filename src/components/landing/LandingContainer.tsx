@@ -9,7 +9,7 @@ export function LandingContainer({ children }: LandingContainerProps) {
   return (
     <main className="relative min-h-screen w-full flex items-center justify-center overflow-hidden px-4 sm:px-8 py-16">
       <LandingBackground />
-      {children}
+      <div className="relative z-10">{children}</div>
     </main>
   );
 }
