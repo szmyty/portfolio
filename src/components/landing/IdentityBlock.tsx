@@ -6,7 +6,7 @@ export function IdentityBlock() {
     <div className="flex flex-col items-center gap-4 sm:gap-6 text-center">
       <LottieAnimation
         animationData={placeholderAnimation}
-        className="w-32 h-32 sm:w-40 sm:h-40"
+        className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44"
       />
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary">
         Alan Szmyt
