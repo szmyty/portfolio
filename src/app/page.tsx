@@ -1,10 +1,10 @@
 import { IdentityBlock } from "@/components/landing/IdentityBlock";
-import { LandingContainer } from "@/components/landing/LandingContainer";
+import { LandingEntry } from "@/components/landing/LandingEntry";
 
 export default function Home() {
   return (
-    <LandingContainer>
+    <LandingEntry>
       <IdentityBlock />
-    </LandingContainer>
+    </LandingEntry>
   );
 }
