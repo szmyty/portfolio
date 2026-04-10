@@ -1,6 +1,13 @@
+import { LottieAnimation } from "@/components/animation/LottieAnimation";
+import placeholderAnimation from "@/animations/placeholder.json";
+
 export function IdentityBlock() {
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6 text-center">
+      <LottieAnimation
+        animationData={placeholderAnimation}
+        className="w-32 h-32 sm:w-40 sm:h-40"
+      />
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary">
         Alan Szmyt
       </h1>
