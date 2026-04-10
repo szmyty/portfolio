@@ -1,7 +1,9 @@
+import { LandingContainer } from "@/components/landing/LandingContainer";
+
 export default function Home() {
   return (
-    <main className="flex flex-1 items-center justify-center">
+    <LandingContainer>
       <p>Portfolio coming soon.</p>
-    </main>
+    </LandingContainer>
   );
 }
