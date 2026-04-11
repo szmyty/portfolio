@@ -1,6 +1,4 @@
-import { IdentityBlock } from "@/components/landing/IdentityBlock";
-import { LandingEntry } from "@/components/landing/LandingEntry";
-import { MainContent } from "@/components/landing/MainContent";
+import { IdentityBlock, LandingEntry, MainContent } from "@/features/landing";
 
 export default function Home() {
   return (
