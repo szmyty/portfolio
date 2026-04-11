@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Center } from "@portfolio/components/ui/Center";
 import { Container } from "@portfolio/components/ui/Container";
-import { Footer } from "@portfolio/components/ui/Footer";
+import { Footer } from "@portfolio/features/landing/Footer";
 import { Section } from "@portfolio/components/ui/Section";
 
 export async function MainContent() {
