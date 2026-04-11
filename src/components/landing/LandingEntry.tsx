@@ -28,9 +28,10 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
           <motion.main
             key="landing"
             className="absolute inset-0 flex items-center justify-center px-4 sm:px-8 py-16 cursor-pointer"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.04 }}
-            transition={{ duration: 0.55, ease: "easeInOut" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.04, transition: { duration: 0.55, ease: "easeInOut" } }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             onClick={handleEnter}
             role="button"
             tabIndex={0}
