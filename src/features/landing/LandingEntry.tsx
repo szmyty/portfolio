@@ -3,9 +3,9 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { LandingBackground } from "@/features/landing/LandingBackground";
-import { EntryTrigger } from "@/features/landing/EntryTrigger";
-import { Center } from "@/components/ui/Center";
+import { LandingBackground } from "@portfolio/features/landing/LandingBackground";
+import { EntryTrigger } from "@portfolio/features/landing/EntryTrigger";
+import { Center } from "@portfolio/components/ui/Center";
 
 interface LandingEntryProps {
   children: ReactNode;

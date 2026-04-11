@@ -1,6 +1,6 @@
-import { Center } from "@/components/ui/Center";
-import { Container } from "@/components/ui/Container";
-import { Section } from "@/components/ui/Section";
+import { Center } from "@portfolio/components/ui/Center";
+import { Container } from "@portfolio/components/ui/Container";
+import { Section } from "@portfolio/components/ui/Section";
 
 export function MainContent() {
   return (

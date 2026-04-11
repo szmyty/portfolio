@@ -1,4 +1,4 @@
-import { IdentityBlock, LandingEntry, MainContent } from "@/features/landing";
+import { IdentityBlock, LandingEntry, MainContent } from "@portfolio/features/landing";
 
 export default function Home() {
   return (
