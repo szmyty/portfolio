@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
-import { env } from "@portfolio/env";
+import { siteConfig } from "@portfolio/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,25 +15,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = siteConfig.url;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Alan Szmyt | Portfolio",
-    template: "%s | Alan Szmyt",
-  },
-  description:
-    "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
-  keywords: [
-    "Alan Szmyt",
-    "software engineer",
-    "portfolio",
-    "full-stack",
-    "web development",
-  ],
-  authors: [{ name: "Alan Szmyt", url: siteUrl }],
-  creator: "Alan Szmyt",
+  title: siteConfig.title,
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author.name, url: siteUrl }],
+  creator: siteConfig.author.name,
   robots: {
     index: true,
     follow: true,
@@ -51,18 +41,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "/",
-    title: "Alan Szmyt | Portfolio",
-    description:
-      "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
-    siteName: "Alan Szmyt | Portfolio",
-    locale: "en_US",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Alan Szmyt | Portfolio",
-    description:
-      "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
-    creator: "@szmyty",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    creator: siteConfig.author.handle,
   },
 };
 
@@ -78,18 +66,17 @@ const jsonLd = {
     {
       "@type": "Person",
       "@id": `${siteUrl}/#person`,
-      name: "Alan Szmyt",
+      name: siteConfig.author.name,
       url: siteUrl,
-      sameAs: ["https://github.com/szmyty"],
-      jobTitle: "Software Engineer",
+      sameAs: [siteConfig.author.github],
+      jobTitle: siteConfig.author.jobTitle,
     },
     {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
       url: siteUrl,
-      name: "Alan Szmyt | Portfolio",
-      description:
-        "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
+      name: siteConfig.name,
+      description: siteConfig.description,
       author: { "@id": `${siteUrl}/#person` },
     },
   ],
