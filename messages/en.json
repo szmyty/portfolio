@@ -7,6 +7,10 @@
     "name": "Alan Szmyt",
     "tagline": "Software engineer focused on building thoughtful, reliable systems."
   },
+  "EntryTrigger": {
+    "ariaLabel": "Enter the site",
+    "prompt": "Click anywhere, or press Enter / Space"
+  },
   "LandingEntry": {
     "comingSoon": "Main content coming soon.",
     "skipToContent": "Skip to content"
