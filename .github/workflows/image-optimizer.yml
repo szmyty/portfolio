@@ -44,10 +44,9 @@ jobs:
             --volume "${{ github.workspace }}:/workspace" \
             --workdir "/workspace" \
             ghcr.io/toy/image_optim \
-            image_optim \
-              --recursive \
-              --skip-missing-workers \
-              .
+            --recursive \
+            --skip-missing-workers \
+            .
 
       # ----------------------------------------
       # 🔍 Step 3: Detect changes
