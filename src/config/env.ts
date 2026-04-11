@@ -2,13 +2,13 @@
 // Allowing fallbacks at build time lets the build succeed when production
 // env vars are injected at runtime (e.g., on Vercel). At production runtime,
 // the full validation runs and throws a clear error if a variable is missing.
-const isDev = process.env.NODE_ENV !== "production";
+const isNonProduction = process.env.NODE_ENV !== "production";
 const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
 
 function requireEnv(name: string, fallback?: string): string {
   const value = process.env[name];
   if (value) return value;
-  if ((isDev || isBuildPhase) && fallback !== undefined) return fallback;
+  if ((isNonProduction || isBuildPhase) && fallback !== undefined) return fallback;
   throw new Error(
     `Missing required environment variable: ${name}. ` +
       `Set it in your .env file or deployment environment.`,
@@ -21,3 +21,9 @@ export const env = {
     "http://localhost:3000",
   ),
 } as const;
+
+/** True only in `NODE_ENV=development` (local dev server). */
+export const isDev = process.env.NODE_ENV === "development";
+
+/** True only in `NODE_ENV=production`. */
+export const isProd = process.env.NODE_ENV === "production";
