@@ -13,9 +13,9 @@ export async function MainContent() {
         <Center className="min-h-full py-16">
           <Section>
             <Container className="text-center space-y-6">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
                 {t("name")}
-              </h2>
+              </h1>
               <p className="text-base sm:text-lg text-text-secondary">
                 {t("tagline")}
               </p>

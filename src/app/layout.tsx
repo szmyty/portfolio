@@ -14,25 +14,54 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Portfolio",
-    template: "%s | Portfolio",
+    default: "Alan Szmyt | Portfolio",
+    template: "%s | Alan Szmyt",
   },
-  description: "Personal portfolio",
+  description:
+    "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
+  keywords: [
+    "Alan Szmyt",
+    "software engineer",
+    "portfolio",
+    "full-stack",
+    "web development",
+  ],
+  authors: [{ name: "Alan Szmyt", url: siteUrl }],
+  creator: "Alan Szmyt",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
-    title: "Portfolio",
-    description: "Personal portfolio",
-    siteName: "Portfolio",
+    url: "/",
+    title: "Alan Szmyt | Portfolio",
+    description:
+      "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
+    siteName: "Alan Szmyt | Portfolio",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portfolio",
-    description: "Personal portfolio",
+    title: "Alan Szmyt | Portfolio",
+    description:
+      "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
+    creator: "@szmyty",
   },
 };
 
