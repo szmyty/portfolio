@@ -1,0 +1,17 @@
+{
+  "IdentityBlock": {
+    "name": "Alan Szmyt",
+    "tagline": "Software engineer focused on building thoughtful, reliable systems."
+  },
+  "MainContent": {
+    "name": "Alan Szmyt",
+    "tagline": "Software engineer focused on building thoughtful, reliable systems."
+  },
+  "LandingEntry": {
+    "comingSoon": "Main content coming soon."
+  },
+  "Metadata": {
+    "title": "Portfolio",
+    "description": "Personal portfolio"
+  }
+}
