@@ -3,8 +3,8 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { LandingBackground } from "@/components/landing/LandingBackground";
-import { EntryTrigger } from "@/components/landing/EntryTrigger";
+import { LandingBackground } from "@/features/landing/LandingBackground";
+import { EntryTrigger } from "@/features/landing/EntryTrigger";
 import { Center } from "@/components/ui/Center";
 
 interface LandingEntryProps {
