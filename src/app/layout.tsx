@@ -71,6 +71,29 @@ export const viewport = {
   viewportFit: "cover",
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${siteUrl}/#person`,
+      name: "Alan Szmyt",
+      url: siteUrl,
+      sameAs: ["https://github.com/szmyty"],
+      jobTitle: "Software Engineer",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "Alan Szmyt | Portfolio",
+      description:
+        "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
+      author: { "@id": `${siteUrl}/#person` },
+    },
+  ],
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -84,6 +107,12 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full bg-background text-foreground">
         <NextIntlClientProvider messages={messages}>
           {children}
