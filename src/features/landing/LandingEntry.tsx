@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { LandingBackground } from "@portfolio/features/landing/LandingBackground";
 import { EntryTrigger } from "@portfolio/features/landing/EntryTrigger";
 import { Center } from "@portfolio/components/ui/Center";
+import { SkipToContent } from "@portfolio/components/ui/SkipToContent";
 
 interface LandingEntryProps {
   children: ReactNode;
@@ -24,8 +25,25 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
     });
   }, []);
 
+  // Delay focus until after the enter animation (0.55s) has completed
+  const SKIP_FOCUS_DELAY_MS = 600;
+
+  const handleSkip = useCallback(() => {
+    handleEnter();
+    setTimeout(() => {
+      document.getElementById("main-content")?.focus();
+    }, SKIP_FOCUS_DELAY_MS);
+  }, [handleEnter]);
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
+      <SkipToContent
+        label={t("skipToContent")}
+        onSkip={(e) => {
+          e.preventDefault();
+          handleSkip();
+        }}
+      />
       <AnimatePresence mode="wait">
         {!entered ? (
           <motion.main
