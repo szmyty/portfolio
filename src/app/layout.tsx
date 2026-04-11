@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
-import { siteConfig } from "@portfolio/lib/site";
+import { siteConfig, isDev, env } from "@portfolio/config";
 import { DebugPanel } from "@portfolio/components/debug/DebugPanel";
 import nextPkg from "next/package.json";
 import reactPkg from "react/package.json";
@@ -96,8 +96,6 @@ const jsonLd = {
   ],
 };
 
-const isDev = process.env.NODE_ENV === "development";
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -124,8 +122,7 @@ export default async function RootLayout({
         {isDev && (
           <DebugPanel
             info={{
-              siteUrl:
-                process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+              siteUrl: env.NEXT_PUBLIC_SITE_URL,
               nextVersion: nextPkg.version,
               reactVersion: reactPkg.version,
               locale,

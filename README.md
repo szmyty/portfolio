@@ -26,7 +26,9 @@ src/
 │   ├── debug/        #   Development-only diagnostic panels
 │   └── ui/           #   Generic layout primitives (Container, Section, Center, Footer)
 ├── config/           # App-wide configuration and environment validation
-│   └── env.ts        #   Typed, validated environment variables
+│   ├── env.ts        #   Typed, validated environment variables and feature flags (isDev, isProd)
+│   ├── site.ts       #   Site metadata (title, description, author, URLs)
+│   └── index.ts      #   Public barrel export (@portfolio/config)
 ├── content/          # Content abstraction layer: types and static data
 │   ├── types.ts      #   TypeScript interfaces (Project, CreativeWork, …)
 │   ├── projects.ts   #   Software project entries
@@ -36,8 +38,8 @@ src/
 │   └── landing/      #   Landing page entry sequence
 │       └── animation/ #     Animation hooks and visual layer components (isolated from layout)
 ├── i18n/             # Internationalization setup (next-intl)
-├── lib/              # Shared utilities and site-level constants
-│   └── site.ts       #   Site metadata (title, description, author, URLs)
+├── lib/              # Shared utilities and design token constants
+│   └── tokens.ts     #   TypeScript references for CSS custom properties
 └── animations/       # Lottie JSON animation assets
 ```
 
