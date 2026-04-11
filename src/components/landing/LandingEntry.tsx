@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { LandingBackground } from "@/components/landing/LandingBackground";
 import { EntryTrigger } from "@/components/landing/EntryTrigger";
+import { Center } from "@/components/ui/Center";
 
 interface LandingEntryProps {
   children: ReactNode;
@@ -47,9 +48,9 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
             {mainContent ?? (
-              <div className="flex min-h-screen items-center justify-center">
+              <Center className="min-h-screen">
                 <p className="text-text-secondary">Main content coming soon.</p>
-              </div>
+              </Center>
             )}
           </motion.div>
         )}
