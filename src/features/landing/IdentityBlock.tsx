@@ -1,10 +1,12 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
 
 export function IdentityBlock() {
+  const t = useTranslations("IdentityBlock");
   const shouldReduceMotion = useReducedMotion();
 
   const fadeUp = shouldReduceMotion
@@ -27,14 +29,14 @@ export function IdentityBlock() {
         {...fadeUp}
         transition={{ duration: 0.5, ease: "easeOut", delay: shouldReduceMotion ? 0 : 0.15 }}
       >
-        Alan Szmyt
+        {t("name")}
       </motion.h1>
       <motion.p
         className="text-base sm:text-lg text-text-secondary"
         {...fadeUp}
         transition={{ duration: 0.5, ease: "easeOut", delay: shouldReduceMotion ? 0 : 0.28 }}
       >
-        Software engineer focused on building thoughtful, reliable systems.
+        {t("tagline")}
       </motion.p>
     </div>
   );

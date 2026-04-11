@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { LandingBackground } from "@portfolio/features/landing/LandingBackground";
 import { EntryTrigger } from "@portfolio/features/landing/EntryTrigger";
 import { Center } from "@portfolio/components/ui/Center";
@@ -13,6 +14,7 @@ interface LandingEntryProps {
 }
 
 export function LandingEntry({ children, mainContent }: LandingEntryProps) {
+  const t = useTranslations("LandingEntry");
   const [entered, setEntered] = useState(false);
 
   const handleEnter = useCallback(() => {
@@ -49,7 +51,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
           >
             {mainContent ?? (
               <Center className="min-h-screen">
-                <p className="text-text-secondary">Main content coming soon.</p>
+                <p className="text-text-secondary">{t("comingSoon")}</p>
               </Center>
             )}
           </motion.div>
