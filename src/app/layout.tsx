@@ -15,8 +15,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
+  title: {
+    default: "Portfolio",
+    template: "%s | Portfolio",
+  },
   description: "Personal portfolio",
+  openGraph: {
+    type: "website",
+    title: "Portfolio",
+    description: "Personal portfolio",
+    siteName: "Portfolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Portfolio",
+    description: "Personal portfolio",
+  },
 };
 
 export const viewport = {
