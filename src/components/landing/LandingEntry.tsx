@@ -1,0 +1,71 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import type { ReactNode } from "react";
+import { LandingBackground } from "@/components/landing/LandingBackground";
+import { EntryTrigger } from "@/components/landing/EntryTrigger";
+
+interface LandingEntryProps {
+  children: ReactNode;
+  mainContent?: ReactNode;
+}
+
+export function LandingEntry({ children, mainContent }: LandingEntryProps) {
+  const [entered, setEntered] = useState(false);
+
+  const handleEnter = useCallback(() => {
+    setEntered((prev) => {
+      if (prev) return prev;
+      return true;
+    });
+  }, []);
+
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+      <AnimatePresence>
+        {!entered && (
+          <motion.main
+            key="landing"
+            className="absolute inset-0 flex items-center justify-center px-4 sm:px-8 py-16 cursor-pointer"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.04 }}
+            transition={{ duration: 0.55, ease: "easeInOut" }}
+            onClick={handleEnter}
+            role="button"
+            tabIndex={0}
+            aria-label="Click to enter the site"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleEnter();
+              }
+            }}
+          >
+            <LandingBackground />
+            <div className="relative z-10">{children}</div>
+            <EntryTrigger />
+          </motion.main>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {entered && (
+          <motion.div
+            key="main"
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.55, ease: "easeInOut" }}
+          >
+            {mainContent ?? (
+              <div className="flex min-h-screen items-center justify-center">
+                <p className="text-text-secondary">Main content coming soon.</p>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
