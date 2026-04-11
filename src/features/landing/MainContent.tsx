@@ -9,7 +9,7 @@ export async function MainContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         <Center className="min-h-full py-16">
           <Section>
             <Container className="text-center space-y-6">
