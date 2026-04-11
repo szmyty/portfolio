@@ -78,6 +78,7 @@
 
 html {
   color-scheme: dark;
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -92,6 +93,7 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   font-size: var(--font-size-base);
   line-height: var(--leading-normal);
+  overflow-x: hidden;
 }
 
 /* Typography hierarchy */
@@ -150,4 +152,31 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Responsive typography — scale headings down on small screens */
+@media (max-width: 640px) {
+  h1 {
+    font-size: var(--font-size-4xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-3xl);
+  }
+
+  h3 {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* Reduced motion — disable CSS animations and transitions globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

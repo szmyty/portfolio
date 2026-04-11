@@ -28,7 +28,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
         {!entered ? (
           <motion.main
             key="landing"
-            className="absolute inset-0 flex items-center justify-center px-4 sm:px-8 py-16 cursor-pointer"
+            className="absolute inset-0 flex items-center justify-center px-4 sm:px-8 py-8 sm:py-16 cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.04, transition: { duration: 0.5, ease: "easeInOut" } }}
@@ -36,7 +36,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
             onClick={handleEnter}
           >
             <LandingBackground />
-            <div className="relative z-10">{children}</div>
+            <div className="relative z-10 pb-16 sm:pb-20 [@media(max-height:500px)]:pb-0">{children}</div>
             <EntryTrigger onEnter={handleEnter} />
           </motion.main>
         ) : (
