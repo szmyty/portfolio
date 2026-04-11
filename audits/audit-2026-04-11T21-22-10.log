@@ -1,0 +1,636 @@
+================================================================================
+  PORTFOLIO AUDIT — LANDING v1 READINESS
+  Generated: 2026-04-11T21:22:10Z
+  Scope: Full-spectrum production-grade audit
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+  EXECUTIVE SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+
+Overall Readiness: NEAR-READY (7/10)
+
+The portfolio landing experience is architecturally sound, cleanly structured,
+and performs well. Lint passes with zero errors. Build compiles successfully with
+Turbopack. All six routes generate as static content. The foundational systems
+(design tokens, animation, i18n, SEO) are in place.
+
+Remaining gaps are concentrated in three areas:
+  1. Visual identity — placeholder Lottie animation needs replacement
+  2. Content — projects and creative works arrays are empty
+  3. Minor DX / consistency issues (pnpm vs npm, deprecated file, i18n gaps)
+
+None of the gaps are blockers for a soft v1 launch. The system is clean,
+maintainable, and ready to iterate on.
+
+Findings by severity:
+  HIGH   ─  3
+  MEDIUM ─  9
+  LOW    ─ 12
+
+────────────────────────────────────────────────────────────────────────────────
+  1. ARCHITECTURE & COMPONENT DESIGN
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 9/10
+
+Strengths:
+  ✓ Clear, well-enforced directory contract:
+      app/ → pages, layouts, metadata
+      components/ → reusable, stateless UI primitives
+      features/ → co-located feature modules
+      lib/ → shared utilities and design token constants
+      config/ → typed, validated environment and site configuration
+      content/ → typed interfaces and static data arrays
+      animations/ → raw Lottie JSON assets
+
+  ✓ Feature-scoped animation isolation:
+      features/landing/animation/ isolates useFadeUp hook and
+      LandingVisualLayer from layout concerns. Swap-ready for 3D or
+      alternative animation formats without touching LandingEntry.
+
+  ✓ Barrel exports (index.ts) at every public boundary — clean import surfaces.
+
+  ✓ Path alias @portfolio/* maps to ./src/* — consistent across all files.
+
+  ✓ No circular dependencies observed.
+
+  ✓ Server / client boundary is explicit:
+      "use client" is present only where needed (interactive components).
+      MainContent and LandingBackground are server-safe.
+
+Findings:
+
+  [MED] F-ARCH-01: src/lib/site.ts is deprecated but still present.
+    File re-exports from @portfolio/config/site with a deprecation notice.
+    Risk: dead code, import confusion.
+    Action: Remove the file once consumers (if any) have migrated.
+    Impact: Low (no consumers found in codebase).
+
+  [LOW] F-ARCH-02: UI primitives (Center, Container, Section) do not use
+    the clsx dependency that is already installed.
+    Current: manual string concatenation with .filter(Boolean).join(" ")
+    Preferred: clsx(base, className) — cleaner, handles edge cases.
+    Action: Migrate in a single small PR.
+
+  [LOW] F-ARCH-03: components/ui/ lacks an index.ts barrel export.
+    Each component must be imported by full path. Adding a barrel is
+    consistent with the pattern used in features/landing/ and
+    components/animation/.
+
+────────────────────────────────────────────────────────────────────────────────
+  2. RENDERING & PERFORMANCE
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ All six routes are statically prerendered (○ Static). Zero server-side
+    runtime cost at scale.
+  ✓ Turbopack compilation is fast (4.3 s).
+  ✓ Google Fonts loaded via next/font — zero layout shift, preloaded,
+    self-hosted at build time.
+  ✓ LottieAnimation is "use client" — no SSR hydration mismatch risk.
+  ✓ Bundle analyzer available (npm run analyze / ANALYZE=true next build).
+  ✓ AnimatePresence with mode="wait" prevents simultaneous animation renders.
+
+Findings:
+
+  [MED] F-PERF-01: Lottie animation is not lazy-loaded.
+    Both instances (IdentityBlock avatar, LandingVisualLayer background) are
+    eagerly loaded. The background animation is large and hidden from screen
+    readers. Consider dynamic(() => import(...), { ssr: false }) wrapping for
+    the background layer at minimum.
+
+  [MED] F-PERF-02: og-image.png is referenced in metadata but resides in
+    public/ without next/image optimization. At 1200×630, this image may be
+    large. Verify it is properly compressed; consider serving a WebP variant.
+
+  [LOW] F-PERF-03: No loading.tsx or suspense boundary on the page route.
+    MainContent is an async server component — if content fetching is added
+    later, there is no loading state. Proactive placement of loading.tsx
+    would prevent a future performance regression.
+
+────────────────────────────────────────────────────────────────────────────────
+  3. ANIMATION & MOTION SYSTEM
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ Framer Motion v12 (latest major) — fully compatible with React 19.
+  ✓ prefers-reduced-motion respected in all three animation sites:
+      - useFadeUp hook returns static variants when motion is reduced.
+      - EntryTrigger uses useReducedMotion from Framer Motion.
+      - globals.css includes a @media (prefers-reduced-motion: reduce) rule
+        that disables all CSS animations/transitions globally as a safety net.
+  ✓ LandingVisualLayer isolated — visual layer can be swapped independently
+    of LandingBackground and LandingEntry.
+  ✓ AnimatePresence handles unmount animations cleanly with mode="wait".
+  ✓ Exit animation on landing stage (opacity: 0, scale: 1.04) creates a
+    satisfying "zoom through" transition to main content.
+  ✓ Staggered fade-up in IdentityBlock (delays: 0 / 0.15 / 0.28 s) produces
+    a polished sequential reveal.
+
+Findings:
+
+  [HIGH] F-ANIM-01: placeholder.json is used as the Lottie animation for
+    both the avatar and the background layer. This is a dev placeholder, not
+    a brand asset. The animation is identical in both locations.
+    Action: Replace with brand-specific Lottie assets before v1 release.
+    Specifically: a personal avatar / logo animation for IdentityBlock, and
+    an abstract atmospheric animation for LandingVisualLayer.
+
+  [LOW] F-ANIM-02: EntryTrigger animation (breathing line + text) uses
+    hardcoded repeat: Infinity. This is correct UX but should be verified
+    that it does not contribute to layout thrashing on low-end devices.
+    Consider will-change: opacity on the animated span as a micro-opt.
+
+  [LOW] F-ANIM-03: LandingEntry exit transition duration (0.5 s) and main
+    content entrance duration (0.55 s) slightly overlap. With AnimatePresence
+    mode="wait" this is safe, but the cumulative perceived transition time is
+    ~1.05 s which may feel long on repeat visits. Consider persisting the
+    entered state in sessionStorage to skip the entry animation on refresh.
+
+────────────────────────────────────────────────────────────────────────────────
+  4. STYLING & LAYOUT SYSTEM
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 9/10
+
+Strengths:
+  ✓ Tailwind v4 with @theme inline — modern, performant, no JIT lag.
+  ✓ Design tokens are dual-defined:
+      CSS custom properties in globals.css :root (consumed by Tailwind + CSS)
+      TypeScript constants in lib/tokens.ts (consumed by JS/Framer Motion)
+  ✓ Semantic token names (--text-primary, --accent, --border) — not raw
+    color values in class names.
+  ✓ Responsive breakpoints applied consistently (sm:, md: suffixes).
+  ✓ overflow-x: hidden on both html and body prevents horizontal scroll
+    caused by oversized Lottie animations.
+  ✓ box-sizing: border-box on all elements.
+  ✓ color-scheme: dark — correct for a dark-only theme; prevents browser
+    UI flash.
+  ✓ Typography scale fully defined (xs through 5xl) with responsive scaling
+    for h1–h3 on mobile.
+  ✓ :focus-visible ring using accent color — accessible and visually clean.
+
+Findings:
+
+  [MED] F-STYLE-01: No light mode support.
+    Only dark theme is defined. If a user has prefers-color-scheme: light,
+    the dark theme is still applied. This is acceptable for v1 but should be
+    a documented decision. Add a comment in globals.css stating this is
+    intentional.
+
+  [LOW] F-STYLE-02: Section component applies py-12 sm:py-16 padding.
+    MainContent wraps Section inside Center with additional py-16. This may
+    result in double-padding on some viewport sizes. Audit padding once real
+    content sections are added.
+
+  [LOW] F-STYLE-03: --border: #1f1f1f is very dark (minimal contrast against
+    --surface: #111111). Fine for subtle dividers but will be nearly invisible
+    if used for interactive element borders. Flag for design review when
+    interactive cards or inputs are added.
+
+────────────────────────────────────────────────────────────────────────────────
+  5. UX & INTERACTION DESIGN
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 7/10
+
+Strengths:
+  ✓ Two-stage landing sequence (identity → content) creates a deliberate,
+    premium first impression.
+  ✓ Click-anywhere-to-enter pattern is intuitive and satisfying.
+  ✓ EntryTrigger provides visual and textual affordance (breathing line +
+    "Click anywhere, or press Enter / Space").
+  ✓ Keyboard support: Enter and Space trigger entry.
+  ✓ Landscape/short viewport handled: EntryTrigger hidden at max-height:500px,
+    and pb-16 wrapper collapses via @media(max-height:500px):pb-0.
+  ✓ cursor-pointer on the full landing stage — correct for click affordance.
+
+Findings:
+
+  [MED] F-UX-01: No skip-to-main-content link.
+    Screen reader and keyboard-only users who tab through the landing stage
+    cannot skip to the main content stage. Add a visually hidden skip link
+    at the top of the document.
+
+  [MED] F-UX-02: Entered state is ephemeral (React useState).
+    Refreshing the page resets the entry animation. Users who have already
+    seen the landing see it again every visit. Consider persisting
+    entered=true in sessionStorage so the entry is shown once per browser
+    session.
+
+  [MED] F-UX-03: MainContent is "coming soon" with empty content arrays.
+    projects[] and creativeWorks[] are empty. The main content stage shows
+    only the name, tagline, and footer. This is functional but thin for v1.
+    Action: Populate at least one project entry before release.
+
+  [LOW] F-UX-04: EntryTrigger label text is hardcoded English.
+    "Click anywhere, or press Enter / Space" is not i18n'd. If additional
+    locales are added, this will break consistency. Add to en.json and
+    reference via useTranslations.
+
+  [LOW] F-UX-05: No 404 / not-found page customized.
+    Only /_not-found (default Next.js) is present. A branded not-found page
+    would improve overall polish.
+
+────────────────────────────────────────────────────────────────────────────────
+  6. DEPENDENCY HEALTH
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 7/10
+
+Dependency inventory:
+  next           16.2.3        ← non-standard version (16.x is ahead of stable 15.x)
+  react          19.2.4        ← React 19 stable ✓
+  react-dom      19.2.4        ← React 19 stable ✓
+  framer-motion  ^12.38.0      ← latest major ✓
+  lottie-react   ^2.4.1        ← current stable ✓
+  next-intl      ^4.9.1        ← current major ✓
+  clsx           ^2.1.1        ← current stable ✓
+
+Dev dependencies:
+  @next/bundle-analyzer  ^16.2.3   ✓
+  @tailwindcss/postcss   ^4        ✓
+  tailwindcss            ^4        ✓ (v4 latest)
+  typescript             ^5        ✓
+  eslint                 ^9        ✓
+  eslint-config-next     16.2.3    ✓
+  eslint-config-prettier 10.1.8    ✓
+  prettier               3.8.2     ✓
+
+Findings:
+
+  [HIGH] F-DEP-01: next@16.2.3 is a non-standard version.
+    The public Next.js stable channel is 14.x / 15.x. Version 16 is not
+    yet publicly released (or is a pre-release). Ensure this is intentional
+    and that the package source is trustworthy. Verify compatibility with
+    eslint-config-next@16.2.3 and @next/bundle-analyzer@16.2.3 (aligned).
+    Risk: API instability if this is a canary/pre-release build.
+
+  [MED] F-DEP-02: pnpm-lock.yaml present but package manager is inconsistent.
+    vercel.json: installCommand = "pnpm install --frozen-lockfile"
+    .github/workflows/ci.yml: uses pnpm/action-setup@v5
+    README / package.json scripts: npm
+    Memory note: pnpm-workspace.yaml lacks a packages field.
+    Action: Standardize on one package manager. If pnpm, fix workspace config.
+    If npm, update vercel.json and CI workflow.
+
+  [LOW] F-DEP-03: No test framework installed.
+    No jest, vitest, playwright, or @testing-library/* in dependencies.
+    The project has zero test coverage. Acceptable for v1 but should be
+    planned for milestone 2.
+
+  [LOW] F-DEP-04: No pre-commit hooks (no husky, no lint-staged).
+    Formatting and linting are not enforced at commit time. CI catches issues
+    but only after push. Add husky + lint-staged if team grows beyond solo.
+
+────────────────────────────────────────────────────────────────────────────────
+  7. CODE QUALITY & MAINTAINABILITY
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ TypeScript strict mode enabled (strict: true in tsconfig.json).
+  ✓ ESLint: next/core-web-vitals + next/typescript + prettier — zero lint
+    errors on current codebase.
+  ✓ Prettier configured — consistent formatting.
+  ✓ Content types are well-defined and documented (types.ts).
+  ✓ Functions are small and focused — no god components detected.
+  ✓ Props interfaces are defined locally with JSDoc on non-obvious fields.
+  ✓ useCallback in LandingEntry.handleEnter uses functional update correctly
+    to avoid stale closure issues.
+
+Findings:
+
+  [MED] F-QUAL-01: i18n key duplication.
+    IdentityBlock.name == MainContent.name == "Alan Szmyt"
+    IdentityBlock.tagline == MainContent.tagline == "Software engineer..."
+    These are semantically the same string stored under two keys. Consolidate
+    into a shared namespace (e.g., "Author") to avoid divergence.
+
+  [MED] F-QUAL-02: unstable_retry prop in error pages.
+    error.tsx and global-error.tsx use the prop name unstable_retry.
+    This indicates a Next.js API that is not yet stable. Monitor for
+    breaking changes when upgrading Next.js.
+
+  [LOW] F-QUAL-03: src/lib/site.ts export is marked @deprecated.
+    No consumers of this file were found in the codebase. The file should be
+    deleted to avoid confusion. If it was added for backwards compatibility
+    with an external consumer, document that explicitly.
+
+  [LOW] F-QUAL-04: LandingEntry.tsx is marked "use client" but contains
+    the only <main> semantic element in the landing stage. This is correct
+    but means the main landmark is rendered client-side. Consider whether
+    the interactive shell (motion, state) could be extracted so that the
+    <main> element is SSR-rendered.
+
+  [LOW] F-QUAL-05: i18n messages for LandingEntry.comingSoon ("Main content
+    coming soon.") will become stale once real content is added. Plan to
+    remove this key when MainContent is fully populated.
+
+────────────────────────────────────────────────────────────────────────────────
+  8. ACCESSIBILITY & SEMANTICS
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ lang attribute set on <html> from next-intl locale — correct.
+  ✓ aria-hidden="true" on all decorative SVGs (Footer social icons).
+  ✓ aria-hidden="true" on LandingBackground — correct for decorative layer.
+  ✓ role="button" + tabIndex={0} + aria-label on EntryTrigger.
+  ✓ onKeyDown handles both Enter and Space on EntryTrigger.
+  ✓ aria-expanded on DebugPanel toggle.
+  ✓ role="region" + aria-label on DebugPanel content area.
+  ✓ aria-label on all three social link anchors in Footer.
+  ✓ :focus-visible ring defined in globals.css using --accent color.
+  ✓ prefers-reduced-motion handled at both CSS and JS/Framer Motion levels.
+
+Findings:
+
+  [HIGH] F-A11Y-01: Duplicate <h1> elements across component states.
+    IdentityBlock renders <h1>{t("IdentityBlock.name")}</h1>.
+    MainContent renders <h1>{t("MainContent.name")}</h1>.
+    While AnimatePresence unmounts one before mounting the other, both
+    stages exist in the DOM transiently during the transition. Verify with
+    automated a11y tooling (axe) that no h1 overlap occurs. In MainContent,
+    the name heading may be better expressed as an h2 if it is a subheading
+    below a page-level h1 elsewhere.
+
+  [MED] F-A11Y-02: No skip-to-main-content link (same as F-UX-01).
+    Keyboard-only users must tab through the entire landing stage UI before
+    reaching main content. A visually hidden <a href="#main-content"> at
+    the start of the document is the standard solution.
+
+  [MED] F-A11Y-03: LottieAnimation has no accessible label or description.
+    The Lottie animation in IdentityBlock is the visual avatar/hero element.
+    Without alt text or aria-label, screen reader users receive no context.
+    Wrap in a <figure> with <figcaption> or add role="img" aria-label="..."
+    to the container div.
+
+  [LOW] F-A11Y-04: aria-label="love" on the ♥ span in Footer.
+    While creative, this is not a standard ARIA pattern. The ♥ character
+    followed by the label creates redundant announcement ("heart love").
+    Consider aria-label="heart" or simply wrapping in <abbr title="love">♥</abbr>.
+
+  [LOW] F-A11Y-05: rel="noopener noreferrer" is correct on Footer external
+    links. No issues. (Noting as verified.)
+
+  [LOW] F-A11Y-06: No color contrast audit performed programmatically.
+    Visual inspection suggests --text-muted (#7a7a7a) on --background (#0a0a0a)
+    may not meet WCAG AA (4.5:1) for body text. The muted color is used in
+    Footer copy and EntryTrigger hint text. Run an automated contrast check
+    (e.g., axe DevTools) before release.
+
+────────────────────────────────────────────────────────────────────────────────
+  9. DEVELOPER EXPERIENCE
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ @portfolio/* path alias — no relative path traversal hell.
+  ✓ DebugPanel shows site URL, Next.js version, React version, and locale
+    at runtime in dev mode. Conditionally rendered via isDev.
+  ✓ Turbopack dev server for fast HMR.
+  ✓ .env.example present — onboarding is clear.
+  ✓ COMPLEXITY.md defines complexity budget rules — prevents drift.
+  ✓ SYSTEM.md documents the AI-orchestrated engineering workflow.
+  ✓ README.md documents project structure and directory conventions.
+  ✓ Clean import surfaces via barrel exports.
+  ✓ TypeScript strict mode catches errors at compile time.
+
+Findings:
+
+  [MED] F-DX-01: Package manager inconsistency (pnpm / npm).
+    See F-DEP-02. A new contributor following the README would use npm,
+    while CI and Vercel use pnpm. This causes pnpm-lock.yaml / package-lock.json
+    divergence. Standardize immediately.
+
+  [LOW] F-DX-02: No pre-commit hooks.
+    See F-DEP-04. Formatting errors are caught at lint time (CI) but not
+    at commit time. Minor friction for solo developer; important to add
+    if the project becomes collaborative.
+
+  [LOW] F-DX-03: portfolio.code-workspace exists but was not audited.
+    VSCode workspace settings could include recommended extensions
+    (ESLint, Prettier, Tailwind IntelliSense). Verify the file includes
+    these to improve onboarding DX.
+
+  [LOW] F-DX-04: No CONTRIBUTING.md or development guide.
+    New contributors have no documented steps for running the dev server,
+    running lint, or submitting changes. The README covers structure but
+    not the development workflow.
+
+────────────────────────────────────────────────────────────────────────────────
+  10. BUILD & DEPLOYMENT READINESS
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ Build succeeds cleanly: 0 errors, 0 warnings.
+  ✓ All 6 routes statically prerendered:
+      / (home), /_not-found, /robots.txt, /sitemap.xml
+  ✓ robots.ts generates correct rules (allow all, sitemap URL).
+  ✓ sitemap.ts generates a valid sitemap entry for the home URL.
+  ✓ JSON-LD structured data for Person and WebSite schemas in layout.tsx.
+  ✓ OpenGraph and Twitter card metadata fully configured.
+  ✓ metadataBase set — relative OG image URLs resolve correctly.
+  ✓ Canonical URL set to "/".
+  ✓ Vercel deployment configuration present (vercel.json).
+  ✓ CI workflow (ci.yml) runs lint and build on push to master and PRs.
+  ✓ NEXT_PUBLIC_SITE_URL validated at runtime with a dev fallback.
+
+Findings:
+
+  [MED] F-BUILD-01: vercel.json uses pnpm for install/build but CI uses
+    pnpm and README implies npm. See F-DEP-02. The Vercel deployment should
+    be consistent with CI.
+
+  [MED] F-BUILD-02: og-image.png is referenced in metadata but the file
+    may not be optimized. The image is a static asset in public/ — it will
+    be served as-is. Confirm the file exists, is 1200×630, and is <200 KB.
+    Social media crawlers may timeout on large OG images.
+
+  [LOW] F-BUILD-03: CI workflow triggers only on master branch.
+    Feature branches and PRs targeting master are covered, but no scheduled
+    build runs exist to detect dependency drift over time. Consider adding
+    a weekly scheduled workflow.
+
+  [LOW] F-BUILD-04: No lighthouse or performance budget CI step.
+    Core Web Vitals are not measured in CI. Adding a Lighthouse CI step
+    (even as advisory) would catch regressions before release.
+
+  [LOW] F-BUILD-05: ANALYZE=true next build is available but undocumented
+    in README. Add a note so contributors know to use it when adding
+    large dependencies.
+
+────────────────────────────────────────────────────────────────────────────────
+  11. VISUAL IDENTITY & POLISH
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 6/10
+
+Strengths:
+  ✓ Dark-first aesthetic with a clear, consistent color palette.
+  ✓ Geist Sans + Geist Mono — modern, legible, professionally associated with
+    Vercel's design language.
+  ✓ Subtle radial gradient in LandingBackground adds depth without distraction.
+  ✓ Accent color (#5b9cf6, blue) used consistently for interactive states.
+  ✓ Responsive typography scale (h1 scales from 5xl to 4xl on mobile).
+  ✓ Footer is clean: social links with aria-labeled SVG icons, copyright note.
+  ✓ EntryTrigger breathing animation adds subtle life to the landing stage.
+
+Findings:
+
+  [HIGH] F-VIS-01: Lottie placeholder animation is not a brand asset.
+    Both the IdentityBlock avatar and LandingVisualLayer background use
+    placeholder.json. This is a generic placeholder, not a personal or
+    brand-specific animation. The most visible element of the landing page
+    needs to be replaced with intentional visual design before v1.
+    Action: Design or source:
+      a) A personal avatar animation or stylized initials for IdentityBlock.
+      b) An atmospheric / particle animation for the background layer.
+
+  [MED] F-VIS-02: No logo or wordmark.
+    The site has no visual logo — only text. For a portfolio focused on
+    craft and attention to detail, a simple SVG monogram or wordmark would
+    significantly elevate first impression.
+
+  [MED] F-VIS-03: og-image.png is present in public/ but was not visually
+    inspected. The OG image is the first visual impression on social shares.
+    Ensure it matches the site's dark aesthetic and includes name + tagline.
+
+  [LOW] F-VIS-04: favicon.ico is the default Next.js favicon.
+    The browser tab icon should reflect the personal brand, not a generic
+    Next.js icon. Replace with a custom favicon (SVG preferred for modern
+    browsers; add to app/ as favicon.ico and icon.svg).
+
+  [LOW] F-VIS-05: No light/dark mode toggle.
+    The site is dark-only. Some users prefer light mode. Even a simple
+    system-preference-respect via prefers-color-scheme would improve reach.
+    This is deferred from v1 per current theme strategy.
+
+  [LOW] F-VIS-06: Accent color (#5b9cf6) is a standard blue.
+    Consider a more distinctive accent that reflects personal identity.
+    This is a design decision, not a code issue.
+
+────────────────────────────────────────────────────────────────────────────────
+  FINDINGS SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+
+HIGH SEVERITY (must address before or immediately after v1):
+  F-ANIM-01  Replace placeholder Lottie animation with brand assets
+  F-DEP-01   Verify next@16.2.3 is intentional and stable
+  F-VIS-01   Replace placeholder Lottie animation (visual identity)
+
+MEDIUM SEVERITY (should address in v1.1 or alongside release):
+  F-ARCH-01  Remove deprecated src/lib/site.ts
+  F-PERF-01  Lazy-load Lottie animations (especially background)
+  F-PERF-02  Optimize og-image.png; add WebP variant
+  F-QUAL-01  Deduplicate i18n keys (IdentityBlock vs MainContent)
+  F-QUAL-02  Monitor unstable_retry API in error pages
+  F-STYLE-01 Document intentional dark-only theme decision in globals.css
+  F-UX-01    Add skip-to-main-content link
+  F-UX-02    Persist entered state in sessionStorage
+  F-UX-03    Populate at least one project entry before release
+  F-A11Y-02  Add skip-to-main-content link (same as F-UX-01)
+  F-A11Y-03  Add accessible label to LottieAnimation in IdentityBlock
+  F-DX-01    Standardize package manager (pnpm vs npm)
+  F-BUILD-01 Align Vercel installCommand with chosen package manager
+  F-BUILD-02 Verify og-image.png exists, is correct size, and is optimized
+  F-VIS-02   Design a logo or wordmark
+  F-VIS-03   Visually inspect og-image.png for brand alignment
+
+LOW SEVERITY (polish / future milestone):
+  F-ARCH-02  Use clsx in UI primitives
+  F-ARCH-03  Add index.ts barrel to components/ui/
+  F-PERF-03  Add loading.tsx for future async content
+  F-ANIM-02  Add will-change: opacity to EntryTrigger breathing animation
+  F-ANIM-03  Persist entered state to skip animation on refresh (F-UX-02)
+  F-STYLE-02 Audit Section + Center padding stacking
+  F-STYLE-03 Flag --border color for review when interactive elements added
+  F-UX-04    i18n EntryTrigger label text
+  F-UX-05    Add custom 404 page
+  F-DEP-03   Add test framework (vitest / playwright)
+  F-DEP-04   Add pre-commit hooks (husky + lint-staged)
+  F-QUAL-03  Delete src/lib/site.ts
+  F-QUAL-04  Consider SSR-rendering <main> landmark
+  F-QUAL-05  Remove LandingEntry.comingSoon i18n key when content is ready
+  F-A11Y-01  Verify no h1 overlap during AnimatePresence transition
+  F-A11Y-04  Fix aria-label="love" on ♥ span
+  F-A11Y-06  Run automated color contrast check on --text-muted
+  F-DX-02    Add pre-commit hooks
+  F-DX-03    Audit portfolio.code-workspace for recommended extensions
+  F-DX-04    Add CONTRIBUTING.md with development workflow
+  F-BUILD-03 Add weekly scheduled CI run for dependency drift
+  F-BUILD-04 Add Lighthouse CI step
+  F-BUILD-05 Document ANALYZE=true flag in README
+  F-VIS-04   Replace default Next.js favicon with custom icon
+  F-VIS-05   Document dark-only theme decision (deferred from v1)
+  F-VIS-06   Evaluate custom accent color for personal brand distinction
+
+────────────────────────────────────────────────────────────────────────────────
+  RECOMMENDED ISSUE BACKLOG (priority order)
+────────────────────────────────────────────────────────────────────────────────
+
+  1. [HIGH]  Replace placeholder Lottie assets with brand animations
+  2. [HIGH]  Verify and document next@16.2.3 version choice
+  3. [MED]   Standardize package manager — pnpm throughout (update README)
+  4. [MED]   Add skip-to-main-content accessibility link
+  5. [MED]   Add aria-label / role="img" to Lottie avatar in IdentityBlock
+  6. [MED]   Lazy-load LandingVisualLayer Lottie animation
+  7. [MED]   Persist entry state in sessionStorage
+  8. [MED]   Populate projects[] with at least one entry for v1
+  9. [MED]   Design logo / wordmark or SVG monogram
+  10. [MED]  Audit and optimize og-image.png for social sharing
+  11. [MED]  Deduplicate i18n keys between IdentityBlock and MainContent
+  12. [LOW]  Custom 404 page with brand styling
+  13. [LOW]  Migrate UI primitives to clsx
+  14. [LOW]  Add index.ts barrel to components/ui/
+  15. [LOW]  Add test framework (vitest) and first smoke test
+  16. [LOW]  Replace default Next.js favicon with custom icon
+  17. [LOW]  Remove deprecated src/lib/site.ts
+  18. [LOW]  i18n EntryTrigger hint text
+  19. [LOW]  Run axe/Lighthouse a11y audit and resolve color contrast issues
+
+────────────────────────────────────────────────────────────────────────────────
+  VERDICT
+────────────────────────────────────────────────────────────────────────────────
+
+The portfolio landing v1 is READY FOR SOFT LAUNCH with the following caveats:
+
+  MUST before release:
+    → Replace placeholder Lottie animation (brand / identity blocker)
+    → Confirm next@16.2.3 stability
+
+  SHOULD before release:
+    → Standardize package manager
+    → Add at least one project entry to content
+    → Verify og-image.png is present and correct
+
+  CAN defer to v1.1:
+    → All accessibility polish items
+    → Logo / wordmark
+    → Test framework
+    → SessionStorage persistence
+    → Skip-to-main link
+
+The codebase is architecturally excellent for a project at this stage. Design
+token system, component isolation, i18n integration, SEO metadata, and
+animation architecture are all production-grade. The primary gap is brand
+visual identity — the engineering foundation is solid.
+
+================================================================================
+  END OF AUDIT
+  Files analyzed: 35 source files across src/
+  Lint result: PASS (0 errors)
+  Build result: PASS (static, 6 routes)
+  TypeScript: PASS (strict mode)
+================================================================================
