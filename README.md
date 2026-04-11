@@ -6,10 +6,11 @@ Personal portfolio of Alan Szmyt — software engineer focused on building thoug
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies and run the development server:
 
 ```bash
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -69,9 +70,10 @@ src/
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start the development server |
-| `npm run build` | Build for production |
-| `npm run lint` | Run ESLint |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Build for production |
+| `pnpm lint` | Run ESLint |
+| `pnpm format` | Format source files with Prettier |
 
 ---
 
