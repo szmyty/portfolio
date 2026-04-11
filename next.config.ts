@@ -9,7 +9,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ["three", "@react-three/fiber", "@react-three/drei"],
 };
 
 export default withBundleAnalyzer(withNextIntl(nextConfig));
