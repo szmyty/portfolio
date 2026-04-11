@@ -1,12 +1,10 @@
 import type { MetadataRoute } from "next";
-import { env } from "@portfolio/env";
+import { siteConfig } from "@portfolio/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = env.NEXT_PUBLIC_SITE_URL;
-
   return [
     {
-      url: siteUrl,
+      url: siteConfig.url,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
