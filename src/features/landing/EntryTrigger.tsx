@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface EntryTriggerProps {
   onEnter?: () => void;
@@ -8,6 +9,7 @@ interface EntryTriggerProps {
 
 export function EntryTrigger({ onEnter }: EntryTriggerProps) {
   const shouldReduceMotion = useReducedMotion();
+  const t = useTranslations("EntryTrigger");
 
   return (
     <motion.div
@@ -21,7 +23,7 @@ export function EntryTrigger({ onEnter }: EntryTriggerProps) {
       }}
       role="button"
       tabIndex={0}
-      aria-label="Enter the site"
+      aria-label={t("ariaLabel")}
       onClick={(e) => {
         e.stopPropagation();
         onEnter?.();
@@ -38,7 +40,7 @@ export function EntryTrigger({ onEnter }: EntryTriggerProps) {
         animate={shouldReduceMotion ? {} : { opacity: [0.4, 1, 0.4] }}
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
       >
-        Click anywhere, or press Enter / Space
+        {t("prompt")}
       </motion.p>
       <motion.span
         className="block w-px h-6 bg-text-muted origin-top"
