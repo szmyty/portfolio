@@ -6,6 +6,6 @@ interface SectionProps {
 }
 
 export function Section({ children, className }: SectionProps) {
-  const classes = ["px-4 sm:px-8 py-16", className].filter(Boolean).join(" ");
+  const classes = ["px-4 sm:px-8 py-12 sm:py-16", className].filter(Boolean).join(" ");
   return <section className={classes}>{children}</section>;
 }

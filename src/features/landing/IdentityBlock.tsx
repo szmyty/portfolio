@@ -1,17 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
 
-const fadeUp = {
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-};
-
 export function IdentityBlock() {
+  const shouldReduceMotion = useReducedMotion();
+
+  const fadeUp = shouldReduceMotion
+    ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
+    : { initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 } };
+
   return (
-    <div className="flex flex-col items-center gap-4 sm:gap-6 text-center">
+    <div className="flex flex-col items-center gap-4 sm:gap-6 text-center w-full max-w-sm sm:max-w-md px-4">
       <motion.div
         {...fadeUp}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -22,16 +23,16 @@ export function IdentityBlock() {
         />
       </motion.div>
       <motion.h1
-        className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary"
+        className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary break-words"
         {...fadeUp}
-        transition={{ duration: 0.5, ease: "easeOut", delay: 0.15 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: shouldReduceMotion ? 0 : 0.15 }}
       >
         Alan Szmyt
       </motion.h1>
       <motion.p
-        className="text-base sm:text-lg text-text-secondary max-w-sm sm:max-w-md"
+        className="text-base sm:text-lg text-text-secondary"
         {...fadeUp}
-        transition={{ duration: 0.5, ease: "easeOut", delay: 0.28 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: shouldReduceMotion ? 0 : 0.28 }}
       >
         Software engineer focused on building thoughtful, reliable systems.
       </motion.p>
