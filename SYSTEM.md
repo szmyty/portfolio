@@ -8,10 +8,10 @@ This document defines a repeatable system for designing, planning, implementing,
 
 The goal is to:
 
-* maximize development speed
-* maintain high-quality, production-grade outputs
-* reduce cognitive load
-* ensure consistency across all projects
+- maximize development speed
+- maintain high-quality, production-grade outputs
+- reduce cognitive load
+- ensure consistency across all projects
 
 This system transforms ideas into structured, executable, and auditable engineering processes.
 
@@ -21,12 +21,12 @@ This system transforms ideas into structured, executable, and auditable engineer
 
 Renderflow (and all projects using this system) follow these principles:
 
-* **Architecture First** — design before implementation
-* **Spec-Driven Development** — define structure before execution
-* **AI as Executor** — Copilot generates, human verifies
-* **Audit-Driven Refinement** — continuous improvement via system-wide review
-* **Deterministic Systems** — reproducible, predictable outputs
-* **Composable Design** — systems built from modular components
+- **Architecture First** — design before implementation
+- **Spec-Driven Development** — define structure before execution
+- **AI as Executor** — Copilot generates, human verifies
+- **Audit-Driven Refinement** — continuous improvement via system-wide review
+- **Deterministic Systems** — reproducible, predictable outputs
+- **Composable Design** — systems built from modular components
 
 ---
 
@@ -47,20 +47,20 @@ Each repository should include:
 
 ### 📄 Identity Layer
 
-* VISION.md — what the system is
-* PURPOSE.md — why it exists
+- VISION.md — what the system is
+- PURPOSE.md — why it exists
 
 ---
 
 ### 📐 Architecture Layer
 
-* ARCHITECTURE.md — system design and components
+- ARCHITECTURE.md — system design and components
 
 ---
 
 ### 🗺️ Planning Layer
 
-* ROADMAP.md — all milestones and issues
+- ROADMAP.md — all milestones and issues
 
 ---
 
@@ -72,14 +72,14 @@ Located in:
 
 Contains:
 
-* system.spec.md
-* vision.spec.md
-* purpose.spec.md
-* architecture.spec.md
-* roadmap.spec.md
-* issue.spec.md
-* audit.spec.md
-* milestone.spec.md
+- system.spec.md
+- vision.spec.md
+- purpose.spec.md
+- architecture.spec.md
+- roadmap.spec.md
+- issue.spec.md
+- audit.spec.md
+- milestone.spec.md
 
 Specs define structure, formatting, and rules for all generated files.
 
@@ -87,9 +87,9 @@ Specs define structure, formatting, and rules for all generated files.
 
 ### 📦 Supporting Structure
 
-* examples/ — sample usage (lowercase)
-* .github/ISSUE_TEMPLATE/ — GitHub templates
-* .github/workflows/ — CI/CD
+- examples/ — sample usage (lowercase)
+- .github/ISSUE_TEMPLATE/ — GitHub templates
+- .github/workflows/ — CI/CD
 
 ---
 
@@ -109,9 +109,9 @@ Example:
 
 ### Roadmap
 
-* contains all planned work (MVP + future)
-* written once, evolves over time
-* includes all GitHub issues as bullet points
+- contains all planned work (MVP + future)
+- written once, evolves over time
+- includes all GitHub issues as bullet points
 
 ---
 
@@ -119,9 +119,9 @@ Example:
 
 Each milestone:
 
-* groups related issues
-* represents a meaningful increment (e.g. MVP, v1.0.0)
-* is executed sequentially
+- groups related issues
+- represents a meaningful increment (e.g. MVP, v1.0.0)
+- is executed sequentially
 
 ---
 
@@ -129,27 +129,27 @@ Each milestone:
 
 ### Creation
 
-* issues are generated from roadmap
-* created in small batches (e.g. 3 at a time)
-* follow issue.spec.md
+- issues are generated from roadmap
+- created in small batches (e.g. 3 at a time)
+- follow issue.spec.md
 
 ---
 
 ### Execution
 
-* Copilot implements issues
-* human reviews quickly for correctness
-* no over-analysis during execution phase
+- Copilot implements issues
+- human reviews quickly for correctness
+- no over-analysis during execution phase
 
 ---
 
 ### Philosophy
 
-* issues must be:
-  * scoped
-  * atomic
-  * clear
-  * executable
+- issues must be:
+  - scoped
+  - atomic
+  - clear
+  - executable
 
 ---
 
@@ -159,11 +159,11 @@ Testing is performed per milestone, not per issue.
 
 ### Validation includes:
 
-* code compiles
-* CI passes
-* CLI or system runs correctly
-* outputs are correct
-* developer experience is acceptable
+- code compiles
+- CI passes
+- CLI or system runs correctly
+- outputs are correct
+- developer experience is acceptable
 
 ---
 
@@ -175,28 +175,28 @@ At the end of each milestone:
 
 Audit evaluates:
 
-* architecture
-* performance
-* code quality
-* DX / UX
-* missing features
-* simplification opportunities
+- architecture
+- performance
+- code quality
+- DX / UX
+- missing features
+- simplification opportunities
 
 ---
 
 ### Audit Output
 
-* categorized findings (HIGH / MED / LOW)
-* actionable improvements
-* new GitHub issues
+- categorized findings (HIGH / MED / LOW)
+- actionable improvements
+- new GitHub issues
 
 ---
 
 ### Execution
 
-* audit issues are executed
-* repository is refined
-* milestone is finalized
+- audit issues are executed
+- repository is refined
+- milestone is finalized
 
 ---
 
@@ -204,11 +204,11 @@ Audit evaluates:
 
 A milestone is complete when:
 
-* all issues are implemented
-* system runs correctly
-* CI is passing
-* manual validation is complete
-* audit issues are resolved or triaged
+- all issues are implemented
+- system runs correctly
+- CI is passing
+- manual validation is complete
+- audit issues are resolved or triaged
 
 ---
 
@@ -218,9 +218,9 @@ All ideas must be captured.
 
 Rules:
 
-* ideas go into ROADMAP.md
-* no idea is left in chat or memory only
-* backlog is continuously refined
+- ideas go into ROADMAP.md
+- no idea is left in chat or memory only
+- backlog is continuously refined
 
 ---
 
@@ -228,21 +228,21 @@ Rules:
 
 ### Roles
 
-| Role        | Actor    |
-|-------------|----------|
-| Architect   | Human    |
-| Implementer | Copilot  |
-| Reviewer    | Human    |
-| Auditor     | AI       |
+| Role        | Actor   |
+| ----------- | ------- |
+| Architect   | Human   |
+| Implementer | Copilot |
+| Reviewer    | Human   |
+| Auditor     | AI      |
 
 ---
 
 ### Principles
 
-* human defines structure
-* AI fills implementation
-* human verifies correctness
-* audit ensures system quality
+- human defines structure
+- AI fills implementation
+- human verifies correctness
+- audit ensures system quality
 
 ---
 
@@ -250,10 +250,10 @@ Rules:
 
 To maximize speed:
 
-* batch issue creation
-* avoid over-testing per issue
-* test per milestone
-* rely on audit loop for correction
+- batch issue creation
+- avoid over-testing per issue
+- test per milestone
+- rely on audit loop for correction
 
 ---
 
@@ -261,10 +261,10 @@ To maximize speed:
 
 This system supports:
 
-* multiple repositories
-* different tech stacks
-* plugin-based architectures
-* AI-assisted systems
+- multiple repositories
+- different tech stacks
+- plugin-based architectures
+- AI-assisted systems
 
 ---
 
@@ -272,9 +272,9 @@ This system supports:
 
 This system evolves into:
 
-* a reusable project generation framework
-* a standardized engineering methodology
-* a personal developer operating system
+- a reusable project generation framework
+- a standardized engineering methodology
+- a personal developer operating system
 
 ---
 

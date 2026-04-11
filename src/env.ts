@@ -11,13 +11,13 @@ function requireEnv(name: string, fallback?: string): string {
   if ((isDev || isBuildPhase) && fallback !== undefined) return fallback;
   throw new Error(
     `Missing required environment variable: ${name}. ` +
-      `Set it in your .env file or deployment environment.`
+      `Set it in your .env file or deployment environment.`,
   );
 }
 
 export const env = {
   NEXT_PUBLIC_SITE_URL: requireEnv(
     "NEXT_PUBLIC_SITE_URL",
-    "http://localhost:3000"
+    "http://localhost:3000",
   ),
 } as const;

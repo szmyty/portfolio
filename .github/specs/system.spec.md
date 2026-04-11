@@ -14,13 +14,13 @@ The SYSTEM.md document serves as the central definition of the engineering workf
 
 SYSTEM.md must:
 
-* define the full development lifecycle
-* describe the core philosophy and principles
-* define project structure expectations
-* establish the workflow loop (vision → execution → audit)
-* define roles (human vs AI responsibilities)
-* define validation and completion criteria
-* define how specs, issues, and execution interact
+- define the full development lifecycle
+- describe the core philosophy and principles
+- define project structure expectations
+- establish the workflow loop (vision → execution → audit)
+- define roles (human vs AI responsibilities)
+- define validation and completion criteria
+- define how specs, issues, and execution interact
 
 ---
 
@@ -40,11 +40,11 @@ Describes why the system exists and what it enables.
 
 Defines guiding principles such as:
 
-* architecture-first
-* spec-driven development
-* AI-assisted execution
-* audit-driven refinement
-* deterministic systems
+- architecture-first
+- spec-driven development
+- AI-assisted execution
+- audit-driven refinement
+- deterministic systems
 
 ---
 
@@ -62,10 +62,10 @@ Defines the full lifecycle:
 
 Defines required repository files:
 
-* VISION.md
-* PURPOSE.md
-* ARCHITECTURE.md
-* ROADMAP.md
+- VISION.md
+- PURPOSE.md
+- ARCHITECTURE.md
+- ROADMAP.md
 
 And directories:
 
@@ -88,9 +88,9 @@ Must include at least one example.
 
 Defines:
 
-* roadmap as source of truth
-* milestone grouping
-* execution order
+- roadmap as source of truth
+- milestone grouping
+- execution order
 
 ---
 
@@ -98,9 +98,9 @@ Defines:
 
 Defines:
 
-* issue creation rules
-* batching strategy (e.g. 3 at a time)
-* issue quality expectations
+- issue creation rules
+- batching strategy (e.g. 3 at a time)
+- issue quality expectations
 
 ---
 
@@ -110,8 +110,8 @@ Defines how and when testing occurs.
 
 Must explicitly state:
 
-* testing occurs at milestone level
-* not required per issue
+- testing occurs at milestone level
+- not required per issue
 
 ---
 
@@ -119,9 +119,9 @@ Must explicitly state:
 
 Defines:
 
-* audit timing (end of milestone)
-* audit responsibilities
-* expected outputs (findings + new issues)
+- audit timing (end of milestone)
+- audit responsibilities
+- expected outputs (findings + new issues)
 
 ---
 
@@ -131,10 +131,10 @@ Defines when a milestone is complete.
 
 Must include:
 
-* code correctness
-* CI passing
-* manual validation
-* audit resolution
+- code correctness
+- CI passing
+- manual validation
+- audit resolution
 
 ---
 
@@ -142,8 +142,8 @@ Must include:
 
 Defines:
 
-* all ideas must be captured
-* ROADMAP.md is the single source of truth
+- all ideas must be captured
+- ROADMAP.md is the single source of truth
 
 ---
 
@@ -151,8 +151,8 @@ Defines:
 
 Defines:
 
-* human vs AI roles
-* division of responsibility
+- human vs AI roles
+- division of responsibility
 
 ---
 
@@ -160,9 +160,9 @@ Defines:
 
 Defines:
 
-* batching
-* milestone-based testing
-* reliance on audit loop
+- batching
+- milestone-based testing
+- reliance on audit loop
 
 ---
 
@@ -170,8 +170,8 @@ Defines:
 
 Defines:
 
-* system is reusable across repos
-* supports multiple stacks and domains
+- system is reusable across repos
+- supports multiple stacks and domains
 
 ---
 
@@ -179,8 +179,8 @@ Defines:
 
 Defines evolution into:
 
-* reusable framework
-* personal engineering OS
+- reusable framework
+- personal engineering OS
 
 ---
 
@@ -188,11 +188,11 @@ Defines evolution into:
 
 SYSTEM.md must:
 
-* use clear section headers
-* use concise bullet points
-* avoid unnecessary verbosity
-* include indented blocks instead of triple backticks
-* maintain readability and scannability
+- use clear section headers
+- use concise bullet points
+- avoid unnecessary verbosity
+- include indented blocks instead of triple backticks
+- maintain readability and scannability
 
 ---
 
@@ -200,9 +200,9 @@ SYSTEM.md must:
 
 SYSTEM.md must NOT:
 
-* contain project-specific implementation details
-* reference specific technologies unless necessary
-* include low-level code
+- contain project-specific implementation details
+- reference specific technologies unless necessary
+- include low-level code
 
 ---
 
@@ -210,15 +210,15 @@ SYSTEM.md must NOT:
 
 SYSTEM.md is:
 
-* a system definition
-* a reusable framework
-* a guide for both humans and AI
+- a system definition
+- a reusable framework
+- a guide for both humans and AI
 
 It is not:
 
-* a README
-* a tutorial
-* a project-specific document
+- a README
+- a tutorial
+- a project-specific document
 
 ---
 
@@ -226,6 +226,6 @@ It is not:
 
 SYSTEM.md should:
 
-* evolve as the workflow improves
-* be updated when new patterns emerge
-* remain the source of truth for the system
+- evolve as the workflow improves
+- be updated when new patterns emerge
+- remain the source of truth for the system
