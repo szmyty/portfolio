@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
@@ -9,6 +9,22 @@ import { EntryTrigger } from "@portfolio/features/landing/EntryTrigger";
 import { Center } from "@portfolio/components/ui/Center";
 import { SkipToContent } from "@portfolio/components/ui/SkipToContent";
 
+const STORAGE_KEY = "landing-entered";
+
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getSnapshot() {
+  if (typeof window === "undefined") return false;
+  return sessionStorage.getItem(STORAGE_KEY) === "true";
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 interface LandingEntryProps {
   children: ReactNode;
   mainContent?: ReactNode;
@@ -16,13 +32,17 @@ interface LandingEntryProps {
 
 export function LandingEntry({ children, mainContent }: LandingEntryProps) {
   const t = useTranslations("LandingEntry");
-  const [entered, setEntered] = useState(false);
+  const storedEntered = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+  const [manuallyEntered, setManuallyEntered] = useState(false);
+  const entered = storedEntered || manuallyEntered;
 
   const handleEnter = useCallback(() => {
-    setEntered((prev) => {
-      if (prev) return prev;
-      return true;
-    });
+    sessionStorage.setItem(STORAGE_KEY, "true");
+    setManuallyEntered(true);
   }, []);
 
   // Delay focus until after the enter animation (0.55s) has completed
