@@ -30,10 +30,22 @@ export default function GlobalError({
           padding: "1rem",
         }}
       >
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+        <h2
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            marginBottom: "0.5rem",
+          }}
+        >
           Something went wrong
         </h2>
-        <p style={{ fontSize: "0.875rem", color: "#a1a1aa", marginBottom: "1rem" }}>
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "#a1a1aa",
+            marginBottom: "1rem",
+          }}
+        >
           An unexpected error occurred. Please try again.
         </p>
         <button

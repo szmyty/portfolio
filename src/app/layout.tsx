@@ -62,7 +62,9 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     creator: siteConfig.author.handle,
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: siteConfig.name }],
+    images: [
+      { url: "/og-image.png", width: 1200, height: 630, alt: siteConfig.name },
+    ],
   },
 };
 
@@ -122,7 +124,8 @@ export default async function RootLayout({
         {isDev && (
           <DebugPanel
             info={{
-              siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+              siteUrl:
+                process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
               nextVersion: nextPkg.version,
               reactVersion: reactPkg.version,
               locale,
