@@ -49,6 +49,7 @@ Each repository should include:
 
 - VISION.md — what the system is
 - PURPOSE.md — why it exists
+- COMPLEXITY.md — complexity budget and simplicity principles
 
 ---
 
