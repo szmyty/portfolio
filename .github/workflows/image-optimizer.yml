@@ -1,0 +1,89 @@
+name: 🖼️ Optimize Images
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  optimize-images:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # ----------------------------------------
+      # 🧠 Step 1: Detect images
+      # ----------------------------------------
+      - name: 🔍 Detect image files
+        id: detect_images
+        run: |
+          IMAGE_FILES="$(git ls-files | grep -E '\.(png|jpg|jpeg|gif|svg)$' || true)"
+
+          if [[ -z "${IMAGE_FILES}" ]]; then
+            echo "has_images=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_images=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      # ----------------------------------------
+      # 🐳 Step 2: Optimize (only if images exist)
+      # ----------------------------------------
+      - name: 🐳 Optimize images with Docker
+        if: steps.detect_images.outputs.has_images == 'true'
+        run: |
+          docker run \
+            --platform "linux/amd64" \
+            --rm \
+            --volume "${{ github.workspace }}:/workspace" \
+            --workdir "/workspace" \
+            ghcr.io/toy/image_optim \
+            image_optim \
+              --recursive \
+              --skip-missing-workers \
+              .
+
+      # ----------------------------------------
+      # 🔍 Step 3: Detect changes
+      # ----------------------------------------
+      - name: 🔍 Detect changes
+        id: detect_changes
+        if: steps.detect_images.outputs.has_images == 'true'
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes_detected=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "changes_detected=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      # ----------------------------------------
+      # ❌ Step 4: Fail PR if not optimized
+      # ----------------------------------------
+      - name: ❌ Fail if images not optimized (PR)
+        if: github.event_name == 'pull_request' && steps.detect_changes.outputs.changes_detected == 'true'
+        run: |
+          printf "Images are not optimized. Please run image_optim locally.\n"
+          git diff
+          exit 1
+
+      # ----------------------------------------
+      # 🤖 Step 5: Auto-commit (push only)
+      # ----------------------------------------
+      - name: 🤖 Commit optimized images
+        if: github.event_name == 'push' && steps.detect_changes.outputs.changes_detected == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+
+          git commit \
+            --message "chore(images): optimize images via image_optim"
+
+          git push
