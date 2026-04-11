@@ -27,6 +27,11 @@ src/
 │   └── ui/           #   Generic layout primitives (Container, Section, Center, Footer)
 ├── config/           # App-wide configuration and environment validation
 │   └── env.ts        #   Typed, validated environment variables
+├── content/          # Content abstraction layer: types and static data
+│   ├── types.ts      #   TypeScript interfaces (Project, CreativeWork, …)
+│   ├── projects.ts   #   Software project entries
+│   ├── creative.ts   #   Creative work entries
+│   └── index.ts      #   Public barrel export (@portfolio/content)
 ├── features/         # Self-contained feature modules, one folder per feature
 │   └── landing/      #   Landing page entry sequence
 ├── i18n/             # Internationalization setup (next-intl)
@@ -42,6 +47,7 @@ src/
 | `app/`          | Next.js pages, layouts, `metadata`, `viewport`, error/sitemap/robots files |
 | `components/`   | Stateless or lightly-stateful reusable UI pieces; no business logic |
 | `config/`       | Environment variable validation and app-wide static config |
+| `content/`      | Content types (interfaces) and static data arrays; no UI logic |
 | `features/`     | Co-located components, hooks, and logic for a single product feature |
 | `lib/`          | Pure utility functions and shared constants used across multiple modules |
 | `animations/`   | Raw animation data files (Lottie JSON) consumed by animation components |
