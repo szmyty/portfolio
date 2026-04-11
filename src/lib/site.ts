@@ -1,4 +1,4 @@
-import { env } from "@portfolio/env";
+import { env } from "@portfolio/config/env";
 
 export const siteConfig = {
   name: "Alan Szmyt | Portfolio",

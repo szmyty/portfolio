@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Alan Szmyt — Portfolio
+
+Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.
+
+---
 
 ## Getting Started
 
@@ -6,31 +10,65 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── app/              # Next.js App Router: pages, layouts, metadata, route handlers
+├── components/       # Reusable UI components, organized by subdomain
+│   ├── animation/    #   Lottie and motion-based display components
+│   ├── debug/        #   Development-only diagnostic panels
+│   └── ui/           #   Generic layout primitives (Container, Section, Center, Footer)
+├── config/           # App-wide configuration and environment validation
+│   └── env.ts        #   Typed, validated environment variables
+├── features/         # Self-contained feature modules, one folder per feature
+│   └── landing/      #   Landing page entry sequence
+├── i18n/             # Internationalization setup (next-intl)
+├── lib/              # Shared utilities and site-level constants
+│   └── site.ts       #   Site metadata (title, description, author, URLs)
+└── animations/       # Lottie JSON animation assets
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Conventions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Directory       | What belongs here |
+|-----------------|----------------------------------------------------------------|
+| `app/`          | Next.js pages, layouts, `metadata`, `viewport`, error/sitemap/robots files |
+| `components/`   | Stateless or lightly-stateful reusable UI pieces; no business logic |
+| `config/`       | Environment variable validation and app-wide static config |
+| `features/`     | Co-located components, hooks, and logic for a single product feature |
+| `lib/`          | Pure utility functions and shared constants used across multiple modules |
+| `animations/`   | Raw animation data files (Lottie JSON) consumed by animation components |
+| `i18n/`         | next-intl configuration and locale message loading |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Rules of thumb:**
 
-## Deploy on Vercel
+- A **component** is reusable across features. A **feature** owns its own components when they are not shared.
+- Configuration and secrets go in `config/`; never inline them in application code.
+- `lib/` is for pure, side-effect-free helpers. Anything with side-effects belongs in a feature or a component.
+- Each `features/<name>/` directory exports a public API through its `index.ts` file.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start the development server |
+| `npm run build` | Build for production |
+| `npm run lint` | Run ESLint |
+
+---
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) — React framework (App Router)
+- [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS
+- [Framer Motion](https://www.framer.com/motion/) — Animations
+- [next-intl](https://next-intl.dev) — Internationalization
