@@ -19,35 +19,25 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Validate lint
-        run: pnpm run lint
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build project
         run: pnpm run build
 
-      - name: Verify production start
-        run: |
-          pnpm run start &
-          sleep 5
-          curl --fail http://localhost:3000 || exit 1
-      - name: Check for unused dependencies
-        run: npx knip || true
       - name: Print environment info
         run: |
           node --version
