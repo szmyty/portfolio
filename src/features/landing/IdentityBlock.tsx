@@ -1,17 +1,14 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
+import { LottieAnimation } from "@portfolio/components/animation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
+import { useFadeUp } from "./animation";
 
 export function IdentityBlock() {
   const t = useTranslations("IdentityBlock");
-  const shouldReduceMotion = useReducedMotion();
-
-  const fadeUp = shouldReduceMotion
-    ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
-    : { initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 } };
+  const { variants: fadeUp, shouldReduceMotion } = useFadeUp();
 
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6 text-center w-full max-w-sm sm:max-w-md px-4">
