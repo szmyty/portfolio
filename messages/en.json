@@ -1,9 +1,5 @@
 {
-  "IdentityBlock": {
-    "name": "Alan Szmyt",
-    "tagline": "Software engineer focused on building thoughtful, reliable systems."
-  },
-  "MainContent": {
+  "Author": {
     "name": "Alan Szmyt",
     "tagline": "Software engineer focused on building thoughtful, reliable systems."
   },

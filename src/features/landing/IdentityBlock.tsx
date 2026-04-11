@@ -7,7 +7,7 @@ import placeholderAnimation from "@portfolio/animations/placeholder.json";
 import { useFadeUp } from "./animation";
 
 export function IdentityBlock() {
-  const t = useTranslations("IdentityBlock");
+  const t = useTranslations("Author");
   const { variants: fadeUp, shouldReduceMotion } = useFadeUp();
 
   return (

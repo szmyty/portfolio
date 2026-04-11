@@ -5,7 +5,7 @@ import { Footer } from "@portfolio/features/landing/Footer";
 import { Section } from "@portfolio/components/ui/Section";
 
 export async function MainContent() {
-  const t = await getTranslations("MainContent");
+  const t = await getTranslations("Author");
 
   return (
     <div className="flex flex-col min-h-screen">
