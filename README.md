@@ -34,6 +34,7 @@ src/
 │   └── index.ts      #   Public barrel export (@portfolio/content)
 ├── features/         # Self-contained feature modules, one folder per feature
 │   └── landing/      #   Landing page entry sequence
+│       └── animation/ #     Animation hooks and visual layer components (isolated from layout)
 ├── i18n/             # Internationalization setup (next-intl)
 ├── lib/              # Shared utilities and site-level constants
 │   └── site.ts       #   Site metadata (title, description, author, URLs)
@@ -48,7 +49,7 @@ src/
 | `components/`   | Stateless or lightly-stateful reusable UI pieces; no business logic |
 | `config/`       | Environment variable validation and app-wide static config |
 | `content/`      | Content types (interfaces) and static data arrays; no UI logic |
-| `features/`     | Co-located components, hooks, and logic for a single product feature |
+| `features/`     | Co-located components, hooks, and logic for a single product feature; animation sub-directories isolate visual logic from layout |
 | `lib/`          | Pure utility functions and shared constants used across multiple modules |
 | `animations/`   | Raw animation data files (Lottie JSON) consumed by animation components |
 | `i18n/`         | next-intl configuration and locale message loading |
