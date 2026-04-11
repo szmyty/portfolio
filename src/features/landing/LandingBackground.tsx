@@ -1,5 +1,5 @@
-import { LottieAnimation } from "@/components/animation/LottieAnimation";
-import placeholderAnimation from "@/animations/placeholder.json";
+import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
+import placeholderAnimation from "@portfolio/animations/placeholder.json";
 
 export function LandingBackground() {
   return (

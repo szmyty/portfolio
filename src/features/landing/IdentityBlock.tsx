@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LottieAnimation } from "@/components/animation/LottieAnimation";
-import placeholderAnimation from "@/animations/placeholder.json";
+import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
+import placeholderAnimation from "@portfolio/animations/placeholder.json";
 
 const fadeUp = {
   initial: { opacity: 0, y: 18 },
