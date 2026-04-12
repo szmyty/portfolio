@@ -15,7 +15,7 @@ export function LandingBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0 h-screen z-0 overflow-hidden"
+      className="absolute inset-x-0 top-0 h-screen z-0 overflow-hidden"
     >
       {/* Hero-intensity cosmic atmosphere — stars and accent nebula glow */}
       <CosmicBackground mode="hero" />

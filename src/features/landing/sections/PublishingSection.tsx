@@ -6,7 +6,7 @@ export function PublishingSection() {
     <section
       id="publishing"
       aria-label="Publishing"
-      className="relative px-4 sm:px-8 py-24 sm:py-32 bg-background scroll-mt-16"
+      className="relative px-4 sm:px-8 py-24 sm:py-32 bg-background scroll-mt-16 pointer-events-auto"
     >
       <CosmicBackground mode="content" />
       <div className="relative z-10 max-w-3xl mx-auto flex flex-col gap-6">
