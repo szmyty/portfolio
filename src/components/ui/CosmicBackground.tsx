@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { tokens } from "@portfolio/lib/tokens";
+import { useTheme } from "@portfolio/lib/theme";
 
 export type CosmicBackgroundMode = "hero" | "content";
 
@@ -23,11 +24,15 @@ interface CosmicBackgroundProps {
  * Parallax is automatically disabled when the user prefers reduced motion.
  * Must be placed inside a `position: relative` container. All layers are
  * absolutely positioned and non-interactive (pointer-events-none).
+ *
+ * Starfield colors adapt to the active theme (dark: white dots, light: dark dots).
  */
 export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
   const isHero = mode === "hero";
   const shouldReduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === "light";
 
   // Hero mode: parallax driven by global scroll (stars drift as hero scrolls away)
   const { scrollY } = useScroll();
@@ -49,20 +54,45 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
   const y2 = isHero ? heroY2 : contentY2;
   const y3 = isHero ? heroY3 : contentY3;
 
+  // Star color adapts to theme: white on dark, soft dark on light
+  const starColor1 = isLight ? "rgba(30,30,60,0.5)" : "rgba(255,255,255,0.9)";
+  const starColor2 = isLight ? "rgba(30,30,60,0.4)" : "rgba(255,255,255,0.7)";
+  const starColor3 = isLight ? "rgba(30,30,60,0.45)" : "rgba(255,255,255,0.8)";
+
+  // Nebula glow adapts to theme: accent in dark, soft blue-grey in light
+  const nebulaColor = isLight
+    ? `color-mix(in srgb, ${tokens.color.accent} 12%, transparent)`
+    : `color-mix(in srgb, ${tokens.color.accent} 8%, transparent)`;
+
+  // Opacity values per layer per mode — keyed by [isHero][isLight]
+  const opacityMatrix = {
+    layer1: { hero: { dark: 0.3, light: 0.4 }, content: { dark: 0.12, light: 0.15 } },
+    layer2: { hero: { dark: 0.25, light: 0.35 }, content: { dark: 0.1, light: 0.12 } },
+    layer3: { hero: { dark: 0.2, light: 0.3 }, content: { dark: 0.08, light: 0.1 } },
+  };
+  const section = isHero ? "hero" : "content";
+  const palette = isLight ? "light" : "dark";
+  const opacity1 = opacityMatrix.layer1[section][palette];
+  const opacity2 = opacityMatrix.layer2[section][palette];
+  const opacity3 = opacityMatrix.layer3[section][palette];
+  const overlayBackground = isLight ? "rgba(245,245,245,0.55)" : "rgba(0,0,0,0.55)";
+
   return (
     <div
       ref={containerRef}
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
+      {/* Background fill — picks up the theme's --background CSS variable */}
+      <div className="absolute inset-0 bg-background" />
+
       {/* Starfield — layer 1: dense tiny stars (near depth — fastest parallax) */}
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px)",
+          backgroundImage: `radial-gradient(${starColor1} 1px, transparent 1px)`,
           backgroundSize: "120px 120px",
-          opacity: isHero ? 0.3 : 0.12,
+          opacity: opacity1,
           y: y1,
         }}
       />
@@ -71,11 +101,10 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px)",
+          backgroundImage: `radial-gradient(${starColor2} 1px, transparent 1px)`,
           backgroundSize: "170px 170px",
           backgroundPosition: "55px 90px",
-          opacity: isHero ? 0.25 : 0.1,
+          opacity: opacity2,
           y: y2,
         }}
       />
@@ -84,11 +113,10 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.8) 1.5px, transparent 1.5px)",
+          backgroundImage: `radial-gradient(${starColor3} 1.5px, transparent 1.5px)`,
           backgroundSize: "280px 280px",
           backgroundPosition: "140px 40px",
-          opacity: isHero ? 0.2 : 0.08,
+          opacity: opacity3,
           y: y3,
         }}
       />
@@ -97,7 +125,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
       <div
         className="absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 70% 60% at 50% 40%, color-mix(in srgb, ${tokens.color.accent} 8%, transparent) 0%, transparent 75%)`,
+          background: `radial-gradient(ellipse 70% 60% at 50% 40%, ${nebulaColor} 0%, transparent 75%)`,
           opacity: isHero ? 1 : 0.45,
         }}
       />
@@ -106,7 +134,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
       {!isHero && (
         <div
           className="absolute inset-0"
-          style={{ background: "rgba(0, 0, 0, 0.55)" }}
+          style={{ background: overlayBackground }}
         />
       )}
     </div>
