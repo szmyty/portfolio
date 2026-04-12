@@ -6,7 +6,7 @@ import type { ThreeEvent } from "@react-three/fiber";
 import type { ComponentType, ReactNode } from "react";
 import type { Mesh, MeshStandardMaterial } from "three";
 import { TorusKnotGeometry } from "./geometry";
-import { StandardMaterial } from "./materials";
+import { GradientMaterial } from "./materials";
 import type { MaterialProps } from "./materials";
 import type { EffectLayerProps } from "./effects";
 
@@ -42,7 +42,7 @@ export interface InfinityObjectProps {
   /**
    * Material layer — any component that accepts a `matRef` and renders a
    * Three.js material element.
-   * Defaults to StandardMaterial (PBR, indigo accent).
+   * Defaults to GradientMaterial (blue → purple → cyan gradient, PBR).
    * Swap for a shader-based material without touching any other layer.
    */
   MaterialComponent?: ComponentType<MaterialProps>;
@@ -83,7 +83,7 @@ export interface InfinityObjectProps {
  */
 export function InfinityObject({
   GeometryComponent = TorusKnotGeometry,
-  MaterialComponent = StandardMaterial,
+  MaterialComponent = GradientMaterial,
   // effects and children reserved for future use
 }: InfinityObjectProps) {
   const meshRef = useRef<Mesh>(null);
