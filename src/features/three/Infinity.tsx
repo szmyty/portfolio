@@ -18,7 +18,7 @@ const IDLE_EMISSIVE = 0.15;
 const HOVER_EMISSIVE = 0.6;
 const ENGAGED_EMISSIVE = 1.0;
 
-export type InfinityObjectProps = {
+export type InfinityProps = {
   GeometryComponent?: ComponentType;
   MaterialComponent?: ComponentType<{ matRef?: React.Ref<MeshStandardMaterial> }>;
   effects?: { glow?: boolean };
@@ -26,7 +26,7 @@ export type InfinityObjectProps = {
 };
 
 /**
- * InfinityObject (Stable Edition)
+ * Infinity (Stable Edition)
  *
  * This version intentionally removes:
  * - rotation
@@ -38,11 +38,11 @@ export type InfinityObjectProps = {
  * → visually alive (shader + glow)
  * → spatially stable (anchored identity element)
  */
-export function InfinityObject({
+export function Infinity({
   GeometryComponent = InfinityGeometry,
   MaterialComponent = GradientMaterial,
   effects = { glow: true },
-}: InfinityObjectProps) {
+}: InfinityProps) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
 
@@ -83,24 +83,14 @@ export function InfinityObject({
   /**
    * Frame loop (visual polish only)
    */
-  useFrame(({ viewport }, delta) => {
+  useFrame((_state, delta) => {
     if (!meshRef.current) return;
 
     /**
-     * Responsive positioning
+     * Centered hero position
      */
-    const isLandscape = viewport.width >= viewport.height;
-
-    const baseX = isLandscape
-      ? viewport.width * 0.28
-      : viewport.width * 0.08;
-
-    const baseY = isLandscape
-      ? viewport.height * -0.18
-      : viewport.height * -0.32;
-
-    meshRef.current.position.x = baseX;
-    meshRef.current.position.y = baseY;
+    meshRef.current.position.x = 0;
+    meshRef.current.position.y = 0;
 
     /**
      * Subtle scale interaction (feels premium, not distracting)

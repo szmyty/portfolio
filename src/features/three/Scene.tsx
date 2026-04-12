@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { InfinityObject } from "./InfinityObject";
+import { Infinity } from "./Infinity";
 
 /**
  * Scene renders a Three.js canvas using React Three Fiber.
@@ -22,7 +22,7 @@ import { InfinityObject } from "./InfinityObject";
  *   tint that traces the silhouette edges of the knot, separating the object
  *   from the background and reinforcing its three-dimensional form.
  *
- * Post-processing bloom is enabled by default via the InfinityObject effects
+ * Post-processing bloom is enabled by default via the Infinity effects
  * prop and adds a soft luminous glow around emissive surfaces.
  */
 export function Scene() {
@@ -36,7 +36,7 @@ export function Scene() {
       <directionalLight position={[-4, -2, -3]} intensity={0.2} />
       {/* Rim light from upper-right-back — traces silhouette edges for form separation */}
       <directionalLight position={[-3, 4, -5]} intensity={0.6} color="#818cf8" />
-      <InfinityObject />
+      <Infinity />
     </Canvas>
   );
 }

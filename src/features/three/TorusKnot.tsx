@@ -15,7 +15,7 @@ const HOLD_THRESHOLD_MS = 250;
 const SCROLL_CANCEL_PX = 8;
 
 /**
- * InfinityKnot renders a torus-knot geometry configured with p=2, q=1
+ * TorusKnot renders a torus-knot geometry configured with p=2, q=1
  * to approximate an infinity (lemniscate) shape.
  *
  * Parameters:
@@ -38,7 +38,7 @@ const SCROLL_CANCEL_PX = 8;
  * Accessibility: respects prefers-reduced-motion by disabling idle rotation and
  * the sinusoidal float when the user has requested reduced motion.
  */
-export function InfinityKnot() {
+export function TorusKnot() {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
 
@@ -156,7 +156,7 @@ export function InfinityKnot() {
     };
   }, []);
 
-  useFrame(({ clock, viewport }, delta) => {
+  useFrame(({ clock }, delta) => {
     if (!meshRef.current) return;
 
     const isEngaged = interactionState.current === "engaged";
@@ -185,23 +185,15 @@ export function InfinityKnot() {
       }
     }
 
-    // Compute viewport-proportional offsets so the object stays clear of the
-    // centred text on all screen sizes.
-    //   - Landscape (desktop/tablet): shift to lower-right quadrant.
-    //   - Portrait (mobile): shift to lower-centre to stay below the heading.
-    const isLandscape = viewport.width >= viewport.height;
-    const baseX = isLandscape ? viewport.width * 0.28 : viewport.width * 0.08;
-    const baseY = isLandscape
-      ? viewport.height * -0.18
-      : viewport.height * -0.32;
-
     meshRef.current.rotation.x = rotX.current;
     meshRef.current.rotation.y = rotY.current;
-    meshRef.current.position.x = baseX;
+
+    // Centered hero position.
+    meshRef.current.position.x = 0;
     // Vertical float is independent of drag. Disabled when reduced motion is on.
     meshRef.current.position.y = reducedMotion.current
-      ? baseY
-      : baseY + Math.sin(clock.getElapsedTime() * 0.5) * 0.15;
+      ? 0
+      : Math.sin(clock.getElapsedTime() * 0.5) * 0.15;
 
     // Smooth scale: 1.0 idle → 1.05 hovered → 1.08 engaged.
     const targetScale = isEngaged ? 1.08 : isHovered.current ? 1.05 : 1.0;
