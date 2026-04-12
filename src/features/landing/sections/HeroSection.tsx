@@ -5,9 +5,9 @@ export function HeroSection() {
     <section
       id="hero"
       aria-label="Hero"
-      className="relative flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 text-center"
+      className="relative flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 text-center pointer-events-none"
     >
-      <div className="flex flex-col items-center gap-6 max-w-2xl">
+      <div className="flex flex-col items-center gap-6 max-w-2xl pointer-events-auto">
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-text-primary">
           Alan Szmyt
         </h1>

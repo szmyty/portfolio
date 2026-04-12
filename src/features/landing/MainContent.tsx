@@ -10,10 +10,10 @@ import {
 export function MainContent() {
   return (
     <div className="flex flex-col w-full">
-      <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border">
+      <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto">
         <NavBar />
       </header>
-      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none pointer-events-none">
         <HeroSection />
         <MusicSection />
         <PublishingSection />
