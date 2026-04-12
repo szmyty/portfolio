@@ -86,14 +86,14 @@ export function ParticleTrail({
   const posAttrRef = useRef<BufferAttribute>(null);
   const offsetRef = useRef(0);
 
-  // Lazily-initialised starting positions passed to the bufferAttribute.
+  // Lazily-initialized starting positions passed to the bufferAttribute.
   // R3F reads this once on mount; from then on we drive updates imperatively
   // via posAttrRef.current inside useFrame.
   const [initialPositions] = useState<Float32Array>(() => {
     const arr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       const t = i / count;
-      const idx = Math.floor(t * PATH_SAMPLES);
+      const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
       arr[i * 3] = TORUS_PATH[idx * 3];
       arr[i * 3 + 1] = TORUS_PATH[idx * 3 + 1];
       arr[i * 3 + 2] = TORUS_PATH[idx * 3 + 2];
@@ -112,7 +112,7 @@ export function ParticleTrail({
     // Recompute each particle's position by sampling the pre-computed path.
     for (let i = 0; i < count; i++) {
       const t = ((i / count) + offsetRef.current) % 1.0;
-      const idx = Math.floor(t * PATH_SAMPLES);
+      const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
       posAttr.setXYZ(
         i,
         TORUS_PATH[idx * 3],
