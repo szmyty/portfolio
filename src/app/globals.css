@@ -40,6 +40,31 @@
   /* Letter spacing */
   --tracking-tight: -0.025em;
 
+  /* Pointer-event layering — z-index scale
+   *
+   * Layer 0 — background (non-interactive)
+   *   Starfield, nebula, decorative atmosphere.
+   *   Always pointer-events: none.
+   *
+   * Layer 1 — 3D canvas (interactive)
+   *   WebGL scene rendered by React Three Fiber.
+   *   pointer-events: auto so the canvas receives drag / hover input.
+   *   Sits above the background but below all UI.
+   *
+   * Layer 2 — UI overlay (selectively interactive)
+   *   Text, buttons, navigation.
+   *   Container is pointer-events: none; only leaf interactive elements
+   *   restore pointer-events: auto to avoid blocking the 3D layer beneath.
+   *
+   * Layer 3 — chrome (always interactive)
+   *   Sticky header, persistent navigation.
+   *   pointer-events: auto; never blocked.
+   */
+  --z-background: 0;
+  --z-canvas: 1;
+  --z-ui: 10;
+  --z-chrome: 20;
+
   /* Spacing scale */
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
