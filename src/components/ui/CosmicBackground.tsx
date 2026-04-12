@@ -64,6 +64,12 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
     ? `color-mix(in srgb, ${tokens.color.accent} 12%, transparent)`
     : `color-mix(in srgb, ${tokens.color.accent} 8%, transparent)`;
 
+  // Opacity values per layer per mode — extracted for readability
+  const opacity1 = isHero ? (isLight ? 0.4 : 0.3) : (isLight ? 0.15 : 0.12);
+  const opacity2 = isHero ? (isLight ? 0.35 : 0.25) : (isLight ? 0.12 : 0.1);
+  const opacity3 = isHero ? (isLight ? 0.3 : 0.2) : (isLight ? 0.1 : 0.08);
+  const overlayBackground = isLight ? "rgba(245,245,245,0.55)" : "rgba(0,0,0,0.55)";
+
   return (
     <div
       ref={containerRef}
@@ -79,7 +85,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
         style={{
           backgroundImage: `radial-gradient(${starColor1} 1px, transparent 1px)`,
           backgroundSize: "120px 120px",
-          opacity: isHero ? (isLight ? 0.4 : 0.3) : (isLight ? 0.15 : 0.12),
+          opacity: opacity1,
           y: y1,
         }}
       />
@@ -91,7 +97,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
           backgroundImage: `radial-gradient(${starColor2} 1px, transparent 1px)`,
           backgroundSize: "170px 170px",
           backgroundPosition: "55px 90px",
-          opacity: isHero ? (isLight ? 0.35 : 0.25) : (isLight ? 0.12 : 0.1),
+          opacity: opacity2,
           y: y2,
         }}
       />
@@ -103,7 +109,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
           backgroundImage: `radial-gradient(${starColor3} 1.5px, transparent 1.5px)`,
           backgroundSize: "280px 280px",
           backgroundPosition: "140px 40px",
-          opacity: isHero ? (isLight ? 0.3 : 0.2) : (isLight ? 0.1 : 0.08),
+          opacity: opacity3,
           y: y3,
         }}
       />
@@ -121,7 +127,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
       {!isHero && (
         <div
           className="absolute inset-0"
-          style={{ background: isLight ? "rgba(245,245,245,0.55)" : "rgba(0,0,0,0.55)" }}
+          style={{ background: overlayBackground }}
         />
       )}
     </div>

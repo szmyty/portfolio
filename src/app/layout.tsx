@@ -9,9 +9,6 @@ import { ThemeProvider } from "@portfolio/lib/theme";
 import nextPkg from "next/package.json";
 import reactPkg from "react/package.json";
 
-/** Must match THEME_STORAGE_KEY in src/lib/theme.tsx */
-const THEME_STORAGE_KEY = "theme-preference";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -107,10 +104,24 @@ export default async function RootLayout({
          * Anti-flicker theme script — runs synchronously before paint so the
          * correct theme is applied before React hydrates, eliminating any
          * flash of the wrong theme.
+         *
+         * NOTE: The storage key literal "theme-preference" must stay in sync
+         * with THEME_STORAGE_KEY in src/lib/theme.tsx.
          */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=sessionStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});var m=s||'dark';var r=m==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;if(r==='light'){document.documentElement.setAttribute('data-theme','light');}document.documentElement.classList.add('no-theme-transition');requestAnimationFrame(function(){document.documentElement.classList.remove('no-theme-transition');});}catch(e){}})();`,
+            __html: [
+              "(function(){",
+              "try{",
+              "var s=sessionStorage.getItem('theme-preference');",
+              "var m=s||'dark';",
+              "var r=m==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;",
+              "if(r==='light'){document.documentElement.setAttribute('data-theme','light');}",
+              "document.documentElement.classList.add('no-theme-transition');",
+              "requestAnimationFrame(function(){document.documentElement.classList.remove('no-theme-transition');});",
+              "}catch(e){}",
+              "})();",
+            ].join(""),
           }}
         />
         <script
