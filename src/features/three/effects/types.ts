@@ -10,8 +10,9 @@ export interface EffectLayerProps {
   glow?: boolean;
 
   /**
-   * Enable a particle-trail effect that follows the mesh surface.
-   * (future — not yet implemented)
+   * Enable a particle-trail effect that animates glowing points along the
+   * torus-knot spine, reinforcing the infinity-loop motion.
+   * Defaults to true.
    */
   particles?: boolean;
 }
