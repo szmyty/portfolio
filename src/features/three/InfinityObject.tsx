@@ -9,7 +9,7 @@ import { TorusKnotGeometry } from "./geometry";
 import { GradientMaterial } from "./materials";
 import type { MaterialProps } from "./materials";
 import type { EffectLayerProps } from "./effects";
-import { BloomEffect } from "./effects";
+import { BloomEffect, ParticleTrail } from "./effects";
 
 /** Duration in ms the pointer must be held before drag interaction activates. */
 const HOLD_THRESHOLD_MS = 250;
@@ -50,7 +50,8 @@ export interface InfinityObjectProps {
 
   /**
    * Effect layer hook points for future effects (glow, particles, trails).
-   * None are rendered yet; this prop surface keeps the API stable.
+   * `glow` enables the Bloom post-processing pass (default: true).
+   * `particles` enables the animated particle trail along the infinity path (default: true).
    */
   effects?: EffectLayerProps;
 
@@ -67,7 +68,7 @@ export interface InfinityObjectProps {
  *
  *   Geometry  → shape of the object (torusKnot by default)
  *   Material  → surface appearance (PBR standard by default)
- *   Effects   → post-processing / particle hooks (future-ready, not yet rendered)
+ *   Effects   → post-processing / particle system (Bloom + ParticleTrail by default)
  *
  * Interaction model (identical to the original InfinityKnot baseline):
  *   1. Default (passive)  – idle rotation + float; page scroll is unaffected.
@@ -85,7 +86,7 @@ export interface InfinityObjectProps {
 export function InfinityObject({
   GeometryComponent = TorusKnotGeometry,
   MaterialComponent = GradientMaterial,
-  effects = { glow: true },
+  effects = { glow: true, particles: true },
   // children reserved for future use
 }: InfinityObjectProps) {
   const meshRef = useRef<Mesh>(null);
@@ -324,6 +325,7 @@ export function InfinityObject({
         <MaterialComponent matRef={matRef} />
       </mesh>
       {effects.glow !== false && <BloomEffect />}
+      {effects.particles !== false && <ParticleTrail meshRef={meshRef} />}
     </>
   );
 }
