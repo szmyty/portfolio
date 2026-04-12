@@ -1,9 +1,19 @@
 import Link from "next/link";
 import { Section } from "@portfolio/components/ui/Section";
+import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
+import placeholderAnimation from "@portfolio/animations/placeholder.json";
+
+const musicVisual = (
+  <LottieAnimation
+    animationData={placeholderAnimation}
+    className="w-full h-full"
+    style={{ maxWidth: 280, maxHeight: 280 }}
+  />
+);
 
 export function MusicSection() {
   return (
-    <Section id="music" aria-label="Music" title="Music" background="surface">
+    <Section id="music" aria-label="Music" title="Music" background="surface" visual={musicVisual}>
       <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
         Original compositions, music production, and sound design. From ambient
         soundscapes to structured arrangements, exploring the full spectrum of

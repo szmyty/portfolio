@@ -1,5 +1,15 @@
 import Link from "next/link";
 import { Section } from "@portfolio/components/ui/Section";
+import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
+import placeholderAnimation from "@portfolio/animations/placeholder.json";
+
+const developmentVisual = (
+  <LottieAnimation
+    animationData={placeholderAnimation}
+    className="w-full h-full"
+    style={{ maxWidth: 280, maxHeight: 280 }}
+  />
+);
 
 export function DevelopmentSection() {
   return (
@@ -8,6 +18,7 @@ export function DevelopmentSection() {
       aria-label="Development"
       title="Development"
       background="surface"
+      visual={developmentVisual}
     >
       <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
         Software projects, open-source contributions, and engineering
