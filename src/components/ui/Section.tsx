@@ -83,7 +83,7 @@ export function Section({
         ].join(" ")}
       >
         {/* Text column */}
-        <div className={visual ? "flex-1 flex flex-col gap-6" : "flex flex-col gap-6"}>
+        <div className={["flex flex-col gap-6", visual && "flex-1"].filter(Boolean).join(" ")}>
           {title && (
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
               {title}
