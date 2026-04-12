@@ -9,6 +9,7 @@ import { TorusKnotGeometry } from "./geometry";
 import { GradientMaterial } from "./materials";
 import type { MaterialProps } from "./materials";
 import type { EffectLayerProps } from "./effects";
+import { BloomEffect } from "./effects";
 
 /** Duration in ms the pointer must be held before drag interaction activates. */
 const HOLD_THRESHOLD_MS = 250;
@@ -84,7 +85,8 @@ export interface InfinityObjectProps {
 export function InfinityObject({
   GeometryComponent = TorusKnotGeometry,
   MaterialComponent = GradientMaterial,
-  // effects and children reserved for future use
+  effects = { glow: true },
+  // children reserved for future use
 }: InfinityObjectProps) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
@@ -310,15 +312,18 @@ export function InfinityObject({
   };
 
   return (
-    <mesh
-      ref={meshRef}
-      scale={0.7}
-      onPointerDown={handlePointerDown}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-    >
-      <GeometryComponent />
-      <MaterialComponent matRef={matRef} />
-    </mesh>
+    <>
+      <mesh
+        ref={meshRef}
+        scale={0.7}
+        onPointerDown={handlePointerDown}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+      >
+        <GeometryComponent />
+        <MaterialComponent matRef={matRef} />
+      </mesh>
+      {effects.glow !== false && <BloomEffect />}
+    </>
   );
 }

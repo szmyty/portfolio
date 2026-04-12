@@ -21,6 +21,9 @@ import { InfinityObject } from "./InfinityObject";
  * - rim directionalLight: backlight from upper-right-back with a cool violet
  *   tint that traces the silhouette edges of the knot, separating the object
  *   from the background and reinforcing its three-dimensional form.
+ *
+ * Post-processing bloom is enabled by default via the InfinityObject effects
+ * prop and adds a soft luminous glow around emissive surfaces.
  */
 export function Scene() {
   return (
