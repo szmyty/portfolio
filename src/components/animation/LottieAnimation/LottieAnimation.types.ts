@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export interface LottieAnimationProps {
+export type LottieAnimationProps = {
   animationData: unknown;
   loop?: boolean;
   className?: string;

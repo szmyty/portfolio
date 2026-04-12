@@ -4,7 +4,7 @@ import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
 import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
 
-interface PageShellProps {
+type PageShellProps = {
   children: ReactNode;
 }
 

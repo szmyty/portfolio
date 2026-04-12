@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 
-interface FooterLinkProps {
+type FooterLinkProps = {
   href: string;
   label: string;
   children: ReactNode;

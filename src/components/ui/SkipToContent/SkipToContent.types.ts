@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 
-export interface SkipToContentProps {
+export type SkipToContentProps = {
   targetId?: string;
   label: string;
   onSkip?: (e: MouseEvent<HTMLAnchorElement>) => void;

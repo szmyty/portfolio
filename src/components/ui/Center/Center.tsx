@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-interface CenterProps {
+type CenterProps = {
   children: ReactNode;
   className?: string;
 }

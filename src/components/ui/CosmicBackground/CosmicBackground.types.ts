@@ -1,5 +1,5 @@
 export type CosmicBackgroundMode = "hero" | "content";
 
-export interface CosmicBackgroundProps {
+export type CosmicBackgroundProps = {
   mode?: CosmicBackgroundMode;
 }
