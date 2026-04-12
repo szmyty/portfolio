@@ -1,6 +1,7 @@
 {
   "Author": {
     "name": "Alan Szmyt",
+    "handle": "szmyty",
     "tagline": "Software engineer focused on building thoughtful, reliable systems."
   },
   "EntryTrigger": {
@@ -11,10 +12,6 @@
     "comingSoon": "Main content coming soon.",
     "skipToContent": "Skip to content"
   },
-  "Metadata": {
-    "title": "Alan Szmyt | Portfolio",
-    "description": "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems."
-  },
   "NotFound": {
     "code": "404",
     "heading": "Page not found",
@@ -24,5 +21,43 @@
   "UnderConstruction": {
     "title": "Under Construction",
     "description": "This section is being built. Check back soon for new content."
+  },
+  "NavBar": {
+    "ariaLabel": "Main navigation",
+    "home": "Home",
+    "music": "Music",
+    "publishing": "Publishing",
+    "development": "Development"
+  },
+  "HeroSection": {
+    "description": "Software engineer, musician, and creator — exploring the intersections of technology, sound, and the written word.",
+    "viewWork": "View Work",
+    "exploreMusic": "Explore Music"
+  },
+  "MusicSection": {
+    "title": "Music",
+    "description": "Original compositions, music production, and sound design. From ambient soundscapes to structured arrangements, exploring the full spectrum of sonic creativity.",
+    "placeholder": "Placeholder — full content coming soon.",
+    "link": "Explore Music →"
+  },
+  "PublishingSection": {
+    "title": "Publishing",
+    "description": "Writing, essays, and published works exploring ideas across technology, philosophy, and creative practice.",
+    "placeholder": "Placeholder — full content coming soon.",
+    "link": "Explore Publishing →"
+  },
+  "DevelopmentSection": {
+    "title": "Development",
+    "description": "Software projects, open-source contributions, and engineering explorations. Building thoughtful, reliable systems at the intersection of craft and technology.",
+    "placeholder": "Placeholder — full content coming soon.",
+    "link": "Explore Development →"
+  },
+  "Footer": {
+    "madeWith": "made with",
+    "love": "love",
+    "by": "by",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "email": "Email"
   }
 }

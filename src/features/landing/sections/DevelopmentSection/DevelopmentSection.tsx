@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Section } from "@portfolio/components/ui/Section";
 import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
@@ -11,29 +12,29 @@ const developmentVisual = (
   />
 );
 
-export function DevelopmentSection() {
+export async function DevelopmentSection() {
+  const t = await getTranslations("DevelopmentSection");
+
   return (
     <Section
       id="development"
-      aria-label="Development"
-      title="Development"
+      aria-label={t("title")}
+      title={t("title")}
       background="surface"
       visual={developmentVisual}
     >
       <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
-        Software projects, open-source contributions, and engineering
-        explorations. Building thoughtful, reliable systems at the intersection
-        of craft and technology.
+        {t("description")}
       </p>
       <p className="text-sm text-text-muted">
-        Placeholder — full content coming soon.
+        {t("placeholder")}
       </p>
       <div className="mt-2">
         <Link
           href="/development"
           className="inline-flex items-center gap-2 text-accent hover:text-accent-hover transition-colors duration-200 font-medium"
         >
-          Explore Development →
+          {t("link")}
         </Link>
       </div>
     </Section>

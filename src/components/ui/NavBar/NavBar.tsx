@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ThemeToggle } from "@portfolio/components/ui/ThemeToggle";
 
 interface SectionNavItem {
   id: string;
-  label: string;
+  labelKey: string;
 }
 
 const sectionItems: SectionNavItem[] = [
-  { id: "music", label: "Music" },
-  { id: "publishing", label: "Publishing" },
-  { id: "development", label: "Development" },
+  { id: "music", labelKey: "music" },
+  { id: "publishing", labelKey: "publishing" },
+  { id: "development", labelKey: "development" },
 ];
 
 const sectionIds = sectionItems.map((item) => item.id);
@@ -53,6 +54,7 @@ function useSectionObserver(ids: string[], enabled: boolean): string | null {
 }
 
 export function NavBar() {
+  const t = useTranslations("NavBar");
   const pathname = usePathname();
   const isHome = pathname === "/";
   const activeId = useSectionObserver(sectionIds, isHome);
@@ -63,16 +65,16 @@ export function NavBar() {
 
   return (
     <nav
-      aria-label="Main navigation"
+      aria-label={t("ariaLabel")}
       className="w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-6 overflow-x-auto"
     >
       <Link
         href="/"
         className="text-sm font-medium text-text-muted hover:text-accent transition-colors duration-200"
       >
-        Home
+        {t("home")}
       </Link>
-      {sectionItems.map(({ id, label }) => {
+      {sectionItems.map(({ id, labelKey }) => {
         const isActive = isHome && activeId === id;
         return (
           <Link
@@ -85,7 +87,7 @@ export function NavBar() {
                 : "text-text-muted hover:text-accent"
             }`}
           >
-            {label}
+            {t(labelKey)}
           </Link>
         );
       })}
