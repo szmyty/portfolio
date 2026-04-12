@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
 
 export function DevelopmentSection() {
   return (
     <section
       id="development"
       aria-label="Development"
-      className="px-4 sm:px-8 py-24 sm:py-32 bg-surface scroll-mt-16"
+      className="relative px-4 sm:px-8 py-24 sm:py-32 bg-surface scroll-mt-16"
     >
-      <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <CosmicBackground mode="content" />
+      <div className="relative z-10 max-w-3xl mx-auto flex flex-col gap-6">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
           Development
         </h2>
