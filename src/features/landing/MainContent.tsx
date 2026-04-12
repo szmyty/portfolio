@@ -1,25 +1,15 @@
-import { getTranslations } from "next-intl/server";
 import { Center } from "@portfolio/components/ui/Center";
-import { Container } from "@portfolio/components/ui/Container";
 import { Footer } from "@portfolio/features/landing/Footer";
 import { Section } from "@portfolio/components/ui/Section";
+import { UnderConstruction } from "@portfolio/components/ui/UnderConstruction";
 
-export async function MainContent() {
-  const t = await getTranslations("Author");
-
+export function MainContent() {
   return (
     <div className="flex flex-col min-h-screen">
       <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         <Center className="min-h-full py-16">
           <Section>
-            <Container className="text-center space-y-6">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
-                {t("name")}
-              </h1>
-              <p className="text-base sm:text-lg text-text-secondary">
-                {t("tagline")}
-              </p>
-            </Container>
+            <UnderConstruction />
           </Section>
         </Center>
       </main>
