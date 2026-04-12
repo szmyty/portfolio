@@ -81,7 +81,7 @@ export function InfinityKnot() {
     };
   }, []);
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock, viewport }, delta) => {
     if (!meshRef.current) return;
 
     if (!isDragging.current) {
@@ -108,10 +108,22 @@ export function InfinityKnot() {
       }
     }
 
+    // Compute viewport-proportional offsets so the object stays clear of the
+    // centred text on all screen sizes.
+    //   - Landscape (desktop/tablet): shift to lower-right quadrant.
+    //   - Portrait (mobile): shift to lower-centre to stay below the heading.
+    const isLandscape = viewport.width >= viewport.height;
+    const baseX = isLandscape ? viewport.width * 0.28 : viewport.width * 0.08;
+    const baseY = isLandscape
+      ? viewport.height * -0.18
+      : viewport.height * -0.32;
+
     meshRef.current.rotation.x = rotX.current;
     meshRef.current.rotation.y = rotY.current;
+    meshRef.current.position.x = baseX;
     // Vertical float is independent of drag and always runs.
-    meshRef.current.position.y = Math.sin(clock.getElapsedTime() * 0.5) * 0.15;
+    meshRef.current.position.y =
+      baseY + Math.sin(clock.getElapsedTime() * 0.5) * 0.15;
   });
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -141,6 +153,7 @@ export function InfinityKnot() {
   return (
     <mesh
       ref={meshRef}
+      scale={0.7}
       onPointerDown={handlePointerDown}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
