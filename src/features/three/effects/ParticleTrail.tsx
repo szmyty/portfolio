@@ -5,10 +5,17 @@ import { useFrame } from "@react-three/fiber";
 import { AdditiveBlending, DynamicDrawUsage } from "three";
 import type { Points, Mesh, BufferAttribute } from "three";
 
-/** Torus-knot winding parameters — must match TorusKnotGeometry (p=2, q=1). */
-const TORUS_P = 2;
-const TORUS_Q = 1;
-const TORUS_RADIUS = 1;
+/**
+ * Lemniscate scaling constants — must match InfinityGeometry / InfinityCurve.
+ *
+ *   angle ∈ [0, 2π]
+ *   denom = 1 + sin²(angle)
+ *   x = cos(angle) / denom · HORIZONTAL_SCALE
+ *   y = sin(angle)·cos(angle) / denom · VERTICAL_SCALE
+ *   z = 0
+ */
+const HORIZONTAL_SCALE = 2.2;
+const VERTICAL_SCALE = 1.2;
 
 /**
  * Number of pre-computed path samples used for position interpolation.
@@ -35,40 +42,41 @@ interface ParticleTrailProps {
 }
 
 /**
- * Pre-computed torus-knot centerline — calculated once at module load.
+ * Pre-computed lemniscate (infinity) centerline — calculated once at module load.
  *
- * The formula mirrors the one used inside Three.js TorusKnotGeometry
- * (calculatePositionOnCurve) so particles lie exactly on the geometry spine:
+ * Uses the same Bernoulli lemniscate formula as InfinityGeometry / InfinityCurve
+ * so particles ride exactly on the geometry spine:
  *
- *   u ∈ [0, p·2π]
- *   quOverP = (q / p) · u
- *   x = radius · (2 + cos(quOverP)) · 0.5 · cos(u)
- *   y = radius · (2 + cos(quOverP)) · 0.5 · sin(u)
- *   z = radius · sin(quOverP) · 0.5
+ *   angle = t · 2π,  t ∈ [0, 1)
+ *   denom = 1 + sin²(angle)
+ *   x = cos(angle) / denom · HORIZONTAL_SCALE
+ *   y = sin(angle)·cos(angle) / denom · VERTICAL_SCALE
+ *   z = 0
  *
  * Storing as a module-level constant avoids re-computing inside the component
  * render cycle and keeps it outside React's hooks immutability rules.
  */
-const TORUS_PATH: Float32Array = (() => {
+const INFINITY_PATH: Float32Array = (() => {
   const arr = new Float32Array(PATH_SAMPLES * 3);
   for (let i = 0; i < PATH_SAMPLES; i++) {
-    const u = (i / PATH_SAMPLES) * TORUS_P * Math.PI * 2;
-    const quOverP = (TORUS_Q / TORUS_P) * u;
-    const cs = Math.cos(quOverP);
-    arr[i * 3] = TORUS_RADIUS * (2 + cs) * 0.5 * Math.cos(u);
-    arr[i * 3 + 1] = TORUS_RADIUS * (2 + cs) * 0.5 * Math.sin(u);
-    arr[i * 3 + 2] = TORUS_RADIUS * Math.sin(quOverP) * 0.5;
+    const angle = (i / PATH_SAMPLES) * Math.PI * 2;
+    const sin = Math.sin(angle);
+    const cos = Math.cos(angle);
+    const denom = 1 + sin * sin;
+    arr[i * 3] = (cos / denom) * HORIZONTAL_SCALE;
+    arr[i * 3 + 1] = ((sin * cos) / denom) * VERTICAL_SCALE;
+    arr[i * 3 + 2] = 0;
   }
   return arr;
 })();
 
 /**
  * ParticleTrail renders a stream of glowing particles that travel along the
- * torus-knot (p=2, q=1) spine — the same centerline used by TorusKnotGeometry.
+ * lemniscate (infinity) spine — the same centerline used by InfinityGeometry.
  *
  * Implementation notes:
- * - TORUS_PATH is a module-level pre-computed array (512 equally-spaced points)
- *   using the exact Three.js TorusKnotGeometry formula, so particles ride the
+ * - INFINITY_PATH is a module-level pre-computed array (512 equally-spaced
+ *   points) using the Bernoulli lemniscate formula, so particles ride the
  *   geometry centerline precisely.
  * - Particles are spread evenly around the full loop and advance at the same
  *   rate, keeping density uniform throughout the animation.
@@ -94,9 +102,9 @@ export function ParticleTrail({
     for (let i = 0; i < count; i++) {
       const t = i / count;
       const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
-      arr[i * 3] = TORUS_PATH[idx * 3];
-      arr[i * 3 + 1] = TORUS_PATH[idx * 3 + 1];
-      arr[i * 3 + 2] = TORUS_PATH[idx * 3 + 2];
+      arr[i * 3] = INFINITY_PATH[idx * 3];
+      arr[i * 3 + 1] = INFINITY_PATH[idx * 3 + 1];
+      arr[i * 3 + 2] = INFINITY_PATH[idx * 3 + 2];
     }
     return arr;
   });
@@ -115,9 +123,9 @@ export function ParticleTrail({
       const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
       posAttr.setXYZ(
         i,
-        TORUS_PATH[idx * 3],
-        TORUS_PATH[idx * 3 + 1],
-        TORUS_PATH[idx * 3 + 2],
+        INFINITY_PATH[idx * 3],
+        INFINITY_PATH[idx * 3 + 1],
+        INFINITY_PATH[idx * 3 + 2],
       );
     }
     posAttr.needsUpdate = true;
