@@ -105,8 +105,10 @@ export default async function RootLayout({
          * correct theme is applied before React hydrates, eliminating any
          * flash of the wrong theme.
          *
-         * NOTE: The storage key literal "theme-preference" must stay in sync
-         * with THEME_STORAGE_KEY in src/lib/theme.tsx.
+         * The storage key 'theme-preference' is hardcoded here because this
+         * script executes before any module is loaded — it cannot import
+         * THEME_STORAGE_KEY from src/lib/theme.tsx at runtime. Keep this
+         * literal in sync with THEME_STORAGE_KEY in that file.
          */}
         <script
           dangerouslySetInnerHTML={{

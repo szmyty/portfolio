@@ -64,10 +64,17 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
     ? `color-mix(in srgb, ${tokens.color.accent} 12%, transparent)`
     : `color-mix(in srgb, ${tokens.color.accent} 8%, transparent)`;
 
-  // Opacity values per layer per mode — extracted for readability
-  const opacity1 = isHero ? (isLight ? 0.4 : 0.3) : (isLight ? 0.15 : 0.12);
-  const opacity2 = isHero ? (isLight ? 0.35 : 0.25) : (isLight ? 0.12 : 0.1);
-  const opacity3 = isHero ? (isLight ? 0.3 : 0.2) : (isLight ? 0.1 : 0.08);
+  // Opacity values per layer per mode — keyed by [isHero][isLight]
+  const opacityMatrix = {
+    layer1: { hero: { dark: 0.3, light: 0.4 }, content: { dark: 0.12, light: 0.15 } },
+    layer2: { hero: { dark: 0.25, light: 0.35 }, content: { dark: 0.1, light: 0.12 } },
+    layer3: { hero: { dark: 0.2, light: 0.3 }, content: { dark: 0.08, light: 0.1 } },
+  };
+  const section = isHero ? "hero" : "content";
+  const palette = isLight ? "light" : "dark";
+  const opacity1 = opacityMatrix.layer1[section][palette];
+  const opacity2 = opacityMatrix.layer2[section][palette];
+  const opacity3 = opacityMatrix.layer3[section][palette];
   const overlayBackground = isLight ? "rgba(245,245,245,0.55)" : "rgba(0,0,0,0.55)";
 
   return (

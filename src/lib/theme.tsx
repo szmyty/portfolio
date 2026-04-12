@@ -26,7 +26,16 @@ const ThemeContext = createContext<ThemeContextValue>({
   setTheme: () => {},
 });
 
-/** Key used to persist theme preference in sessionStorage. */
+/**
+ * Key used to persist theme preference in sessionStorage.
+ *
+ * This constant is referenced in two places:
+ *   1. The ThemeProvider (this file) — reads/writes on the client via React.
+ *   2. The anti-flicker inline <script> in layout.tsx — reads synchronously
+ *      before React hydrates to prevent flash-of-wrong-theme. That script
+ *      cannot import modules, so the key is hardcoded there as a string
+ *      literal that must be kept in sync with this value.
+ */
 export const THEME_STORAGE_KEY = "theme-preference";
 
 function getSystemTheme(): ResolvedTheme {
