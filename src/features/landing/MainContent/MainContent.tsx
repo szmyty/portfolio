@@ -5,7 +5,7 @@ import {
   HeroSection,
   MusicSection,
   PublishingSection,
-} from "../sections";
+} from "@portfolio/features/landing/sections";
 
 /**
  * MainContent — post-entry UI overlay (layer 2, z-10).

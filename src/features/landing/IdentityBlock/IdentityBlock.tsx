@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { LottieAnimation } from "@portfolio/components/animation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
-import { useFadeUp } from "../animation";
+import { useFadeUp } from "@portfolio/features/landing/animation";
 
 export function IdentityBlock() {
   const t = useTranslations("Author");
