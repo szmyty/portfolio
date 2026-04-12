@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemeToggle } from "@portfolio/components/ui/ThemeToggle";
 
 interface SectionNavItem {
@@ -20,7 +20,6 @@ const sectionIds = sectionItems.map((item) => item.id);
 
 function useSectionObserver(ids: string[], enabled: boolean): string | null {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const idsRef = useRef(ids);
 
   useEffect(() => {
     if (!enabled) return;
@@ -34,18 +33,21 @@ function useSectionObserver(ids: string[], enabled: boolean): string | null {
         }
       },
       {
+        // Top margin trims the hero area so a section is only "active" once
+        // it's scrolled ~20% into view. Bottom margin removes the lower 60%
+        // of the viewport so only one section is active at a time.
         rootMargin: "-20% 0px -60% 0px",
         threshold: 0,
       }
     );
 
-    for (const id of idsRef.current) {
+    for (const id of ids) {
       const element = document.getElementById(id);
       if (element) observer.observe(element);
     }
 
     return () => observer.disconnect();
-  }, [enabled]);
+  }, [ids, enabled]);
 
   return activeId;
 }
@@ -76,7 +78,7 @@ export function NavBar() {
           <Link
             key={id}
             href={getSectionHref(id)}
-            aria-current={isActive ? "true" : undefined}
+            aria-current={isActive ? "location" : undefined}
             className={`text-sm font-medium transition-colors duration-200 ${
               isActive
                 ? "text-accent"
