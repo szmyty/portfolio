@@ -10,23 +10,29 @@ import { InfinityObject } from "./InfinityObject";
  * Import this component via dynamic import with ssr: false to avoid
  * server-side rendering errors.
  *
- * Lighting setup:
- * - ambientLight: soft base illumination across all surfaces to avoid
- *   fully unlit areas.
- * - key directionalLight: primary light from upper-right to create depth
- *   and surface shading without overexposure.
- * - fill directionalLight: low-intensity counter-light from the opposite
- *   side to soften shadow contrast and ensure even visibility.
+ * Lighting setup (three-point + rim):
+ * - ambientLight: reduced intensity so the metallic surface retains contrast;
+ *   a too-high ambient flattens highlights and removes perceived depth.
+ * - key directionalLight: primary light from upper-left-front, angled to rake
+ *   across the torus-knot curves and produce sharp, intentional specular
+ *   highlights on the metallic surface.
+ * - fill directionalLight: low-intensity counter-light from lower-right-back
+ *   to soften the shadow side without erasing depth contrast.
+ * - rim directionalLight: backlight from upper-right-back with a cool violet
+ *   tint that traces the silhouette edges of the knot, separating the object
+ *   from the background and reinforcing its three-dimensional form.
  */
 export function Scene() {
   return (
     <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-      {/* Soft ambient base so no surface is completely dark */}
-      <ambientLight intensity={0.4} />
-      {/* Key light from upper-right — creates depth and gentle shading */}
-      <directionalLight position={[5, 5, 5]} intensity={0.8} />
-      {/* Fill light from opposite side — reduces harsh shadow contrast */}
-      <directionalLight position={[-5, -2, -5]} intensity={0.3} />
+      {/* Reduced ambient keeps darks dark — avoids flat appearance */}
+      <ambientLight intensity={0.25} />
+      {/* Key light from upper-left-front — rakes across knot curves for crisp highlights */}
+      <directionalLight position={[4, 6, 3]} intensity={1.0} />
+      {/* Fill light from lower-right-back — softens shadows without killing depth */}
+      <directionalLight position={[-4, -2, -3]} intensity={0.2} />
+      {/* Rim light from upper-right-back — traces silhouette edges for form separation */}
+      <directionalLight position={[-3, 4, -5]} intensity={0.6} color="#818cf8" />
       <InfinityObject />
     </Canvas>
   );
