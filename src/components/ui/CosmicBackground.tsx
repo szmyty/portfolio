@@ -1,3 +1,7 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { tokens } from "@portfolio/lib/tokens";
 
 export type CosmicBackgroundMode = "hero" | "content";
@@ -7,37 +11,64 @@ interface CosmicBackgroundProps {
 }
 
 /**
- * Layered cosmic background with adaptive intensity.
+ * Layered cosmic background with adaptive intensity and scroll-based parallax.
  *
- * Renders a static, CSS-only space atmosphere behind section content.
+ * Renders a space atmosphere behind section content. Each starfield layer moves
+ * at a different speed as the user scrolls, creating a sense of depth.
+ *
  * Supports two intensity modes:
- *   - "hero"    — full-intensity starfield and accent glow for high-impact sections
- *   - "content" — reduced starfield and stronger readability overlay for text-heavy sections
+ *   - "hero"    — full-intensity starfield driven by global scroll position
+ *   - "content" — reduced starfield driven by section-relative scroll progress
  *
+ * Parallax is automatically disabled when the user prefers reduced motion.
  * Must be placed inside a `position: relative` container. All layers are
  * absolutely positioned and non-interactive (pointer-events-none).
  */
 export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
   const isHero = mode === "hero";
+  const shouldReduceMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Hero mode: parallax driven by global scroll (stars drift as hero scrolls away)
+  const { scrollY } = useScroll();
+  const heroY1 = useTransform(scrollY, [0, 900], shouldReduceMotion ? [0, 0] : [0, -60]);
+  const heroY2 = useTransform(scrollY, [0, 900], shouldReduceMotion ? [0, 0] : [0, -100]);
+  const heroY3 = useTransform(scrollY, [0, 900], shouldReduceMotion ? [0, 0] : [0, -150]);
+
+  // Content mode: parallax driven by section's scroll progress through the viewport
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+  const contentY1 = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [40, -40]);
+  const contentY2 = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [65, -65]);
+  const contentY3 = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [90, -90]);
+
+  // Select the appropriate parallax values based on mode
+  const y1 = isHero ? heroY1 : contentY1;
+  const y2 = isHero ? heroY2 : contentY2;
+  const y3 = isHero ? heroY3 : contentY3;
 
   return (
     <div
+      ref={containerRef}
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
-      {/* Starfield — layer 1: dense tiny stars */}
-      <div
+      {/* Starfield — layer 1: dense tiny stars (near depth — fastest parallax) */}
+      <motion.div
         className="absolute inset-0"
         style={{
           backgroundImage:
             "radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px)",
           backgroundSize: "120px 120px",
           opacity: isHero ? 0.3 : 0.12,
+          y: y1,
         }}
       />
 
-      {/* Starfield — layer 2: offset tiny stars to break the grid pattern */}
-      <div
+      {/* Starfield — layer 2: offset tiny stars (mid depth) */}
+      <motion.div
         className="absolute inset-0"
         style={{
           backgroundImage:
@@ -45,11 +76,12 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
           backgroundSize: "170px 170px",
           backgroundPosition: "55px 90px",
           opacity: isHero ? 0.25 : 0.1,
+          y: y2,
         }}
       />
 
-      {/* Starfield — layer 3: sparse medium stars */}
-      <div
+      {/* Starfield — layer 3: sparse medium stars (far depth — slowest parallax) */}
+      <motion.div
         className="absolute inset-0"
         style={{
           backgroundImage:
@@ -57,10 +89,11 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
           backgroundSize: "280px 280px",
           backgroundPosition: "140px 40px",
           opacity: isHero ? 0.2 : 0.08,
+          y: y3,
         }}
       />
 
-      {/* Accent nebula glow — faint radial bloom from the accent color */}
+      {/* Accent nebula glow — static atmosphere, no parallax */}
       <div
         className="absolute inset-0"
         style={{
