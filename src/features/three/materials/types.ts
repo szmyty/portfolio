@@ -1,4 +1,4 @@
-import type { MutableRefObject } from "react";
+import type { RefObject } from "react";
 import type { MeshStandardMaterial } from "three";
 
 /**
@@ -8,6 +8,12 @@ import type { MeshStandardMaterial } from "three";
  * InfinityObject can drive per-frame properties (e.g. emissive intensity)
  * without knowing which material is currently active.
  */
-export interface MaterialProps {
-  matRef: MutableRefObject<MeshStandardMaterial | null>;
+export type MaterialProps = {
+  matRef: RefObject<MeshStandardMaterial | null>;
+}
+
+export type ExtendedShader = {
+  vertexShader: string;
+  fragmentShader: string;
+  uniforms: Record<string, { value: unknown }>;
 }
