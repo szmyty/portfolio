@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { InfinityKnot } from "./InfinityKnot";
+import { InfinityObject } from "./InfinityObject";
 
 /**
  * Scene renders a Three.js canvas using React Three Fiber.
@@ -27,7 +27,7 @@ export function Scene() {
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
       {/* Fill light from opposite side — reduces harsh shadow contrast */}
       <directionalLight position={[-5, -2, -5]} intensity={0.3} />
-      <InfinityKnot />
+      <InfinityObject />
     </Canvas>
   );
 }
