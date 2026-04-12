@@ -24,7 +24,7 @@ export type InteractionState = "idle" | "pending" | "engaged";
  * Parameters injected from InfinityObject.
  * Keeps this hook stateless and reusable.
  */
-export interface UseInfinityInteractionParams {
+export type UseInfinityInteractionParams = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   emissiveTargetRef: React.RefObject<number>;
 

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export type SectionBackground = "background" | "surface";
 
-export interface SectionProps {
+export type SectionProps = {
   id?: string;
   "aria-label"?: string;
   title?: ReactNode;

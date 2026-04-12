@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export interface EmptyStateProps {
+export type EmptyStateProps = {
   /** Primary heading displayed in the empty state. */
   title: string;
   /** Supporting text that provides more context. */

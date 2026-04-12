@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ThemeToggle } from "@portfolio/components/ui/ThemeToggle";
 
-interface SectionNavItem {
+type SectionNavItem = {
   id: string;
   labelKey: string;
 }

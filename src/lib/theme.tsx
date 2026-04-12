@@ -12,7 +12,7 @@ import type { ReactNode } from "react";
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
 
-interface ThemeContextValue {
+type ThemeContextValue = {
   /** User-selected preference: "light", "dark", or "system". */
   theme: ThemeMode;
   /** Actual resolved theme after applying system preference. */
@@ -64,7 +64,7 @@ function applyTheme(resolved: ResolvedTheme) {
   }
 }
 
-interface ThemeProviderProps {
+type ThemeProviderProps = {
   children: ReactNode;
 }
 

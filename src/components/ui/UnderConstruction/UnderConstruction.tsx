@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { LottieAnimation } from "@portfolio/components/animation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
 
-interface UnderConstructionProps {
+type UnderConstructionProps = {
   title?: string;
   description?: string;
 }

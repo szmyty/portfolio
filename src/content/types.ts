@@ -13,15 +13,15 @@ export type Tag = string;
 export type ContentStatus = "active" | "archived" | "in-progress" | "planned";
 
 /** External URL links associated with a project. */
-export interface ProjectLinks {
+export type ProjectLinks = {
   /** Public live URL, if deployed. */
   live?: string;
   /** Source-code repository URL. */
   repo?: string;
-}
+};
 
 /** A software project entry. */
-export interface Project {
+export type Project = {
   /** Unique slug used as an identifier and in URLs. */
   slug: string;
   /** Human-readable display title. */
@@ -36,10 +36,10 @@ export interface Project {
   status: ContentStatus;
   /** Related external URLs. */
   links?: ProjectLinks;
-}
+};
 
 /** A creative work entry (design, writing, art, etc.). */
-export interface CreativeWork {
+export type CreativeWork = {
   /** Unique slug used as an identifier and in URLs. */
   slug: string;
   /** Human-readable display title. */
@@ -54,4 +54,4 @@ export interface CreativeWork {
   status: ContentStatus;
   /** Optional URL pointing to the work or a related resource. */
   url?: string;
-}
+};

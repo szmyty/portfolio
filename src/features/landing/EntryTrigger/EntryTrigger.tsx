@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-interface EntryTriggerProps {
+type EntryTriggerProps = {
   onEnter?: () => void;
 }
 

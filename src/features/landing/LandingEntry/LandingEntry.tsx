@@ -25,7 +25,7 @@ function getServerSnapshot() {
   return false;
 }
 
-interface LandingEntryProps {
+type LandingEntryProps = {
   children: ReactNode;
   mainContent?: ReactNode;
 }

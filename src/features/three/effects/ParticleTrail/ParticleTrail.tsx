@@ -32,7 +32,7 @@ const DEFAULT_COUNT = 80;
  */
 const DEFAULT_SPEED = 0.12;
 
-interface ParticleTrailProps {
+type ParticleTrailProps = {
   /** Ref to the main mesh whose transform the trail mirrors each frame. */
   meshRef: React.RefObject<Mesh | null>;
   /** Number of particles spread along the path. Defaults to 80. */

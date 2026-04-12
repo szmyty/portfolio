@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-export interface IconProps {
+export type IconProps = {
   /** The Lucide icon component to render. */
   icon: LucideIcon;
   /** Width and height of the icon in pixels. Defaults to 24. */

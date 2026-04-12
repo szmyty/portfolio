@@ -1,7 +1,7 @@
 /**
  * Hook-point types for the effect layer of InfinityObject.
  */
-export interface EffectLayerProps {
+export type EffectLayerProps = {
   /**
    * Enable a bloom / glow post-processing pass around the mesh.
    * Implemented via @react-three/postprocessing EffectComposer + Bloom.

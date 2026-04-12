@@ -19,7 +19,7 @@ import {
  * @property outputRange - Corresponding output values in pixels applied to the `y` transform.
  *                         Negative values move the element upward (typical parallax direction).
  */
-export interface UseScrollParallaxOptions {
+export type UseScrollParallaxOptions = {
   mode?: "global" | "element";
   inputRange?: [number, number];
   outputRange: [number, number];
