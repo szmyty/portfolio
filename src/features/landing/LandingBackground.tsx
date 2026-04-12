@@ -15,7 +15,7 @@ export function LandingBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      className="pointer-events-none absolute inset-x-0 top-0 h-screen z-0 overflow-hidden"
     >
       {/* Subtle radial gradient for depth — faint accent glow at center */}
       <div

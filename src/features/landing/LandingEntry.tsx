@@ -56,7 +56,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
   }, [handleEnter]);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
       {/* Top-level hero visual layer — persists behind all content states */}
       <LandingBackground />
       <SkipToContent
@@ -89,7 +89,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
         ) : (
           <motion.div
             key="main"
-            className="absolute inset-0 z-10"
+            className="relative z-10"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
