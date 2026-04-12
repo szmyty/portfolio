@@ -1,0 +1,1 @@
+export { ParticleTrail } from "./ParticleTrail";

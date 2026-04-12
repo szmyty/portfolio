@@ -1,0 +1,1 @@
+export { TorusKnotGeometry } from "./TorusKnotGeometry";

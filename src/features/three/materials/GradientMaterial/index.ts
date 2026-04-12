@@ -1,0 +1,1 @@
+export { GradientMaterial } from "./GradientMaterial";
