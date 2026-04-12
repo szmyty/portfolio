@@ -1,3 +1,13 @@
 {
   "folders": [{ "path": "." }],
+  "settings": {
+      "workbench.colorCustomizations": {
+      "editorGutter.modifiedBackground": "#ff79c6",
+      "editorGutter.addedBackground": "#50fa7b",
+      "editorGutter.deletedBackground": "#ff79c6",
+      "editorOverviewRuler.modifiedForeground": "#ff79c6",
+      "editorOverviewRuler.addedForeground": "#50fa7b",
+      "editorOverviewRuler.deletedForeground": "#ff79c6"
+    }
+  }
 }
