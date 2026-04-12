@@ -142,6 +142,13 @@ Each milestone:
 - human reviews quickly for correctness
 - no over-analysis during execution phase
 
+### Scope Control
+
+- Define systems broadly, implement narrowly
+- Avoid executing all components simultaneously
+- Prioritize core loops before auxiliary systems
+- Defer non-critical features to backlog
+
 ---
 
 ### Philosophy
