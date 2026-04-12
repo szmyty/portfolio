@@ -13,6 +13,7 @@ export const siteConfig = {
     name: "Alan Szmyt",
     handle: "@szmyty",
     jobTitle: "Software Engineer",
+    email: "szmyty@gmail.com",
     github: "https://github.com/szmyty",
     linkedin: "https://linkedin.com/in/alanszmyt",
   },
