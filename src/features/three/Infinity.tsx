@@ -7,7 +7,7 @@ import type { Mesh, MeshStandardMaterial } from "three";
 
 import { InfinityGeometry } from "./geometry/InfinityGeometry";
 import { GradientMaterial } from "./materials";
-import { BloomEffect } from "./effects";
+import { BloomEffect, ParticleTrail } from "./effects";
 
 import { useInfinityInteraction } from "./hooks/useInfinityInteraction";
 
@@ -21,7 +21,7 @@ const ENGAGED_EMISSIVE = 1.0;
 export type InfinityProps = {
   GeometryComponent?: ComponentType;
   MaterialComponent?: ComponentType<{ matRef?: React.Ref<MeshStandardMaterial> }>;
-  effects?: { glow?: boolean };
+  effects?: { glow?: boolean; particles?: boolean };
   children?: ReactNode;
 };
 
@@ -41,7 +41,7 @@ export type InfinityProps = {
 export function Infinity({
   GeometryComponent = InfinityGeometry,
   MaterialComponent = GradientMaterial,
-  effects = { glow: true },
+  effects = { glow: true, particles: true },
 }: InfinityProps) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
@@ -133,6 +133,7 @@ export function Infinity({
       </mesh>
 
       {effects.glow !== false && <BloomEffect />}
+      {effects.particles !== false && <ParticleTrail meshRef={meshRef} />}
     </>
   );
 }
