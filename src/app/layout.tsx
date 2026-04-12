@@ -5,8 +5,12 @@ import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { siteConfig, isDev, env } from "@portfolio/config";
 import { DebugPanel } from "@portfolio/components/debug/DebugPanel";
+import { ThemeProvider } from "@portfolio/lib/theme";
 import nextPkg from "next/package.json";
 import reactPkg from "react/package.json";
+
+/** Must match THEME_STORAGE_KEY in src/lib/theme.tsx */
+const THEME_STORAGE_KEY = "theme-preference";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -99,15 +103,27 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        {/*
+         * Anti-flicker theme script — runs synchronously before paint so the
+         * correct theme is applied before React hydrates, eliminating any
+         * flash of the wrong theme.
+         */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=sessionStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});var m=s||'dark';var r=m==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;if(r==='light'){document.documentElement.setAttribute('data-theme','light');}document.documentElement.classList.add('no-theme-transition');requestAnimationFrame(function(){document.documentElement.classList.remove('no-theme-transition');});}catch(e){}})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="min-h-full bg-background text-foreground">
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </ThemeProvider>
         {isDev && (
           <DebugPanel
             info={{

@@ -2,6 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Infinity } from "./Infinity";
+import { useTheme } from "@portfolio/lib/theme";
 
 /**
  * Scene renders a Three.js canvas using React Three Fiber.
@@ -24,18 +25,29 @@ import { Infinity } from "./Infinity";
  *
  * Post-processing bloom is enabled by default via the Infinity effects
  * prop and adds a soft luminous glow around emissive surfaces.
+ *
+ * Lighting values adapt to the active theme:
+ *   - dark: high-contrast, deep shadow with vivid rim.
+ *   - light: brighter ambient, softer key, warmer rim to suit the pale background.
  */
 export function Scene() {
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === "light";
+
   return (
     <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-      {/* Reduced ambient keeps darks dark — avoids flat appearance */}
-      <ambientLight intensity={0.25} />
-      {/* Key light from upper-left-front — rakes across knot curves for crisp highlights */}
-      <directionalLight position={[4, 6, 3]} intensity={1.0} />
+      {/* Ambient — higher in light mode to lift the whole scene */}
+      <ambientLight intensity={isLight ? 0.5 : 0.25} />
+      {/* Key light from upper-left-front — reduced slightly in light mode */}
+      <directionalLight position={[4, 6, 3]} intensity={isLight ? 0.8 : 1.0} />
       {/* Fill light from lower-right-back — softens shadows without killing depth */}
-      <directionalLight position={[-4, -2, -3]} intensity={0.2} />
-      {/* Rim light from upper-right-back — traces silhouette edges for form separation */}
-      <directionalLight position={[-3, 4, -5]} intensity={0.6} color="#818cf8" />
+      <directionalLight position={[-4, -2, -3]} intensity={isLight ? 0.35 : 0.2} />
+      {/* Rim light — warm lavender in dark, soft indigo in light */}
+      <directionalLight
+        position={[-3, 4, -5]}
+        intensity={isLight ? 0.4 : 0.6}
+        color={isLight ? "#a5b4fc" : "#818cf8"}
+      />
       <Infinity />
     </Canvas>
   );

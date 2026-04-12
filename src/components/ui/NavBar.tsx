@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@portfolio/components/ui/ThemeToggle";
 
 interface NavItem {
   href: string;
@@ -27,6 +28,9 @@ export function NavBar() {
           {label}
         </Link>
       ))}
+      <div className="ml-auto">
+        <ThemeToggle />
+      </div>
     </nav>
   );
 }
