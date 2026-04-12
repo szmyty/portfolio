@@ -19,6 +19,18 @@ const HOLD_THRESHOLD_MS = 250;
  */
 const SCROLL_CANCEL_PX = 8;
 
+/**
+ * Emissive intensity levels for each interaction state.
+ *
+ * IDLE_EMISSIVE ensures a continuous ambient glow even without user interaction,
+ * establishing the strong visual presence required by the emissive material spec.
+ * HOVER and ENGAGED progressively brighten the glow while keeping intensity
+ * within a range that avoids overexposure (≤ 1.0 avoids HDR clipping).
+ */
+const IDLE_EMISSIVE = 0.15;
+const HOVER_EMISSIVE = 0.6;
+const ENGAGED_EMISSIVE = 1.0;
+
 export interface InfinityObjectProps {
   /**
    * Geometry layer — any component that renders a Three.js geometry element.
@@ -97,7 +109,8 @@ export function InfinityObject({
   const isHovered = useRef(false);
 
   // Target emissive intensity lerped toward each frame for a smooth glow.
-  const emissiveTarget = useRef(0);
+  // Initialised to IDLE_EMISSIVE so the object glows from first render.
+  const emissiveTarget = useRef(IDLE_EMISSIVE);
 
   // Store the canvas element in a ref so event handlers can mutate its style
   // without the linter treating it as an immutable hook return value.
@@ -132,7 +145,7 @@ export function InfinityObject({
       if (canvasRef.current) {
         canvasRef.current.style.cursor = isHovered.current ? "grab" : "default";
       }
-      emissiveTarget.current = isHovered.current ? 0.4 : 0;
+      emissiveTarget.current = isHovered.current ? HOVER_EMISSIVE : IDLE_EMISSIVE;
     };
 
     const onPointerMove = (e: PointerEvent) => {
@@ -273,7 +286,7 @@ export function InfinityObject({
       if (canvasRef.current) {
         canvasRef.current.style.cursor = "grabbing";
       }
-      emissiveTarget.current = 0.8;
+      emissiveTarget.current = ENGAGED_EMISSIVE;
     }, HOLD_THRESHOLD_MS);
   };
 
@@ -282,7 +295,7 @@ export function InfinityObject({
     if (interactionState.current === "idle" && canvasRef.current) {
       canvasRef.current.style.cursor = "grab";
     }
-    emissiveTarget.current = 0.4;
+    emissiveTarget.current = HOVER_EMISSIVE;
   };
 
   const handlePointerLeave = () => {
@@ -290,9 +303,9 @@ export function InfinityObject({
     if (interactionState.current === "idle" && canvasRef.current) {
       canvasRef.current.style.cursor = "default";
     }
-    // Keep glow while actively dragging; fade out otherwise.
+    // Fade back to base idle glow; keep full glow while actively dragging.
     if (interactionState.current !== "engaged") {
-      emissiveTarget.current = 0;
+      emissiveTarget.current = IDLE_EMISSIVE;
     }
   };
 
