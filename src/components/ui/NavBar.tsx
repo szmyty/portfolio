@@ -64,7 +64,7 @@ export function NavBar() {
   return (
     <nav
       aria-label="Main navigation"
-      className="w-full px-4 sm:px-8 py-4 flex items-center gap-6"
+      className="w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-6 overflow-x-auto"
     >
       <Link
         href="/"

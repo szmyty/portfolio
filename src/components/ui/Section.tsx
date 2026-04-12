@@ -94,7 +94,7 @@ export function Section({
 
         {/* Optional visual column */}
         {visual && (
-          <div className="flex-shrink-0 flex items-center justify-center md:w-72 lg:w-96">
+          <div className="flex-shrink-0 flex items-center justify-center w-full max-w-[280px] sm:max-w-xs md:w-72 lg:w-96">
             {visual}
           </div>
         )}

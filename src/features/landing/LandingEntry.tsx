@@ -56,7 +56,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
   }, [handleEnter]);
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
+    <div className="relative min-h-screen min-h-dvh w-full overflow-x-hidden bg-background">
       {/*
        * Layer 0 + 1 — background & 3D canvas (z-0).
        * CosmicBackground is pointer-events-none; LandingVisualLayer is pointer-events-auto.

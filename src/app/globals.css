@@ -222,6 +222,17 @@ a:hover {
   }
 }
 
+/* Extra-small screens (≤ 400px) — additional heading scale reduction */
+@media (max-width: 400px) {
+  h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-2xl);
+  }
+}
+
 /* Reduced motion — disable CSS animations and transitions globally */
 @media (prefers-reduced-motion: reduce) {
   *,

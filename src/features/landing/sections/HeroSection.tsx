@@ -26,7 +26,7 @@ export function HeroSection() {
     <section
       id="hero"
       aria-label="Hero"
-      className="relative flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 text-center pointer-events-none"
+      className="relative flex flex-col items-center justify-center min-h-screen min-h-dvh px-4 sm:px-8 text-center pointer-events-none"
     >
       <motion.div
         style={{ y }}

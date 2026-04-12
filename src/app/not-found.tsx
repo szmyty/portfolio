@@ -6,7 +6,7 @@ export default async function NotFound() {
   const t = await getTranslations("NotFound");
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+    <div className="relative min-h-screen min-h-dvh w-full overflow-hidden bg-background">
       {/* Reuse the same 3D visual identity used on the landing page */}
       <LandingBackground />
 

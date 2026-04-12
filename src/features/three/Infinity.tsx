@@ -18,6 +18,14 @@ const IDLE_EMISSIVE = 0.15;
 const HOVER_EMISSIVE = 0.6;
 const ENGAGED_EMISSIVE = 1.0;
 
+/**
+ * Geometry constants for viewport-aware scaling.
+ * The lemniscate (InfinityGeometry) spans ~4.9 world units wide at scale=1,
+ * derived from its horizontalScale (2.2) plus tube radius (0.25) on each side.
+ */
+const INFINITY_NATURAL_WIDTH = 4.9;
+const INFINITY_MAX_SCALE = 0.7;
+
 export type InfinityProps = {
   GeometryComponent?: ComponentType;
   MaterialComponent?: ComponentType<{ matRef?: React.Ref<MeshStandardMaterial> }>;
@@ -83,7 +91,7 @@ export function Infinity({
   /**
    * Frame loop (visual polish only)
    */
-  useFrame((_state, delta) => {
+  useFrame((state, delta) => {
     if (!meshRef.current) return;
 
     /**
@@ -93,18 +101,32 @@ export function Infinity({
     meshRef.current.position.y = 0;
 
     /**
+     * Viewport-aware base scale.
+     *
+     * The lemniscate geometry spans ~4.9 world units wide at scale=1.
+     * We fit the object within 85% of the visible viewport width so it
+     * renders correctly on portrait mobile without clipping, while capping
+     * the scale at 0.7 on larger viewports to preserve the intended size.
+     */
+    const { viewport } = state;
+    const baseScale = Math.min(
+      (viewport.width * 0.85) / INFINITY_NATURAL_WIDTH,
+      INFINITY_MAX_SCALE,
+    );
+
+    /**
      * Subtle scale interaction (feels premium, not distracting)
      */
     const isHovered = interaction.isHovered.current;
 
-    const targetScale = isHovered ? 1.04 : 1.0;
+    const targetNorm = isHovered ? 1.04 : 1.0;
 
-    const currentNorm = meshRef.current.scale.x / 0.7;
+    const currentNorm = meshRef.current.scale.x / baseScale;
 
     const newNorm =
-      currentNorm + (targetScale - currentNorm) * Math.min(delta * 6, 1);
+      currentNorm + (targetNorm - currentNorm) * Math.min(delta * 6, 1);
 
-    meshRef.current.scale.setScalar(0.7 * newNorm);
+    meshRef.current.scale.setScalar(baseScale * newNorm);
 
     /**
      * Smooth emissive transitions
