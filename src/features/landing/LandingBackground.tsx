@@ -42,7 +42,7 @@ export function LandingBackground() {
   return (
     <div
       aria-hidden="true"
-      className="absolute inset-x-0 top-0 h-screen z-0 overflow-hidden"
+      className="absolute inset-x-0 top-0 h-screen h-dvh z-0 overflow-hidden"
     >
       {/* Layer 0 — background: non-interactive cosmic atmosphere */}
       <CosmicBackground mode="hero" />

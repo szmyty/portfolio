@@ -22,7 +22,7 @@ function FooterLink({ href, label, children }: FooterLinkProps) {
 
 export function Footer() {
   return (
-    <footer className="w-full py-6 px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border pointer-events-auto">
+    <footer className="w-full py-6 px-4 sm:px-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border pointer-events-auto">
       <p className="text-xs text-text-muted tracking-wide">
         made with{" "}
         <span className="text-red-400" aria-label="love">

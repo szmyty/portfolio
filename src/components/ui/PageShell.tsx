@@ -22,10 +22,10 @@ interface PageShellProps {
  */
 export function PageShell({ children }: PageShellProps) {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+    <div className="relative min-h-screen min-h-dvh w-full overflow-hidden bg-background">
       <CosmicBackground mode="content" />
       <div className="absolute inset-0 z-10 flex flex-col">
-        <header>
+        <header className="pt-[env(safe-area-inset-top)]">
           <NavBar />
         </header>
         <main id="main-content" tabIndex={-1} className="flex-1 outline-none">

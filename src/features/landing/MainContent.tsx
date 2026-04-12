@@ -23,8 +23,14 @@ import {
 export function MainContent() {
   return (
     <div className="flex flex-col w-full">
-      {/* Layer 3 — chrome: sticky header is always interactive */}
-      <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto">
+      {/* Layer 3 — chrome: sticky header is always interactive.
+           pt-[env(safe-area-inset-top)] pads the header content below the device
+           notch/status bar when viewport-fit=cover is active (e.g. PWA mode on
+           iOS). On standard browser visits the inset is 0 so no extra padding
+           is applied. */}
+      <header
+        className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto pt-[env(safe-area-inset-top)]"
+      >
         <NavBar />
       </header>
       {/* Layer 2 — UI overlay: pointer-events-none on container; sections restore as needed */}
