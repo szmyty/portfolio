@@ -2,16 +2,28 @@ import type { ReactNode } from "react";
 import { Center } from "@portfolio/components/ui/Center";
 import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
-import { LandingBackground } from "@portfolio/features/landing/LandingBackground";
+import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
 
 interface PageShellProps {
   children: ReactNode;
 }
 
+/**
+ * PageShell — shared layout for sub-pages (/music, /development, /publishing, etc.).
+ *
+ * Uses CosmicBackground in content mode rather than the full LandingBackground
+ * (which includes the heavy WebGL canvas). This keeps the cosmic atmosphere
+ * consistent with the landing page content sections while avoiding unnecessary
+ * 3D overhead on content pages.
+ *
+ * The background spans the full page height (via `min-h-screen` on the outer
+ * container and `absolute inset-0` on CosmicBackground). Content is layered
+ * above via z-10.
+ */
 export function PageShell({ children }: PageShellProps) {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
-      <LandingBackground />
+      <CosmicBackground mode="content" />
       <div className="absolute inset-0 z-10 flex flex-col">
         <header>
           <NavBar />
