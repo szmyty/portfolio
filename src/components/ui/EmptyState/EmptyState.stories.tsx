@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
+import { Search, FileText } from "lucide-react";
+import { Icon } from "@portfolio/components/ui/Icon";
 import { EmptyState } from "./EmptyState";
 
 const meta: Meta<typeof EmptyState> = {
@@ -22,23 +24,7 @@ export const Default: Story = {
 
 export const WithIcon: Story = {
   args: {
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <path d="m21 21-4.35-4.35" />
-      </svg>
-    ),
+    icon: <Icon icon={Search} size={48} strokeWidth={1.5} />,
     title: "No results found",
     description: "Try adjusting your search terms or clearing any active filters.",
   },
@@ -61,23 +47,7 @@ export const WithAction: Story = {
 
 export const WithIconAndAction: Story = {
   args: {
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-        <polyline points="14 2 14 8 20 8" />
-      </svg>
-    ),
+    icon: <Icon icon={FileText} size={48} strokeWidth={1.5} />,
     title: "No documents found",
     description: "Upload a document or check back later.",
     action: (
