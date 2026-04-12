@@ -144,6 +144,7 @@ export default async function RootLayout({
               nextVersion: nextPkg.version,
               reactVersion: reactPkg.version,
               locale,
+              nodeEnv: process.env.NODE_ENV,
             }}
           />
         )}

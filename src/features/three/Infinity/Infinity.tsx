@@ -11,6 +11,8 @@ import { BloomEffect, ParticleTrail } from "../effects";
 
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
 import type { InfinityProps } from "./Infinity.types";
+import { isDev } from "@portfolio/config";
+import { setDebugInteraction } from "@portfolio/lib/debug/debugStore";
 
 /**
  * Emissive intensity levels
@@ -132,6 +134,16 @@ export function Infinity({
         current +
         (emissiveTarget.current - current) *
           Math.min(delta * 6, 1);
+    }
+
+    /**
+     * Publish interaction state to debug store (dev only, no-op in prod).
+     */
+    if (isDev) {
+      setDebugInteraction({
+        interactionState: interaction.interactionState.current,
+        isHovered: interaction.isHovered.current,
+      });
     }
   });
 
