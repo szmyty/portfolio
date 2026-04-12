@@ -57,6 +57,8 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
+      {/* Top-level hero visual layer — persists behind all content states */}
+      <LandingBackground />
       <SkipToContent
         label={t("skipToContent")}
         onSkip={(e) => {
@@ -68,7 +70,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
         {!entered ? (
           <motion.main
             key="landing"
-            className="absolute inset-0 flex items-center justify-center px-4 sm:px-8 py-8 sm:py-16 cursor-pointer"
+            className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-8 py-8 sm:py-16 cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{
@@ -79,8 +81,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
             transition={{ duration: 0.4, ease: "easeOut" }}
             onClick={handleEnter}
           >
-            <LandingBackground />
-            <div className="relative z-10 pb-16 sm:pb-20 [@media(max-height:500px)]:pb-0">
+            <div className="pb-16 sm:pb-20 [@media(max-height:500px)]:pb-0">
               {children}
             </div>
             <EntryTrigger onEnter={handleEnter} />
@@ -88,7 +89,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
         ) : (
           <motion.div
             key="main"
-            className="absolute inset-0"
+            className="absolute inset-0 z-10"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
