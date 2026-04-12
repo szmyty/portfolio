@@ -7,7 +7,7 @@ import { useScrollParallax } from "@portfolio/lib/hooks/useScrollParallax";
 
 const LandingVisualLayer = dynamic(
   () =>
-    import("../animation/LandingVisualLayer").then(
+    import("@portfolio/features/landing/animation/LandingVisualLayer").then(
       (mod) => mod.LandingVisualLayer,
     ),
   { ssr: false },
