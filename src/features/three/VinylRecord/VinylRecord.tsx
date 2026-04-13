@@ -5,8 +5,10 @@ import { useFrame, useThree } from "@react-three/fiber";
 import type { Mesh, MeshStandardMaterial } from "three";
 
 import { VinylRecordGeometry } from "../geometry/VinylRecordGeometry";
+import { VinylRecordMaterial } from "../materials/VinylRecordMaterial";
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
 import { useVinylRecordMotion } from "../hooks/useVinylRecordMotion";
+import type { VinylRecordProps } from "./VinylRecord.types";
 
 /**
  * Emissive intensity levels (subtle sheen on a dark vinyl surface)
@@ -26,9 +28,15 @@ const ENGAGED_EMISSIVE = 0.35;
  * - inertia coast after release
  * - hover and engagement emissive feedback
  *
- * Textures will be applied in a follow-up issue.
+ * Accepts pluggable geometry and material components following the same modular
+ * architecture as Infinity, enabling future texture and shader enhancements
+ * without modifying this component.
  */
-export function VinylRecord() {
+export function VinylRecord({
+  GeometryComponent = VinylRecordGeometry,
+  MaterialComponent = VinylRecordMaterial,
+  effects = { rotation: true },
+}: VinylRecordProps) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
 
@@ -66,8 +74,8 @@ export function VinylRecord() {
     IDLE_EMISSIVE,
     HOVER_EMISSIVE,
     ENGAGED_EMISSIVE,
-    onPointerDownStart: motion.resetVelocity,
-    onDrag: motion.applyDrag,
+    onPointerDownStart: effects.rotation !== false ? motion.resetVelocity : undefined,
+    onDrag: effects.rotation !== false ? motion.applyDrag : undefined,
   });
 
   /**
@@ -78,20 +86,22 @@ export function VinylRecord() {
 
     const isEngaged = interaction.interactionState.current === "engaged";
 
-    motion.updateMotion({
-      delta,
-      isEngaged,
-      reducedMotion: reducedMotion.current,
-    });
+    if (effects.rotation !== false) {
+      motion.updateMotion({
+        delta,
+        isEngaged,
+        reducedMotion: reducedMotion.current,
+      });
 
-    /**
-     * Apply accumulated rotation to the mesh.
-     * Base X rotation (Math.PI / 2) orients the disc face toward the camera;
-     * motion.rotX adds tilt from drag interaction.
-     */
-    meshRef.current.rotation.x = Math.PI / 2 + motion.rotX.current;
-    meshRef.current.rotation.y = motion.rotY.current;
-    meshRef.current.rotation.z = motion.rotZ.current;
+      /**
+       * Apply accumulated rotation to the mesh.
+       * Base X rotation (Math.PI / 2) orients the disc face toward the camera;
+       * motion.rotX adds tilt from drag interaction.
+       */
+      meshRef.current.rotation.x = Math.PI / 2 + motion.rotX.current;
+      meshRef.current.rotation.y = motion.rotY.current;
+      meshRef.current.rotation.z = motion.rotZ.current;
+    }
 
     /**
      * Hover / engaged scale feedback.
@@ -122,16 +132,10 @@ export function VinylRecord() {
         onPointerEnter={interaction.handlePointerEnter}
         onPointerLeave={interaction.handlePointerLeave}
       >
-        <VinylRecordGeometry />
-        <meshStandardMaterial
-          ref={matRef}
-          color="#1a1a1a"
-          roughness={0.3}
-          metalness={0.2}
-          emissive="#2a2020"
-          emissiveIntensity={IDLE_EMISSIVE}
-        />
+        <GeometryComponent />
+        <MaterialComponent matRef={matRef} />
       </mesh>
     </>
   );
 }
+

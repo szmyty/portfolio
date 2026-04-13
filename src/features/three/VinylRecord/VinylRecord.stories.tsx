@@ -1,8 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import { Canvas } from "@react-three/fiber";
 import { VinylRecord } from "./VinylRecord";
+import { VinylRecordMaterial } from "@portfolio/features/three/materials";
 
-const meta: Meta = {
+type VinylRecordStoryArgs = {
+  rotation: boolean;
+  material: "vinyl";
+};
+
+const meta: Meta<VinylRecordStoryArgs> = {
   title: "Three/VinylRecord",
   tags: ["autodocs"],
   parameters: {
@@ -10,9 +16,24 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          "Interactive 3D vinyl record with turntable idle spin, hold-to-engage drag rotation, inertia coast, and scroll-safe pointer handling.",
+          "Interactive 3D vinyl record with turntable idle spin, hold-to-engage drag rotation, inertia coast, and scroll-safe pointer handling. Accepts pluggable GeometryComponent and MaterialComponent for extensibility.",
       },
     },
+  },
+  argTypes: {
+    rotation: {
+      control: "boolean",
+      description: "Enable idle turntable spin and drag rotation.",
+    },
+    material: {
+      control: { type: "select" },
+      options: ["vinyl"],
+      description: "Material applied to the disc geometry.",
+    },
+  },
+  args: {
+    rotation: true,
+    material: "vinyl",
   },
   decorators: [
     (Story) => (
@@ -43,6 +64,15 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+function VinylRecordWithArgs({ rotation }: VinylRecordStoryArgs) {
+  return (
+    <VinylRecord
+      MaterialComponent={VinylRecordMaterial}
+      effects={{ rotation }}
+    />
+  );
+}
+
 /**
  * Default interactive vinyl record.
  *
@@ -54,5 +84,15 @@ type Story = StoryObj<typeof meta>;
  * - **Scroll safety**: scroll events pass through unless the hold threshold is met.
  */
 export const Default: Story = {
-  render: () => <VinylRecord />,
+  render: (args) => <VinylRecordWithArgs {...args} />,
 };
+
+/**
+ * Static vinyl record with rotation disabled.
+ * Useful for previewing the geometry and material without motion.
+ */
+export const StaticPose: Story = {
+  args: { rotation: false },
+  render: (args) => <VinylRecordWithArgs {...args} />,
+};
+
