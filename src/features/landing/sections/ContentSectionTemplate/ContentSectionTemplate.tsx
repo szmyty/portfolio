@@ -5,7 +5,7 @@ import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
 import type { ContentSectionTemplateProps } from "./ContentSectionTemplate.types";
 
-const visual = (
+const defaultVisual = (
   <LottieAnimation
     animationData={placeholderAnimation}
     className="w-full h-full"
@@ -17,10 +17,10 @@ const visual = (
  * ContentSectionTemplate — shared async server component for Music, Publishing,
  * and Development landing-page sections.
  *
- * Centralises the repeated layout logic (Lottie visual, description paragraph,
+ * Centralises the repeated layout logic (visual, description paragraph,
  * placeholder note, and "Explore …" link) so each domain section only needs to
  * supply its unique configuration: id, translation namespace, background colour,
- * and destination href.
+ * destination href, and an optional visual override.
  *
  * Usage:
  * ```tsx
@@ -31,12 +31,23 @@ const visual = (
  *   href="/music"
  * />
  * ```
+ *
+ * With a custom visual:
+ * ```tsx
+ * <ContentSectionTemplate
+ *   id="publishing"
+ *   namespace="PublishingSection"
+ *   href="/publishing"
+ *   visual={<MagazineScene />}
+ * />
+ * ```
  */
 export async function ContentSectionTemplate({
   id,
   namespace,
   background = "background",
   href,
+  visual = defaultVisual,
 }: ContentSectionTemplateProps) {
   const t = await getTranslations(namespace);
 

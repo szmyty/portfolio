@@ -2,6 +2,8 @@ export { Scene } from "./Scene";
 export { TorusKnot } from "./TorusKnot";
 export { Infinity } from "./Infinity";
 export type { InfinityProps } from "./Infinity";
+export { Magazine } from "./Magazine";
+export { MagazineScene } from "./MagazineScene";
 export { TorusKnotGeometry } from "./geometry";
 export { StandardMaterial, GradientMaterial } from "./materials";
 export type { MaterialProps } from "./materials";
