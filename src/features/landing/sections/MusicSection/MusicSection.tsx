@@ -1,4 +1,5 @@
 import { ContentSectionTemplate } from "@portfolio/features/landing/sections/ContentSectionTemplate";
+import { VinylVisual } from "./VinylVisual";
 
 export function MusicSection() {
   return (
@@ -7,6 +8,7 @@ export function MusicSection() {
       namespace="MusicSection"
       background="surface"
       href="/music"
+      visual={<VinylVisual />}
     />
   );
 }
