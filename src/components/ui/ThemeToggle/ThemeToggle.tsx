@@ -1,5 +1,8 @@
 "use client";
 
+import { Sun, Moon, Monitor } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Icon } from "@portfolio/components/ui/Icon";
 import { useTheme } from "@portfolio/lib/theme";
 import type { ThemeMode } from "@portfolio/lib/theme";
 
@@ -11,11 +14,10 @@ const LABELS: Record<ThemeMode, string> = {
   system: "System",
 };
 
-/** Simple sun / moon / monitor glyphs — no external icon library required. */
-const ICONS: Record<ThemeMode, string> = {
-  light: "☀️",
-  dark: "🌙",
-  system: "🖥",
+const ICONS: Record<ThemeMode, LucideIcon> = {
+  light: Sun,
+  dark: Moon,
+  system: Monitor,
 };
 
 /**
@@ -38,7 +40,7 @@ export function ThemeToggle() {
       title={`Theme: ${LABELS[theme]}`}
       className="pointer-events-auto flex items-center justify-center w-8 h-8 rounded-md text-text-muted hover:text-accent transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
     >
-      <span aria-hidden="true">{ICONS[theme]}</span>
+      <Icon icon={ICONS[theme]} size={16} />
     </button>
   );
 }
