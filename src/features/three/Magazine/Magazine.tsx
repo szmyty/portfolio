@@ -7,7 +7,6 @@ import type { Mesh, MeshStandardMaterial } from "three";
 import { MagazineGeometry } from "../geometry/MagazineGeometry";
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
 import { useMagazineMotion } from "../hooks/useMagazineMotion";
-import { BloomEffect } from "../effects";
 
 /**
  * Emissive intensity levels (subtle, matches a matte paper surface)
@@ -130,8 +129,6 @@ export function Magazine() {
           emissiveIntensity={IDLE_EMISSIVE}
         />
       </mesh>
-
-      <BloomEffect />
     </>
   );
 }

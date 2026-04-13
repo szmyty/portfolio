@@ -14,12 +14,18 @@ const MagazineScene = dynamic(
  * MagazineVisual — client component wrapper that lazy-loads the 3D magazine
  * canvas (WebGL requires the DOM so SSR must be disabled).
  *
- * Sized to maintain the 2:3 portrait aspect ratio of the magazine geometry
- * while respecting the Section visual column width constraints.
+ * The container uses `position: relative` (required by react-three-fiber Canvas)
+ * and an explicit height so the WebGL context gets the correct dimensions.
+ *
+ * Width is constrained to stay within the Section visual column, while height
+ * preserves the 2:3 portrait aspect ratio of the magazine geometry.
  */
 export function MagazineVisual() {
   return (
-    <div className="w-full aspect-[2/3] max-w-[220px] sm:max-w-[260px] md:max-w-[300px]">
+    <div
+      className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px]"
+      style={{ position: "relative", height: "360px" }}
+    >
       <MagazineScene />
     </div>
   );
