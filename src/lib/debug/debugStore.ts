@@ -17,19 +17,11 @@ export type { InteractionState };
 export type DebugInteractionData = {
   interactionState: InteractionState;
   isHovered: boolean;
-  rotX: number;
-  rotY: number;
-  velX: number;
-  velY: number;
 };
 
 const _interaction: DebugInteractionData = {
   interactionState: "idle",
   isHovered: false,
-  rotX: 0,
-  rotY: 0,
-  velX: 0,
-  velY: 0,
 };
 
 export function setDebugInteraction(patch: Partial<DebugInteractionData>): void {
