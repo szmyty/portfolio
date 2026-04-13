@@ -114,7 +114,7 @@ export default async function RootLayout({
          *
          * The storage key 'theme-preference' is hardcoded here because this
          * script executes before any module is loaded — it cannot import
-         * THEME_STORAGE_KEY from src/lib/theme.tsx at runtime. Keep this
+         * THEME_STORAGE_KEY from src/lib/storageKeys.ts at runtime. Keep this
          * literal in sync with THEME_STORAGE_KEY in that file.
          */}
         <script
