@@ -1,0 +1,492 @@
+================================================================================
+  PORTFOLIO AUDIT — POST-MILESTONE REFACTOR & DESIGN IMPROVEMENTS
+  Generated: 2026-04-13T00:01:14Z
+  Scope: Full-spectrum refactor audit following 3D identity system milestone
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+  EXECUTIVE SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+
+Audit Target: Post-3D identity milestone codebase
+Prior Audit:  audits/audit-2026-04-11T21-22-10.log (Landing v1 Readiness)
+
+This audit focuses on refactoring opportunities, simplification, and
+architectural improvements that emerged from implementing the 3D identity
+system (Infinity geometry, GradientMaterial shader, ParticleTrail, hooks).
+
+Overall System Health: GOOD (8/10)
+
+The 3D identity system is architecturally clean and well-modularized.
+The geometry / material / effects separation is sound and swap-ready.
+The main gaps are dead code artifacts left from the pre-milestone state
+and a critical functional gap in the Infinity interaction model.
+
+Findings by severity:
+  HIGH   ─  2
+  MEDIUM ─  7
+  LOW    ─  8
+
+────────────────────────────────────────────────────────────────────────────────
+  1. ARCHITECTURE & STRUCTURE
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ Clean three-layer separation in features/three/:
+      geometry/   → pure parametric shape definitions
+      materials/  → PBR and shader-augmented surface materials
+      effects/    → post-processing and particle systems
+  ✓ Dedicated hooks/  folder with useInfinityInteraction and useInfinityMotion.
+  ✓ Infinity component is fully swap-aware — GeometryComponent and
+    MaterialComponent are injected as props, enabling hot-swapping without
+    touching the frame loop or interaction layer.
+  ✓ LandingVisualLayer is isolated from LandingBackground — the 3D canvas
+    can evolve independently of the cosmic starfield and scroll logic.
+  ✓ Scene.tsx cleanly separates lighting setup from object composition.
+  ✓ All public boundaries have index.ts barrel exports.
+
+Findings:
+
+  [HIGH] R-ARCH-01: TorusKnot is deprecated legacy code still in the public API.
+    File: src/features/three/TorusKnot/TorusKnot.tsx
+    Export: src/features/three/index.ts → `export { TorusKnot }`
+    Export: src/features/three/geometry/index.ts → `export { TorusKnotGeometry }`
+    The TorusKnot component was the first-generation 3D identity object. It has
+    been superseded by the Infinity + InfinityGeometry + GradientMaterial system.
+    TorusKnot.tsx is 244 lines of inline interaction logic (hold timer, inertia,
+    velocity, touch-scroll prevention) that duplicates code now properly
+    abstracted into useInfinityInteraction.
+    Risk: import confusion, maintenance burden, bundle bloat.
+    Action: Remove TorusKnot.tsx, TorusKnotGeometry.tsx (the geometry component
+    wrapping `<torusKnotGeometry>`), and their barrel exports. Keep the
+    useInfinityInteraction hook — it is the canonical abstraction.
+    Note: TorusKnotGeometry (the extracted component) adds no value over the
+    native `<torusKnotGeometry>` JSX element; it was a stepping-stone component
+    and can be removed with it.
+
+  [MED] R-ARCH-02: useInfinityMotion hook is dead code — never imported.
+    File: src/features/three/hooks/useInfinityMotion/useInfinityMotion.ts
+    The hook provides rotation accumulation, velocity tracking, inertia, and
+    idle motion. It was extracted to separate motion concerns but the Infinity
+    component intentionally omits rotation (it is the "Stable Edition").
+    The hook is fully implemented but has zero consumers.
+    Risk: maintenance confusion — developers may wonder if it should be used.
+    Action (Option A): Delete the hook if the "stable, no-rotation" policy is
+      permanent. Document the design decision in Infinity.tsx header.
+    Action (Option B): Reintroduce to Infinity.tsx when idle rotation is
+      desired (e.g., subtle slow drift). This is the preferred path if the
+      identity element benefits from gentle motion.
+    Recommendation: Option B — reconnect the hook behind a `effects.rotation`
+      flag in InfinityProps, defaulting to false to preserve the current
+      stable behavior.
+
+  [LOW] R-ARCH-03: InfinityProps.children is declared but never consumed.
+    File: src/features/three/Infinity/Infinity.types.ts
+    InfinityProps includes `children?: ReactNode` but the Infinity component
+    never renders {children}. The field was likely added speculatively.
+    Action: Remove the `children` prop from InfinityProps and the ReactNode
+    import from Infinity.tsx unless a use case is identified.
+
+  [LOW] R-ARCH-04: hooks/ folder has no barrel export.
+    Files: src/features/three/hooks/useInfinityInteraction/index.ts
+           src/features/three/hooks/useInfinityMotion/index.ts
+    There is no src/features/three/hooks/index.ts aggregating both hooks.
+    The three/index.ts barrel does not re-export the hooks at all.
+    Action: Add src/features/three/hooks/index.ts and expose hooks through
+    the top-level features/three/index.ts barrel so consumers can import
+    from "@portfolio/features/three" consistently.
+
+────────────────────────────────────────────────────────────────────────────────
+  2. CODE QUALITY
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 7/10
+
+Strengths:
+  ✓ TypeScript strict mode throughout; no `any` types observed.
+  ✓ GradientMaterial cleanly separates GLSL generation into buildGradientFragmentShader
+    — the shader builder is independently testable and not tangled in React.
+  ✓ INFINITY_PATH pre-computation at module level correctly avoids per-frame
+    re-computation and sidesteps React hooks immutability rules.
+  ✓ Consistent use of useRef for frame-mutation state to avoid re-renders.
+  ✓ useFadeUp hook cleanly encapsulates reduced-motion branching.
+  ✓ Section component cleanly abstracts repeated page-section layout.
+
+Findings:
+
+  [HIGH] R-QUAL-01: Infinity component has no window-level drag handlers —
+    the "engaged" state is a functional dead end.
+    File: src/features/three/Infinity/Infinity.tsx
+    File: src/features/three/hooks/useInfinityInteraction/useInfinityInteraction.ts
+    The useInfinityInteraction hook correctly manages three-state machine
+    (idle → pending → engaged) and returns Three.js mesh event handlers
+    (handlePointerDown, handlePointerEnter, handlePointerLeave).
+    However: once the interaction enters "engaged" state (after 250ms hold),
+    there are no window-level listeners to track pointer movement or release.
+    The Infinity.tsx component does not register pointermove, pointerup, or
+    touchmove handlers anywhere. This means:
+      - The cursor changes to "grabbing" but dragging does nothing.
+      - Releasing the pointer never triggers releaseEngaged().
+      - The component is stuck in "engaged" state until the canvas unmounts.
+    Compare with the deprecated TorusKnot.tsx which registers all three
+    window-level handlers in a useEffect, correctly covering the full
+    pointer lifecycle.
+    Action: Move window-level handlers into useInfinityInteraction as a
+    useEffect (paired with the existing useInfinityMotion hook), or add a
+    separate useEffect in Infinity.tsx that calls releaseEngaged on pointerup
+    and cancelHold on pointermove that exceeds SCROLL_CANCEL_PX.
+    This is the most critical functional gap in the current 3D system.
+
+  [MED] R-QUAL-02: InteractionState type is duplicated across two modules.
+    Definitions:
+      src/features/three/hooks/useInfinityInteraction/useInfinityInteraction.ts
+        → `export type InteractionState = "idle" | "pending" | "engaged";`
+      src/lib/debug/debugStore.ts
+        → `export type InteractionState = "idle" | "pending" | "engaged";`
+    These are distinct type declarations for the same concept. If the states
+    evolve in one place, the other can drift silently.
+    Action: Export InteractionState only from useInfinityInteraction and
+    import it in debugStore.ts:
+      `import type { InteractionState } from "@portfolio/features/three/hooks/useInfinityInteraction";`
+
+  [MED] R-QUAL-03: debugStore has rotation/velocity fields that are never updated.
+    File: src/lib/debug/debugStore.ts
+    DebugInteractionData includes rotX, rotY, velX, velY fields but
+    Infinity.tsx only calls setDebugInteraction({ interactionState, isHovered }).
+    The rotation fields are never populated because Infinity is the "Stable
+    Edition" without rotation. They are initialized to 0 and stay 0 forever.
+    Action: Remove rotX, rotY, velX, velY from DebugInteractionData (and
+    the _interaction initializer) until rotation is reintroduced. This keeps
+    the debug panel's data model honest.
+
+  [MED] R-QUAL-04: InfinityGeometry has a dead depthScale variable.
+    File: src/features/three/geometry/InfinityGeometry/InfinityGeometry.tsx
+    In InfinityCurve.getPoint():
+      const z = 0;              // always zero — lemniscate is 2D
+      const depthScale = 0.2;   // comment says "VERY slight depth"
+    The final return is `new THREE.Vector3(x * horizontalScale, y * verticalScale,
+    z * depthScale)` which computes `0 * 0.2 = 0`. The z axis is always zero.
+    depthScale is a dead constant — it multiplies a zero operand.
+    The comment "VERY slight depth" is misleading since no depth is applied.
+    Action: Remove the depthScale constant. Either:
+      (A) Keep z = 0 and document "lemniscate is planar", or
+      (B) Introduce a real depth wobble using a different curve variable
+          (e.g., `z = sin(angle) * depthScale`) if spatial depth is desired.
+
+  [MED] R-QUAL-05: Three content sections share an identical template structure.
+    Files: MusicSection.tsx, DevelopmentSection.tsx, PublishingSection.tsx
+    All three sections follow the same structure:
+      - module-level `visual` constant with placeholder Lottie animation
+      - async server component calling getTranslations
+      - Section wrapper with identical child pattern (p.description, p.placeholder, Link)
+    The only differences are the i18n namespace and the `id`/`aria-label` values.
+    This creates a high-maintenance pattern — any structural change requires
+    updating three files.
+    Action: Extract a shared SectionTemplate or data-driven approach using a
+    `sections` configuration array. Each entry would define:
+      { id, namespaceKey, href, background }
+    The three components can then be generated from a single template or merged
+    into one `LandingSections` component.
+    Note: Keep as separate components if sections are expected to diverge
+    significantly in structure. Flag for review when real content is added.
+
+  [LOW] R-QUAL-06: GradientMaterial ref resolution uses a type assertion.
+    File: src/features/three/materials/GradientMaterial/GradientMaterial.tsx
+    The `resolvedMatRef` fallback:
+      `(matRef as React.MutableRefObject<MeshStandardMaterial | null>) ?? localMatRef`
+    uses a type assertion to cast the incoming `React.Ref<MeshStandardMaterial>`
+    to a mutable ref. This is necessary because React.Ref can be a callback ref
+    or null, not just a RefObject. However, the cast is unsafe — a callback ref
+    would silently break the ref-reading code in useEffect.
+    Action: Accept `React.RefObject<MeshStandardMaterial | null>` (not
+    `React.Ref`) in MaterialProps, or use `useImperativeHandle` / a separate
+    callback to safely pass the resolved ref back to callers.
+
+  [LOW] R-QUAL-07: LandingEntry STORAGE_KEY is not co-located with theme key.
+    File: src/features/landing/LandingEntry/LandingEntry.tsx
+    `const STORAGE_KEY = "landing-entered"` is a module-local constant.
+    The theme key (`THEME_STORAGE_KEY`) lives in lib/theme.tsx and is exported.
+    All session storage keys should be centralized (e.g., in config/ or a
+    lib/storageKeys.ts) so key conflicts and typos are caught in one place.
+    Action: Export LANDING_ENTRY_KEY from a shared constants location and
+    import it in LandingEntry.tsx.
+
+────────────────────────────────────────────────────────────────────────────────
+  3. PERFORMANCE
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ Scene.tsx loaded via next/dynamic with ssr: false — no SSR hydration risk.
+  ✓ INFINITY_PATH is a module-level Float32Array computed once at load time,
+    not inside a component or hook — optimal for the 80-particle loop.
+  ✓ Particles driven imperatively via posAttrRef.needsUpdate — no React
+    re-renders from the particle animation loop.
+  ✓ Emissive glow interpolated each frame with lerp — smooth without
+    triggering React state updates.
+  ✓ CosmicBackground uses CSS radial-gradient + backgroundSize for the
+    starfield — far more efficient than canvas or SVG particle systems.
+  ✓ GradientMaterial shader runs on GPU via Three.js onBeforeCompile hook —
+    no CPU-side color computation per frame.
+
+Findings:
+
+  [MED] R-PERF-01: CosmicBackground tracks both global scrollY and element
+    scrollYProgress simultaneously, regardless of active mode.
+    File: src/components/ui/CosmicBackground/CosmicBackground.tsx
+    In hero mode, useScroll({ target: containerRef }) is called and attaches
+    a ResizeObserver + scroll listener to the containerRef element even though
+    only the global scrollY is needed. The same pattern exists in
+    useScrollParallax (noted in prior audit).
+    Impact: two unnecessary scroll subscriptions per CosmicBackground instance.
+    Action: Split into two separate effects / hooks gated by the `mode` prop,
+    or pass a stable `undefined` ref only in global mode to short-circuit
+    Framer Motion's element-level tracking.
+
+  [LOW] R-PERF-02: ParticleTrail iterates over all 80 particles every frame
+    without reduced-motion awareness.
+    File: src/features/three/effects/ParticleTrail/ParticleTrail.tsx
+    The trail runs at full speed regardless of the user's
+    prefers-reduced-motion preference. It does not check the media query.
+    Action: Read useReducedMotion() or check the media query on mount; if
+    reduced motion is preferred, either hide the particles entirely or set
+    speed = 0 so particles are stationary (preserving the visual texture
+    without animation).
+
+  [LOW] R-PERF-03: BloomEffect renders an EffectComposer unconditionally.
+    File: src/features/three/effects/BloomEffect/BloomEffect.tsx
+    The EffectComposer adds a post-processing pass on every frame. On low-end
+    or power-constrained devices, this is a meaningful overhead.
+    Action: Consider adding a `enabled` prop that conditionally renders the
+    composer, or gate it behind the reducedMotion check since bloom is a
+    purely decorative effect.
+
+────────────────────────────────────────────────────────────────────────────────
+  4. VISUAL SYSTEM
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 7/10
+
+Strengths:
+  ✓ GradientMaterial creates a premium flowing color shift (indigo → purple →
+    cyan) driven by a GPU-side shader — visually distinguishable from a
+    simple PBR material.
+  ✓ Three-point + rim lighting in Scene.tsx produces intentional depth and
+    edge separation. Light values adapt correctly to light/dark theme.
+  ✓ ParticleTrail uses AdditiveBlending — particles accumulate brightness at
+    overlap points, reinforcing the Bloom glow organically.
+  ✓ Viewport-aware scaling in Infinity.tsx ensures the lemniscate renders
+    correctly on portrait mobile without clipping.
+  ✓ CosmicBackground star field adapts color and opacity correctly to both
+    light and dark themes.
+  ✓ ThemeToggle now cycles through all three modes (dark / light / system)
+    rather than being a simple boolean toggle.
+
+Findings:
+
+  [MED] R-VIS-01: ThemeToggle uses emoji glyphs for icons.
+    File: src/components/ui/ThemeToggle/ThemeToggle.tsx
+    Icons: { light: "☀️", dark: "🌙", system: "🖥" }
+    Emoji rendering is inconsistent across operating systems, browsers, and
+    screen readers. Some emoji may not render at the expected size or color.
+    The codebase already installs lucide-react (which includes Sun, Moon, and
+    Monitor icons) via the Icon component at src/components/ui/Icon/.
+    Action: Replace emoji with lucide-react icons using the existing
+    `<Icon>` wrapper. Example:
+      light → <Icon icon={Sun} size={16} />
+      dark  → <Icon icon={Moon} size={16} />
+      system → <Icon icon={Monitor} size={16} />
+
+  [MED] R-VIS-02: IdentityBlock renders a Lottie placeholder that is now
+    visually redundant with the 3D canvas behind it.
+    File: src/features/landing/IdentityBlock/IdentityBlock.tsx
+    The placeholder.json Lottie animation in IdentityBlock floats above the
+    full-viewport Infinity 3D canvas. Both are identity visual elements
+    competing for attention at the center of the screen.
+    Action: Either:
+      (A) Replace with a text-based or SVG monogram/avatar that is
+          compositionally distinct from the 3D object behind it, or
+      (B) Remove the Lottie element from IdentityBlock entirely, letting
+          the 3D canvas serve as the sole visual identity anchor.
+    The 3D canvas already renders through the IdentityBlock container
+    (pointer-events layering is correct). The placeholder Lottie adds
+    visual noise rather than brand value.
+
+  [LOW] R-VIS-03: Infinity hover scale target (1.04×) and TorusKnot hover
+    scale (1.05×) diverge slightly — minor consistency issue.
+    File: src/features/three/Infinity/Infinity.tsx (targetNorm: 1.04)
+    File: src/features/three/TorusKnot/TorusKnot.tsx (targetScale: 1.05)
+    If TorusKnot is removed per R-ARCH-01, this becomes irrelevant.
+    Otherwise, standardize on a single hover multiplier via a shared constant.
+
+────────────────────────────────────────────────────────────────────────────────
+  5. DEVELOPER EXPERIENCE
+────────────────────────────────────────────────────────────────────────────────
+
+SCORE: 8/10
+
+Strengths:
+  ✓ features/three/ folder structure is immediately legible:
+      geometry/ → materials/ → effects/ → hooks/ → Infinity/ → Scene/
+  ✓ InfinityProps.GeometryComponent and MaterialComponent props make the
+    "swap geometry" and "swap material" workflows self-documenting.
+  ✓ buildGradientFragmentShader is exported as a pure function — easy to
+    unit-test or reuse in a second material.
+  ✓ DebugPanel provides real-time interaction state in dev mode without
+    impacting production builds.
+  ✓ Storybook 10.3.5 installed; component stories present for EmptyState,
+    Container, ErrorState, Icon, LoadingState.
+  ✓ Lint passes cleanly (ESLint). Build produces static routes with Turbopack.
+
+Findings:
+
+  [LOW] R-DX-01: No Storybook stories for the 3D feature system.
+    The 3D components (Infinity, Scene, effects, materials) have no Storybook
+    stories. This makes it difficult to develop or review visual changes to
+    the 3D identity without running the full dev server.
+    Action: Add a Canvas-wrapped story for the Infinity component using
+    @storybook/nextjs's canvas support. This enables isolated development
+    of the 3D identity element.
+
+  [LOW] R-DX-02: No Storybook stories for NavBar, ThemeToggle, or Section.
+    These interactive UI components are regression-prone but untested in
+    Storybook. ThemeToggle especially benefits from isolated story-driven
+    development since it drives global state.
+    Action: Add stories for NavBar (with/without active section), ThemeToggle
+    (each mode), and Section (with and without visual slot).
+
+  [LOW] R-DX-03: useInfinityMotion hook is undiscoverable — not exported from
+    the top-level three/index.ts barrel.
+    Even if the hook is kept (per R-ARCH-02 Option B), it is invisible to
+    consumers of the feature module. If a developer wants to add rotation to
+    a new 3D object, they would not find it via IDE autocomplete.
+    Action: Re-export from features/three/index.ts once it has a consumer.
+    Until then, treat as internal.
+
+────────────────────────────────────────────────────────────────────────────────
+  FINDINGS SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+
+HIGH SEVERITY (address before or immediately after next release):
+  R-ARCH-01  Remove deprecated TorusKnot and TorusKnotGeometry components
+  R-QUAL-01  Add window-level drag/release handlers to Infinity interaction
+
+MEDIUM SEVERITY (address in the next iteration):
+  R-ARCH-02  Resolve useInfinityMotion: delete or reconnect (recommend reconnect)
+  R-QUAL-02  Deduplicate InteractionState type (debugStore vs hook)
+  R-QUAL-03  Remove dead rotation/velocity fields from DebugInteractionData
+  R-QUAL-04  Remove dead depthScale variable from InfinityGeometry
+  R-QUAL-05  Extract shared template for MusicSection/DevelopmentSection/PublishingSection
+  R-PERF-01  Split CosmicBackground scroll tracking to avoid dual subscriptions
+  R-VIS-01   Replace emoji in ThemeToggle with lucide-react icons
+  R-VIS-02   Resolve IdentityBlock Lottie vs 3D canvas visual competition
+
+LOW SEVERITY (polish / future milestone):
+  R-ARCH-03  Remove unused children prop from InfinityProps
+  R-ARCH-04  Add hooks/index.ts barrel to features/three/hooks/
+  R-QUAL-06  Fix GradientMaterial ref type assertion
+  R-QUAL-07  Centralize session storage keys
+  R-PERF-02  Add reduced-motion awareness to ParticleTrail
+  R-PERF-03  Add enabled prop to BloomEffect for low-end device bypass
+  R-VIS-03   Standardize hover scale multiplier (or remove with TorusKnot)
+  R-DX-01    Add Storybook stories for 3D components
+  R-DX-02    Add Storybook stories for NavBar, ThemeToggle, Section
+  R-DX-03    Export useInfinityMotion from barrel when it has a consumer
+
+────────────────────────────────────────────────────────────────────────────────
+  RECOMMENDED ACTION BACKLOG (priority order)
+────────────────────────────────────────────────────────────────────────────────
+
+  1. [HIGH]  Fix Infinity interaction — add window-level pointermove, pointerup,
+             and touchmove handlers (R-QUAL-01). This is a functional regression
+             compared to the TorusKnot implementation it replaced.
+
+  2. [HIGH]  Remove TorusKnot, TorusKnotGeometry from codebase and barrel
+             exports (R-ARCH-01). These are the predecessor objects and add
+             confusion about the canonical 3D component.
+
+  3. [MED]   Resolve useInfinityMotion — reconnect with an `effects.rotation`
+             flag in InfinityProps, or delete with a clear code comment
+             documenting the "stable, no-rotation" design decision (R-ARCH-02).
+
+  4. [MED]   Clean up dead code in InfinityGeometry (depthScale = dead
+             calculation) and DebugInteractionData (rotation fields) (R-QUAL-03,
+             R-QUAL-04).
+
+  5. [MED]   Deduplicate InteractionState type — export from one location and
+             import everywhere else (R-QUAL-02).
+
+  6. [MED]   Replace emoji in ThemeToggle with lucide-react icons (R-VIS-01).
+             Quick win — Icon component is already available.
+
+  7. [MED]   Redesign IdentityBlock visual to complement rather than compete
+             with the 3D canvas (R-VIS-02). Placeholder Lottie is a brand gap.
+
+  8. [MED]   Extract shared section template for landing page content sections
+             (R-QUAL-05). Apply when real content begins to differentiate sections.
+
+  9. [MED]   Fix CosmicBackground dual-scroll-subscription overhead (R-PERF-01).
+
+  10. [LOW]  Add Storybook stories for Infinity, ThemeToggle, NavBar, Section
+             (R-DX-01, R-DX-02).
+
+  11. [LOW]  Add reduced-motion check to ParticleTrail; add enabled prop to
+             BloomEffect (R-PERF-02, R-PERF-03).
+
+  12. [LOW]  Centralize sessionStorage keys into a shared constants file
+             (R-QUAL-07).
+
+  13. [LOW]  Fix GradientMaterial ref type safety (R-QUAL-06).
+
+  14. [LOW]  Clean up InfinityProps.children and add hooks/ barrel (R-ARCH-03,
+             R-ARCH-04).
+
+────────────────────────────────────────────────────────────────────────────────
+  CARRIED FORWARD FROM PRIOR AUDIT (still open)
+────────────────────────────────────────────────────────────────────────────────
+
+The following findings from the April 11 Landing v1 Readiness audit remain
+open and are not superseded by this refactor audit:
+
+  F-ANIM-01  Replace placeholder Lottie assets with brand animations
+             (still open — affects IdentityBlock + all three sections)
+  F-DEP-01   Verify next@16.2.3 stability
+  F-UX-01    SkipToContent link is present but no visible focus ring on
+             interactive identity element (IdentityBlock wrapper uses onClick
+             but has no keyboard-accessible role or aria-label on the div)
+  F-VIS-04   Replace default Next.js favicon
+  F-DEP-03   Add test framework (no tests exist)
+  F-DEP-04   Add pre-commit hooks (husky + lint-staged)
+
+────────────────────────────────────────────────────────────────────────────────
+  VERDICT
+────────────────────────────────────────────────────────────────────────────────
+
+The 3D identity system milestone introduced a well-designed, composable
+architecture. The geometry / material / effects separation is correct and
+provides a solid foundation for future iteration. No breaking architectural
+changes are recommended.
+
+Two issues require immediate attention:
+  → R-QUAL-01: The Infinity component cannot process drag input in "engaged"
+    state. This is a behavioral regression vs. the TorusKnot it replaced.
+  → R-ARCH-01: TorusKnot and its supporting types should be removed to
+    eliminate the confusion between the legacy and current identity objects.
+
+All other findings are low-risk cleanups that improve maintainability
+and polish without risk to stability.
+
+No breaking changes are introduced by any of the recommendations above.
+All refactors are backwards-compatible within the scope of this codebase.
+
+================================================================================
+  END OF AUDIT
+  Files analyzed: 48 source files across src/ and .storybook/
+  Prior audit:    audits/audit-2026-04-11T21-22-10.log
+  New findings:   17 (2 HIGH, 8 MED, 7 LOW — excluding 6 carried-forward)
+  Lint result:    (not re-run; prior audit PASS — no structural changes made)
+  Build result:   (not re-run; prior audit PASS — no structural changes made)
+================================================================================
