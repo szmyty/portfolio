@@ -10,7 +10,9 @@
  * DebugPanel itself is conditionally rendered only in dev.
  */
 
-export type InteractionState = "idle" | "pending" | "engaged";
+import type { InteractionState } from "@portfolio/features/three/hooks/useInfinityInteraction";
+
+export type { InteractionState };
 
 export type DebugInteractionData = {
   interactionState: InteractionState;
