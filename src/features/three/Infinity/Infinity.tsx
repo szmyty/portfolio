@@ -10,6 +10,7 @@ import { GradientMaterial } from "../materials";
 import { BloomEffect, ParticleTrail } from "../effects";
 
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
+import { useInfinityMotion } from "../hooks/useInfinityMotion";
 import type { InfinityProps } from "./Infinity.types";
 import { isDev } from "@portfolio/config";
 import { setDebugInteraction } from "@portfolio/lib/debug/debugStore";
@@ -30,17 +31,14 @@ const INFINITY_NATURAL_WIDTH = 4.9;
 const INFINITY_MAX_SCALE = 0.7;
 
 /**
- * Infinity (Stable Edition)
+ * Infinity
  *
- * This version intentionally removes:
- * - rotation
- * - inertia
- * - drag physics
- * - floating animation
- *
- * The object is now:
- * → visually alive (shader + glow)
- * → spatially stable (anchored identity element)
+ * Interactive lemniscate geometry with:
+ * - drag rotation (hold-to-engage, 250 ms threshold)
+ * - inertia coast after release
+ * - idle auto-rotation fallback
+ * - hover glow and scale feedback
+ * - viewport-aware responsive scaling
  */
 export function Infinity({
   GeometryComponent = InfinityGeometry,
@@ -74,7 +72,12 @@ export function Infinity({
   }, [gl]);
 
   /**
-   * Interaction (hover only now — no drag physics)
+   * Motion system (rotation, velocity, inertia, idle fallback)
+   */
+  const motion = useInfinityMotion();
+
+  /**
+   * Interaction (hold-to-engage, hover feedback, window-level drag/release)
    */
   const interaction = useInfinityInteraction({
     canvasRef,
@@ -82,13 +85,33 @@ export function Infinity({
     IDLE_EMISSIVE,
     HOVER_EMISSIVE,
     ENGAGED_EMISSIVE,
+    onPointerDownStart: motion.resetVelocity,
+    onDrag: motion.applyDrag,
   });
 
   /**
-   * Frame loop (visual polish only)
+   * Frame loop
    */
   useFrame((state, delta) => {
     if (!meshRef.current) return;
+
+    const isEngaged = interaction.interactionState.current === "engaged";
+
+    /**
+     * Motion update: inertia coast → idle auto-rotation fallback.
+     * Skipped while dragging (useInfinityMotion handles that via applyDrag).
+     */
+    motion.updateMotion({
+      delta,
+      isEngaged,
+      reducedMotion: reducedMotion.current,
+    });
+
+    /**
+     * Apply accumulated rotation to the mesh.
+     */
+    meshRef.current.rotation.x = motion.rotX.current;
+    meshRef.current.rotation.y = motion.rotY.current;
 
     /**
      * Centered hero position
@@ -111,17 +134,13 @@ export function Infinity({
     );
 
     /**
-     * Subtle scale interaction (feels premium, not distracting)
+     * Scale interaction: idle → hovered → engaged.
      */
     const isHovered = interaction.isHovered.current;
-
-    const targetNorm = isHovered ? 1.04 : 1.0;
-
+    const targetNorm = isEngaged ? 1.08 : isHovered ? 1.04 : 1.0;
     const currentNorm = meshRef.current.scale.x / baseScale;
-
     const newNorm =
-      currentNorm + (targetNorm - currentNorm) * Math.min(delta * 6, 1);
-
+      currentNorm + (targetNorm - currentNorm) * Math.min(delta * 8, 1);
     meshRef.current.scale.setScalar(baseScale * newNorm);
 
     /**

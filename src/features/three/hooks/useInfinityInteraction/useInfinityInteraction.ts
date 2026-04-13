@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 
 /**
@@ -31,6 +31,18 @@ export type UseInfinityInteractionParams = {
   IDLE_EMISSIVE: number;
   HOVER_EMISSIVE: number;
   ENGAGED_EMISSIVE: number;
+
+  /**
+   * Called when a new pointer-down begins (before hold timer).
+   * Use to reset velocity / inertia before a fresh drag.
+   */
+  onPointerDownStart?: () => void;
+
+  /**
+   * Called each pointermove while engaged with the pixel deltas.
+   * Use to drive rotation or other motion responses.
+   */
+  onDrag?: (dx: number, dy: number) => void;
 }
 
 /**
@@ -51,6 +63,8 @@ export function useInfinityInteraction({
   IDLE_EMISSIVE,
   HOVER_EMISSIVE,
   ENGAGED_EMISSIVE,
+  onPointerDownStart,
+  onDrag,
 }: UseInfinityInteractionParams) {
   /**
    * Current interaction mode.
@@ -72,6 +86,15 @@ export function useInfinityInteraction({
    * Hover state (separate from interaction state)
    */
   const isHovered = useRef(false);
+
+  /**
+   * Stable refs for optional callbacks — avoids stale closure issues in the
+   * window-level effect while keeping the deps array empty.
+   */
+  const onPointerDownStartRef = useRef(onPointerDownStart);
+  const onDragRef = useRef(onDrag);
+  onPointerDownStartRef.current = onPointerDownStart;
+  onDragRef.current = onDrag;
 
   /**
    * Cancels any active hold timer.
@@ -105,6 +128,68 @@ export function useInfinityInteraction({
   };
 
   /**
+   * Window-level pointer and touch listeners — handle drag movement, release,
+   * and scroll cancellation across the full pointer lifecycle.
+   */
+  useEffect(() => {
+    const onPointerMove = (e: PointerEvent) => {
+      if (interactionState.current === "pending") {
+        // If the pointer moved too far before the hold elapsed, the user is
+        // scrolling — cancel the hold so native scroll works unimpeded.
+        const dx = Math.abs(e.clientX - initialPointer.current.x);
+        const dy = Math.abs(e.clientY - initialPointer.current.y);
+        if (dx > SCROLL_CANCEL_PX || dy > SCROLL_CANCEL_PX) {
+          cancelHold();
+          interactionState.current = "idle";
+          if (canvasRef.current) {
+            canvasRef.current.style.cursor = isHovered.current
+              ? "grab"
+              : "default";
+          }
+        }
+        return;
+      }
+
+      if (interactionState.current !== "engaged") return;
+
+      const dx = e.clientX - lastPointer.current.x;
+      const dy = e.clientY - lastPointer.current.y;
+      lastPointer.current = { x: e.clientX, y: e.clientY };
+
+      onDragRef.current?.(dx, dy);
+    };
+
+    const onPointerUp = () => {
+      releaseEngaged();
+    };
+
+    // Prevent touch-scroll only while actively dragging the object.
+    // Must be registered as non-passive so preventDefault() is honoured.
+    const preventTouchScroll = (e: TouchEvent) => {
+      if (interactionState.current === "engaged") {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("touchmove", preventTouchScroll);
+      // Ensure no dangling timer if the component unmounts mid-hold.
+      if (holdTimer.current !== null) {
+        clearTimeout(holdTimer.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
    * Pointer down → begin hold detection.
    */
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -114,6 +199,9 @@ export function useInfinityInteraction({
     if (holdTimer.current !== null) {
       clearTimeout(holdTimer.current);
     }
+
+    // Reset velocity / inertia so the new drag always starts from rest.
+    onPointerDownStartRef.current?.();
 
     // Capture initial pointer position
     initialPointer.current = { x: e.clientX, y: e.clientY };
