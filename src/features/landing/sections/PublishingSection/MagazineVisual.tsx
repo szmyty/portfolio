@@ -1,0 +1,32 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+const MagazineScene = dynamic(
+  () =>
+    import("@portfolio/features/three/MagazineScene").then(
+      (mod) => mod.MagazineScene,
+    ),
+  { ssr: false },
+);
+
+/**
+ * MagazineVisual — client component wrapper that lazy-loads the 3D magazine
+ * canvas (WebGL requires the DOM so SSR must be disabled).
+ *
+ * The container uses `position: relative` (required by react-three-fiber Canvas)
+ * and an explicit height so the WebGL context gets the correct dimensions.
+ *
+ * Width is constrained to stay within the Section visual column, while height
+ * preserves the 2:3 portrait aspect ratio of the magazine geometry.
+ */
+export function MagazineVisual() {
+  return (
+    <div
+      className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px]"
+      style={{ position: "relative", height: "360px" }}
+    >
+      <MagazineScene />
+    </div>
+  );
+}
