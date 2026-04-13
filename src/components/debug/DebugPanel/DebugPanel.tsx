@@ -132,10 +132,6 @@ export function DebugPanel({ info }: DebugPanelProps) {
   const [interaction, setInteraction] = useState<DebugInteractionData>({
     interactionState: "idle",
     isHovered: false,
-    rotX: 0,
-    rotY: 0,
-    velX: 0,
-    velY: 0,
   });
 
   const device = useDeviceInfo();
@@ -224,10 +220,6 @@ export function DebugPanel({ info }: DebugPanelProps) {
             value={interaction.isHovered ? "yes" : "no"}
           />
           <Row label="drag" value={interaction.interactionState === "engaged" ? "active" : "inactive"} />
-          <Row label="rot X" value={interaction.rotX.toFixed(3)} />
-          <Row label="rot Y" value={interaction.rotY.toFixed(3)} />
-          <Row label="vel X" value={interaction.velX.toFixed(4)} />
-          <Row label="vel Y" value={interaction.velY.toFixed(4)} />
         </Section>
 
         {/* ── Device Info ── */}
