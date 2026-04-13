@@ -7,7 +7,8 @@ import { useRef } from "react";
  * - rotation accumulation
  * - velocity tracking
  * - inertia / damping
- * - idle Z-axis spin (disc spinning on its face axis, like a turntable)
+ * - continuous Z-axis spin (disc spinning on its face axis like a turntable,
+ *   runs even while X / Y inertia from a drag is still decaying)
  *
  * The record disc faces the camera after a 90° X rotation applied in the
  * component, so the natural idle animation is a rotation around Z (the disc's
@@ -60,7 +61,7 @@ export function useVinylRecordMotion() {
    *
    * Handles:
    * - inertia decay on X / Y tilt axes after drag release
-   * - idle Z-axis turntable spin when at rest
+   * - continuous Z-axis turntable spin (runs even during X / Y inertia coast)
    */
   const updateMotion = ({
     delta,
@@ -93,10 +94,13 @@ export function useVinylRecordMotion() {
 
       rotX.current += velX.current;
       rotY.current += velY.current;
-    } else if (!reducedMotion) {
+    }
+
+    if (!reducedMotion) {
       /**
-       * Idle: spin the disc around its face axis (Z in the camera-facing
-       * orientation) like a record on a turntable.
+       * Continuous turntable spin around the disc's face axis (Z in the
+       * camera-facing orientation). Runs independently of X / Y inertia so
+       * the record never stops spinning — even during the coast after a drag.
        */
       rotZ.current += delta * 0.4;
     }
