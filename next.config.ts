@@ -9,6 +9,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   transpilePackages: [
     "three",
     "@react-three/fiber",
