@@ -43,7 +43,7 @@ const INFINITY_MAX_SCALE = 0.7;
 export function Infinity({
   GeometryComponent = InfinityGeometry,
   MaterialComponent = GradientMaterial,
-  effects = { glow: true, particles: true },
+  effects = { glow: true, particles: true, rotation: true },
 }: InfinityProps) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
@@ -85,8 +85,8 @@ export function Infinity({
     IDLE_EMISSIVE,
     HOVER_EMISSIVE,
     ENGAGED_EMISSIVE,
-    onPointerDownStart: motion.resetVelocity,
-    onDrag: motion.applyDrag,
+    onPointerDownStart: effects.rotation !== false ? motion.resetVelocity : undefined,
+    onDrag: effects.rotation !== false ? motion.applyDrag : undefined,
   });
 
   /**
@@ -100,18 +100,21 @@ export function Infinity({
     /**
      * Motion update: inertia coast → idle auto-rotation fallback.
      * Skipped while dragging (useInfinityMotion handles that via applyDrag).
+     * Skipped entirely when effects.rotation is false.
      */
-    motion.updateMotion({
-      delta,
-      isEngaged,
-      reducedMotion: reducedMotion.current,
-    });
+    if (effects.rotation !== false) {
+      motion.updateMotion({
+        delta,
+        isEngaged,
+        reducedMotion: reducedMotion.current,
+      });
 
-    /**
-     * Apply accumulated rotation to the mesh.
-     */
-    meshRef.current.rotation.x = motion.rotX.current;
-    meshRef.current.rotation.y = motion.rotY.current;
+      /**
+       * Apply accumulated rotation to the mesh.
+       */
+      meshRef.current.rotation.x = motion.rotX.current;
+      meshRef.current.rotation.y = motion.rotY.current;
+    }
 
     /**
      * Centered hero position
