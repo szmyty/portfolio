@@ -2,9 +2,21 @@
 
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 
+type BloomEffectProps = {
+  /**
+   * Whether the bloom post-processing effect is active.
+   * Set to false to skip the EffectComposer entirely for performance savings.
+   * Defaults to true.
+   */
+  enabled?: boolean;
+};
+
 /**
  * BloomEffect adds a subtle luminous glow around emissive surfaces using the
  * Bloom pass from @react-three/postprocessing.
+ *
+ * Pass `enabled={false}` to skip the EffectComposer entirely — useful for
+ * reduced-motion mode, low-end devices, or debug panel toggles.
  *
  * Tuning notes:
  * - intensity: kept low (0.8) so the glow amplifies emissive without overexposure.
@@ -13,7 +25,9 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
  * - luminanceSmoothing: 0.9 softens the threshold edge for a natural bloom falloff.
  * - mipmapBlur: true uses mipmap-based blur for a higher quality, lower-cost spread.
  */
-export function BloomEffect() {
+export function BloomEffect({ enabled = true }: BloomEffectProps) {
+  if (!enabled) return null;
+
   return (
     <EffectComposer>
       <Bloom
