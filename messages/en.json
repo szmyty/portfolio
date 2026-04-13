@@ -10,7 +10,8 @@
   },
   "LandingEntry": {
     "comingSoon": "Main content coming soon.",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "interactiveAriaLabel": "Interactive 3D identity — press Enter or Space to enter the site"
   },
   "NotFound": {
     "code": "404",

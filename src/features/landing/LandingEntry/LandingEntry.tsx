@@ -91,8 +91,17 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
           >
             {/* Interactive identity block — pointer-events-auto restores input */}
             <div
+              role="button"
+              tabIndex={0}
+              aria-label={t("interactiveAriaLabel")}
               className="pb-16 sm:pb-20 [@media(max-height:500px)]:pb-0 pointer-events-auto cursor-pointer"
               onClick={handleEnter}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleEnter();
+                }
+              }}
             >
               {children}
             </div>
