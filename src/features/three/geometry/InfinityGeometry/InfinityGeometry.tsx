@@ -29,19 +29,17 @@ class InfinityCurve extends THREE.Curve<THREE.Vector3> {
 
     const x = cos / denom;
     const y = (sin * cos) / denom;
-    const z = 0;
 
     /**
      * Shape tuning
      */
     const horizontalScale = 2.2; // widen loops
     const verticalScale = 1.2;   // control height
-    const depthScale = 0.2;      // VERY slight depth
 
     return new THREE.Vector3(
       x * horizontalScale,
       y * verticalScale,
-      z * depthScale
+      0
     ).multiplyScalar(this.scale);
   }
 }
