@@ -8,8 +8,7 @@ import { LandingBackground } from "@portfolio/features/landing/LandingBackground
 import { EntryTrigger } from "@portfolio/features/landing/EntryTrigger";
 import { Center } from "@portfolio/components/ui/Center";
 import { SkipToContent } from "@portfolio/components/ui/SkipToContent";
-
-const STORAGE_KEY = "landing-entered";
+import { LANDING_ENTERED_KEY } from "@portfolio/lib/storageKeys";
 
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -18,7 +17,7 @@ function subscribe(callback: () => void) {
 
 function getSnapshot() {
   if (typeof window === "undefined") return false;
-  return sessionStorage.getItem(STORAGE_KEY) === "true";
+  return sessionStorage.getItem(LANDING_ENTERED_KEY) === "true";
 }
 
 function getServerSnapshot() {
@@ -41,7 +40,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
   const entered = storedEntered || manuallyEntered;
 
   const handleEnter = useCallback(() => {
-    sessionStorage.setItem(STORAGE_KEY, "true");
+    sessionStorage.setItem(LANDING_ENTERED_KEY, "true");
     setManuallyEntered(true);
   }, []);
 
