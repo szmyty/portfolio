@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { AdditiveBlending, DynamicDrawUsage } from "three";
 import type { Points, Mesh, BufferAttribute } from "three";
@@ -94,6 +94,18 @@ export function ParticleTrail({
   const posAttrRef = useRef<BufferAttribute>(null);
   const offsetRef = useRef(0);
 
+  /**
+   * Reduced motion preference — detected once on mount so the ref is stable
+   * inside the useFrame callback without causing re-renders.
+   */
+  const reducedMotion = useRef(false);
+
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+  }, []);
+
   // Lazily-initialized starting positions passed to the bufferAttribute.
   // R3F reads this once on mount; from then on we drive updates imperatively
   // via posAttrRef.current inside useFrame.
@@ -112,23 +124,27 @@ export function ParticleTrail({
   useFrame((_, delta) => {
     if (!pointsRef.current || !meshRef.current || !posAttrRef.current) return;
 
-    const posAttr = posAttrRef.current;
+    // When the user prefers reduced motion, keep particles statically visible
+    // at their initial positions — skip travel animation entirely.
+    if (!reducedMotion.current) {
+      const posAttr = posAttrRef.current;
 
-    // Advance the shared offset — wraps at 1.0 for a seamless loop.
-    offsetRef.current = (offsetRef.current + speed * delta) % 1.0;
+      // Advance the shared offset — wraps at 1.0 for a seamless loop.
+      offsetRef.current = (offsetRef.current + speed * delta) % 1.0;
 
-    // Recompute each particle's position by sampling the pre-computed path.
-    for (let i = 0; i < count; i++) {
-      const t = ((i / count) + offsetRef.current) % 1.0;
-      const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
-      posAttr.setXYZ(
-        i,
-        INFINITY_PATH[idx * 3],
-        INFINITY_PATH[idx * 3 + 1],
-        INFINITY_PATH[idx * 3 + 2],
-      );
+      // Recompute each particle's position by sampling the pre-computed path.
+      for (let i = 0; i < count; i++) {
+        const t = ((i / count) + offsetRef.current) % 1.0;
+        const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
+        posAttr.setXYZ(
+          i,
+          INFINITY_PATH[idx * 3],
+          INFINITY_PATH[idx * 3 + 1],
+          INFINITY_PATH[idx * 3 + 2],
+        );
+      }
+      posAttr.needsUpdate = true;
     }
-    posAttr.needsUpdate = true;
 
     // Mirror the mesh transform so the trail rotates and floats in lockstep.
     pointsRef.current.rotation.copy(meshRef.current.rotation);
