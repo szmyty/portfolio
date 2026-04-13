@@ -1,0 +1,1 @@
+export { VinylRecordScene } from "./VinylRecordScene";
