@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ThemeToggle } from "@portfolio/components/ui/ThemeToggle";
@@ -56,11 +56,12 @@ function useSectionObserver(ids: string[], enabled: boolean): string | null {
 export function NavBar() {
   const t = useTranslations("NavBar");
   const pathname = usePathname();
+  const router = useRouter();
   const isHome = pathname === "/";
   const activeId = useSectionObserver(sectionIds, isHome);
 
   function getSectionHref(id: string): string {
-    return isHome ? `#${id}` : `/#${id}`;
+    return `/#${id}`;
   }
 
   return (
@@ -70,7 +71,16 @@ export function NavBar() {
     >
       <Link
         href="/"
-        className="text-sm font-medium text-text-muted hover:text-accent transition-colors duration-200"
+        onClick={(event) => {
+          if (!isHome || typeof window === "undefined") return;
+
+          if (window.location.hash) {
+            event.preventDefault();
+            router.replace("/");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
+        className="text-sm font-medium text-text-secondary hover:text-accent transition-colors duration-200"
       >
         {t("home")}
       </Link>
@@ -84,14 +94,14 @@ export function NavBar() {
             className={`text-sm font-medium transition-colors duration-200 ${
               isActive
                 ? "text-accent"
-                : "text-text-muted hover:text-accent"
+                : "text-text-secondary hover:text-accent"
             }`}
           >
             {t(labelKey)}
           </Link>
         );
       })}
-      <div className="ml-auto">
+      <div className="ml-auto shrink-0">
         <ThemeToggle />
       </div>
     </nav>

@@ -2,11 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import type { ComponentType, ReactNode } from "react";
 import type { Mesh, MeshStandardMaterial } from "three";
 
 import { InfinityGeometry } from "../geometry/InfinityGeometry";
-import { GradientMaterial } from "../materials";
+import { InfinityEnergyMaterial } from "../materials";
 import { BloomEffect, ParticleTrail } from "../effects";
 
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
@@ -42,8 +41,9 @@ const INFINITY_MAX_SCALE = 0.7;
  */
 export function Infinity({
   GeometryComponent = InfinityGeometry,
-  MaterialComponent = GradientMaterial,
+  MaterialComponent = InfinityEnergyMaterial,
   effects = { glow: true, particles: true, rotation: true },
+  position = [0, 0, 0],
 }: InfinityProps) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
@@ -119,8 +119,7 @@ export function Infinity({
     /**
      * Centered hero position
      */
-    meshRef.current.position.x = 0;
-    meshRef.current.position.y = 0;
+    meshRef.current.position.set(position[0], position[1], position[2]);
 
     /**
      * Viewport-aware base scale.

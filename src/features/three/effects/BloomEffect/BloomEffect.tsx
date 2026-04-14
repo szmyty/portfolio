@@ -19,10 +19,11 @@ type BloomEffectProps = {
  * reduced-motion mode, low-end devices, or debug panel toggles.
  *
  * Tuning notes:
- * - intensity: kept low (0.8) so the glow amplifies emissive without overexposure.
- * - luminanceThreshold: 0.2 captures the emissive torus-knot (emissiveIntensity 0.15–1.0)
- *   while ignoring low-luminance background elements.
- * - luminanceSmoothing: 0.9 softens the threshold edge for a natural bloom falloff.
+ * - intensity: moderately strong so the infinity ribbon blooms into the starfield
+ *   without dissolving into a white blob.
+ * - luminanceThreshold: low enough to catch shader-driven emissive bands instead
+ *   of only the brightest hotspots.
+ * - luminanceSmoothing: softer threshold edge for a more atmospheric halo.
  * - mipmapBlur: true uses mipmap-based blur for a higher quality, lower-cost spread.
  */
 export function BloomEffect({ enabled = true }: BloomEffectProps) {
@@ -31,9 +32,9 @@ export function BloomEffect({ enabled = true }: BloomEffectProps) {
   return (
     <EffectComposer>
       <Bloom
-        intensity={0.8}
-        luminanceThreshold={0.2}
-        luminanceSmoothing={0.9}
+        intensity={1.1}
+        luminanceThreshold={0.08}
+        luminanceSmoothing={0.35}
         mipmapBlur
       />
     </EffectComposer>

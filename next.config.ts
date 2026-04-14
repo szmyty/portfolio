@@ -17,6 +17,27 @@ const nextConfig: NextConfig = {
     "@react-three/postprocessing",
     "postprocessing",
   ],
+  turbopack: {
+    rules: {
+      "*.glsl": {
+        type: "raw",
+      },
+      "*.vert.glsl": {
+        type: "raw",
+      },
+      "*.frag.glsl": {
+        type: "raw",
+      },
+    },
+  },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(glsl|vert|frag)$/i,
+      type: "asset/source",
+    });
+
+    return config;
+  },
 };
 
 export default withBundleAnalyzer(withNextIntl(nextConfig));

@@ -2,53 +2,34 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
+import {
+  getInfinityPoint,
+  INFINITY_RADIAL_SEGMENTS,
+  INFINITY_TUBE_RADIUS,
+  INFINITY_TUBULAR_SEGMENTS,
+} from "./infinityCurve";
 
 /**
- * InfinityCurve
+ * Custom parametric curve for a 3D lemniscate.
  *
- * Custom parametric curve representing a smooth infinity (lemniscate).
- *
- * We extend THREE.Curve so it can be fed into TubeGeometry.
+ * The base shape uses the Gerono lemniscate in the XY plane. A localized Z
+ * offset is then applied near the center so the two passes separate into a
+ * readable over/under crossover instead of collapsing into one flat blob.
  */
 class InfinityCurve extends THREE.Curve<THREE.Vector3> {
-  constructor(private scale = 1) {
+  constructor(private readonly scale = 1) {
     super();
   }
 
   getPoint(t: number) {
-    const TWO_PI = Math.PI * 2;
-    const angle = t * TWO_PI;
-
-    const sin = Math.sin(angle);
-    const cos = Math.cos(angle);
-
-    /**
-     * Bernoulli Lemniscate
-     */
-    const denom = 1 + sin * sin;
-
-    const x = cos / denom;
-    const y = (sin * cos) / denom;
-
-    /**
-     * Shape tuning
-     */
-    const horizontalScale = 2.2; // widen loops
-    const verticalScale = 1.2;   // control height
-
-    return new THREE.Vector3(
-      x * horizontalScale,
-      y * verticalScale,
-      0
-    ).multiplyScalar(this.scale);
+    return getInfinityPoint(t).multiplyScalar(this.scale);
   }
 }
 
 /**
  * InfinityGeometry
  *
- * TubeGeometry built along the custom InfinityCurve.
- *
+ * TubeGeometry extruded along the 3D infinity curve.
  */
 export function InfinityGeometry() {
   const geometry = useMemo(() => {
@@ -56,9 +37,9 @@ export function InfinityGeometry() {
 
     return new THREE.TubeGeometry(
       path,
-      200, // tubularSegments (smooth along curve)
-      0.25, // radius (tube thickness)
-      32, // radialSegments (smoothness of tube)
+      INFINITY_TUBULAR_SEGMENTS,
+      INFINITY_TUBE_RADIUS,
+      INFINITY_RADIAL_SEGMENTS,
       true, // closed loop
     );
   }, []);

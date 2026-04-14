@@ -40,7 +40,7 @@ function resolveTheme(mode: ThemeMode): ResolvedTheme {
 
 function readStoredTheme(): ThemeMode {
   if (typeof window === "undefined") return "dark";
-  return (sessionStorage.getItem(THEME_STORAGE_KEY) as ThemeMode) ?? "dark";
+  return (localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode) ?? "dark";
 }
 
 /** Apply the resolved theme to the <html> element. */
@@ -58,7 +58,7 @@ type ThemeProviderProps = {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Lazy initializers read sessionStorage once on the client — no SSR mismatch
+  // Lazy initializers read localStorage once on the client — no SSR mismatch
   // because the anti-flicker script already applied the correct attribute.
   const [theme, setThemeState] = useState<ThemeMode>(readStoredTheme);
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
@@ -80,7 +80,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [theme]);
 
   const setTheme = useCallback((newMode: ThemeMode) => {
-    sessionStorage.setItem(THEME_STORAGE_KEY, newMode);
+    localStorage.setItem(THEME_STORAGE_KEY, newMode);
     const resolved = resolveTheme(newMode);
     setThemeState(newMode);
     setResolvedTheme(resolved);

@@ -1,103 +1,104 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { AdditiveBlending, DynamicDrawUsage } from "three";
-import type { Points, Mesh, BufferAttribute } from "three";
+import { AdditiveBlending, BufferAttribute, Color, DynamicDrawUsage, Vector3 } from "three";
+import type { Mesh, Points } from "three";
+import { getInfinityPoint } from "../../geometry/InfinityGeometry/infinityCurve";
 
-/**
- * Lemniscate scaling constants — must match InfinityGeometry / InfinityCurve.
- *
- *   angle ∈ [0, 2π]
- *   denom = 1 + sin²(angle)
- *   x = cos(angle) / denom · HORIZONTAL_SCALE
- *   y = sin(angle)·cos(angle) / denom · VERTICAL_SCALE
- *   z = 0
- */
-const HORIZONTAL_SCALE = 2.2;
-const VERTICAL_SCALE = 1.2;
-
-/**
- * Number of pre-computed path samples used for position interpolation.
- * Higher = smoother particle motion along tightly-curved sections.
- */
-const PATH_SAMPLES = 512;
-
-/** Default number of particles spread evenly around the path. */
-const DEFAULT_COUNT = 80;
-
-/**
- * Default travel speed in path-fractions per second.
- * 0.12 means the trail completes one full loop every ~8 seconds.
- */
-const DEFAULT_SPEED = 0.12;
+const DEFAULT_COUNT = 220;
 
 type ParticleTrailProps = {
-  /** Ref to the main mesh whose transform the trail mirrors each frame. */
   meshRef: React.RefObject<Mesh | null>;
-  /** Number of particles spread along the path. Defaults to 80. */
   count?: number;
-  /** Travel speed in path-fractions per second. Defaults to 0.12. */
-  speed?: number;
+}
+
+type ParticleField = {
+  anchors: Float32Array;
+  positions: Float32Array;
+  colors: Float32Array;
+  drift: Float32Array;
+  seeds: Float32Array;
+}
+
+function createParticleField(count: number): ParticleField {
+  const anchors = new Float32Array(count * 3);
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const drift = new Float32Array(count * 3);
+  const seeds = new Float32Array(count);
+
+  const point = new Vector3();
+  const outward = new Vector3();
+  const driftDir = new Vector3();
+  const color = new Color();
+
+  for (let i = 0; i < count; i++) {
+    const t = i / count;
+    getInfinityPoint(t, point);
+
+    outward.set(point.x, point.y * 0.9, point.z * 0.35);
+    if (outward.lengthSq() < 1e-4) {
+      outward.set(0, 1, 0);
+    } else {
+      outward.normalize();
+    }
+
+    driftDir.set(
+      outward.x + (Math.random() - 0.5) * 0.45,
+      outward.y + (Math.random() - 0.5) * 0.45,
+      outward.z + (Math.random() - 0.5) * 0.25,
+    ).normalize();
+
+    const haloRadius = 0.1 + Math.random() * 0.18;
+    const shimmerRadius = 0.035 + Math.random() * 0.07;
+
+    anchors[i * 3] = point.x + outward.x * haloRadius;
+    anchors[i * 3 + 1] = point.y + outward.y * haloRadius;
+    anchors[i * 3 + 2] = point.z + outward.z * (haloRadius * 0.35);
+
+    positions[i * 3] = anchors[i * 3];
+    positions[i * 3 + 1] = anchors[i * 3 + 1];
+    positions[i * 3 + 2] = anchors[i * 3 + 2];
+
+    drift[i * 3] = driftDir.x * shimmerRadius;
+    drift[i * 3 + 1] = driftDir.y * shimmerRadius;
+    drift[i * 3 + 2] = driftDir.z * shimmerRadius;
+
+    seeds[i] = Math.random() * Math.PI * 2;
+
+    color
+      .setStyle(
+        Math.random() > 0.5
+          ? "rgb(140,245,255)"
+          : Math.random() > 0.5
+            ? "rgb(255,160,255)"
+            : "rgb(255,255,255)",
+      )
+      .multiplyScalar(0.8 + Math.random() * 0.45);
+
+    colors[i * 3] = color.r;
+    colors[i * 3 + 1] = color.g;
+    colors[i * 3 + 2] = color.b;
+  }
+
+  return { anchors, positions, colors, drift, seeds };
 }
 
 /**
- * Pre-computed lemniscate (infinity) centerline — calculated once at module load.
+ * ParticleTrail now acts as a sparse halo field rather than a literal trail.
  *
- * Uses the same Bernoulli lemniscate formula as InfinityGeometry / InfinityCurve
- * so particles ride exactly on the geometry spine:
- *
- *   angle = t · 2π,  t ∈ [0, 1)
- *   denom = 1 + sin²(angle)
- *   x = cos(angle) / denom · HORIZONTAL_SCALE
- *   y = sin(angle)·cos(angle) / denom · VERTICAL_SCALE
- *   z = 0
- *
- * Storing as a module-level constant avoids re-computing inside the component
- * render cycle and keeps it outside React's hooks immutability rules.
- */
-const INFINITY_PATH: Float32Array = (() => {
-  const arr = new Float32Array(PATH_SAMPLES * 3);
-  for (let i = 0; i < PATH_SAMPLES; i++) {
-    const angle = (i / PATH_SAMPLES) * Math.PI * 2;
-    const sin = Math.sin(angle);
-    const cos = Math.cos(angle);
-    const denom = 1 + sin * sin;
-    arr[i * 3] = (cos / denom) * HORIZONTAL_SCALE;
-    arr[i * 3 + 1] = ((sin * cos) / denom) * VERTICAL_SCALE;
-    arr[i * 3 + 2] = 0;
-  }
-  return arr;
-})();
-
-/**
- * ParticleTrail renders a stream of glowing particles that travel along the
- * lemniscate (infinity) spine — the same centerline used by InfinityGeometry.
- *
- * Implementation notes:
- * - INFINITY_PATH is a module-level pre-computed array (512 equally-spaced
- *   points) using the Bernoulli lemniscate formula, so particles ride the
- *   geometry centerline precisely.
- * - Particles are spread evenly around the full loop and advance at the same
- *   rate, keeping density uniform throughout the animation.
- * - Additive blending makes overlapping particles accumulate brightness,
- *   naturally reinforcing the Bloom post-processing glow on the same layer.
- * - The points transform is copied from the mesh ref each frame so the trail
- *   stays in perfect lockstep with all rotations, floats, and scale pulses.
+ * The reference image reads as ionized dust peeling off the ribbon edges, so
+ * these points hover just outside the infinity loops and shimmer subtly instead
+ * of marching visibly along the centerline.
  */
 export function ParticleTrail({
   meshRef,
   count = DEFAULT_COUNT,
-  speed = DEFAULT_SPEED,
 }: ParticleTrailProps) {
   const pointsRef = useRef<Points>(null);
   const posAttrRef = useRef<BufferAttribute>(null);
-  const offsetRef = useRef(0);
 
-  /**
-   * Reduced motion preference — detected once on mount so the ref is stable
-   * inside the useFrame callback without causing re-renders.
-   */
   const reducedMotion = useRef(false);
 
   useEffect(() => {
@@ -106,47 +107,30 @@ export function ParticleTrail({
     ).matches;
   }, []);
 
-  // Lazily-initialized starting positions passed to the bufferAttribute.
-  // R3F reads this once on mount; from then on we drive updates imperatively
-  // via posAttrRef.current inside useFrame.
-  const [initialPositions] = useState<Float32Array>(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const t = i / count;
-      const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
-      arr[i * 3] = INFINITY_PATH[idx * 3];
-      arr[i * 3 + 1] = INFINITY_PATH[idx * 3 + 1];
-      arr[i * 3 + 2] = INFINITY_PATH[idx * 3 + 2];
-    }
-    return arr;
-  });
+  const field = useMemo(() => createParticleField(count), [count]);
 
-  useFrame((_, delta) => {
+  useFrame((state) => {
     if (!pointsRef.current || !meshRef.current || !posAttrRef.current) return;
 
-    // When the user prefers reduced motion, keep particles statically visible
-    // at their initial positions — skip travel animation entirely.
     if (!reducedMotion.current) {
+      const time = state.clock.getElapsedTime();
       const posAttr = posAttrRef.current;
 
-      // Advance the shared offset — wraps at 1.0 for a seamless loop.
-      offsetRef.current = (offsetRef.current + speed * delta) % 1.0;
-
-      // Recompute each particle's position by sampling the pre-computed path.
       for (let i = 0; i < count; i++) {
-        const t = ((i / count) + offsetRef.current) % 1.0;
-        const idx = Math.min(Math.floor(t * PATH_SAMPLES), PATH_SAMPLES - 1);
+        const pulse = Math.sin(time * 0.85 + field.seeds[i]) * 0.5 + 0.5;
+        const driftScale = 0.45 + pulse * 0.55;
+
         posAttr.setXYZ(
           i,
-          INFINITY_PATH[idx * 3],
-          INFINITY_PATH[idx * 3 + 1],
-          INFINITY_PATH[idx * 3 + 2],
+          field.anchors[i * 3] + field.drift[i * 3] * driftScale,
+          field.anchors[i * 3 + 1] + field.drift[i * 3 + 1] * driftScale,
+          field.anchors[i * 3 + 2] + field.drift[i * 3 + 2] * driftScale,
         );
       }
+
       posAttr.needsUpdate = true;
     }
 
-    // Mirror the mesh transform so the trail rotates and floats in lockstep.
     pointsRef.current.rotation.copy(meshRef.current.rotation);
     pointsRef.current.position.copy(meshRef.current.position);
     pointsRef.current.scale.copy(meshRef.current.scale);
@@ -158,16 +142,20 @@ export function ParticleTrail({
         <bufferAttribute
           ref={posAttrRef}
           attach="attributes-position"
-          args={[initialPositions, 3]}
+          args={[field.positions, 3]}
           usage={DynamicDrawUsage}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          args={[field.colors, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
-        color="#818cf8"
-        size={0.05}
+        vertexColors
+        size={0.038}
         sizeAttenuation
         transparent
-        opacity={0.85}
+        opacity={0.7}
         blending={AdditiveBlending}
         depthWrite={false}
       />

@@ -36,19 +36,36 @@ export function Scene() {
 
   return (
     <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-      {/* Ambient — higher in light mode to lift the whole scene */}
-      <ambientLight intensity={isLight ? 0.5 : 0.25} />
-      {/* Key light from upper-left-front — reduced slightly in light mode */}
-      <directionalLight position={[4, 6, 3]} intensity={isLight ? 0.8 : 1.0} />
-      {/* Fill light from lower-right-back — softens shadows without killing depth */}
-      <directionalLight position={[-4, -2, -3]} intensity={isLight ? 0.35 : 0.2} />
-      {/* Rim light — warm lavender in dark, soft indigo in light */}
+      {/* Ambient stays restrained so the shader-driven glow retains contrast. */}
+      <ambientLight intensity={isLight ? 0.4 : 0.14} color={isLight ? "#e5eefb" : "#1d2340"} />
+      {/* Cool key light shapes the top arc without flattening the shader colors. */}
+      <directionalLight
+        position={[4, 5, 3]}
+        intensity={isLight ? 0.55 : 0.7}
+        color={isLight ? "#c7d2fe" : "#9cc7ff"}
+      />
+      {/* Magenta fill keeps the underside from going dead-black in dark mode. */}
+      <directionalLight
+        position={[-5, -2, 2]}
+        intensity={isLight ? 0.2 : 0.32}
+        color={isLight ? "#d8b4fe" : "#d946ef"}
+      />
+      {/* Violet rim separates the silhouette from the background field. */}
       <directionalLight
         position={[-3, 4, -5]}
-        intensity={isLight ? 0.4 : 0.6}
-        color={isLight ? "#a5b4fc" : "#818cf8"}
+        intensity={isLight ? 0.3 : 0.5}
+        color={isLight ? "#a5b4fc" : "#8b5cf6"}
       />
-      <Infinity />
+      {/* Soft front fill helps the crossover stay readable once the object is lowered. */}
+      <pointLight
+        position={[0, 0.5, 3.5]}
+        intensity={isLight ? 0.18 : 0.24}
+        color={isLight ? "#ffffff" : "#dff9ff"}
+      />
+      <Infinity
+        position={[0, -0.95, 0]}
+        effects={{ rotation: false }}
+      />
     </Canvas>
   );
 }

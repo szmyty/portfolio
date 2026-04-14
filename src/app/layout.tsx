@@ -122,10 +122,11 @@ export default async function RootLayout({
             __html: [
               "(function(){",
               "try{",
-              "var s=sessionStorage.getItem('theme-preference');",
+              "var s=localStorage.getItem('theme-preference');",
               "var m=s||'dark';",
               "var r=m==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;",
               "if(r==='light'){document.documentElement.setAttribute('data-theme','light');}",
+              "else{document.documentElement.removeAttribute('data-theme');}",
               "document.documentElement.classList.add('no-theme-transition');",
               "requestAnimationFrame(function(){document.documentElement.classList.remove('no-theme-transition');});",
               "}catch(e){}",
@@ -133,6 +134,24 @@ export default async function RootLayout({
             ].join(""),
           }}
         />
+        {isDev && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: [
+                "(function(){",
+                "var originalWarn=console.warn;",
+                "console.warn=function(){",
+                "try{",
+                "var first=arguments[0];",
+                "if(typeof first==='string'&&first.indexOf('THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.')!==-1){return;}",
+                "}catch(e){}",
+                "return originalWarn.apply(this,arguments);",
+                "};",
+                "})();",
+              ].join(""),
+            }}
+          />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

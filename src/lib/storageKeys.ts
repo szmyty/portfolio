@@ -1,7 +1,7 @@
 /**
- * Centralized sessionStorage key constants.
+ * Centralized client-side storage key constants.
  *
- * All sessionStorage keys used across the application are defined here to
+ * All storage keys used across the application are defined here to
  * prevent duplication, reduce typo risk, and improve maintainability.
  *
  * Note: The anti-flicker inline <script> in layout.tsx reads the theme key
@@ -13,7 +13,8 @@
 export const LANDING_ENTERED_KEY = "landing-entered";
 
 /**
- * Persists the user-selected theme preference ("light" | "dark" | "system").
+ * Persists the user-selected theme preference ("light" | "dark" | "system")
+ * in localStorage so it survives full browser restarts.
  *
  * Also referenced as a hardcoded string literal in the anti-flicker inline
  * script in src/app/layout.tsx — keep both values in sync.
