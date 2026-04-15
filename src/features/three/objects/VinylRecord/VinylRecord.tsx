@@ -2,12 +2,15 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   Box3,
   Mesh,
   BufferGeometry,
   MeshStandardMaterial,
+  SRGBColorSpace,
+  Texture,
+  TextureLoader,
   Vector3,
 } from "three";
 import { useInfinityInteraction } from "../../hooks/useInfinityInteraction";
@@ -23,12 +26,19 @@ const IDLE_EMISSIVE = 0.02;
 const HOVER_EMISSIVE = 0.18;
 const ENGAGED_EMISSIVE = 0.35;
 const TARGET_SIZE = 3.4;
-const BASE_ROTATION_X = 0.22;
-const BASE_ROTATION_Y = -0.18;
+const BASE_ROTATION_X = 0.08;
+const BASE_ROTATION_Y = Math.PI / 2 - 0.08;
+const LABEL_RADIUS = 0.33;
+const LABEL_SOFTNESS = 0.025;
+const LABEL_SPINDLE = 0.04;
 
 function cloneVinylMaterials(
   material: Mesh["material"],
   isLight: boolean,
+  labelTexture: Texture,
+  labelAxisU: Vector3,
+  labelAxisV: Vector3,
+  labelPlaneRadius: number,
 ) {
   const materials = Array.isArray(material) ? material : [material];
 
@@ -38,6 +48,8 @@ function cloneVinylMaterials(
     }
 
     const nextMaterial = entry.clone();
+    nextMaterial.map = null;
+    nextMaterial.color.set(isLight ? "#131018" : "#050509");
     nextMaterial.roughness = isLight
       ? Math.min(nextMaterial.roughness + 0.08, 1)
       : Math.min(nextMaterial.roughness + 0.16, 1);
@@ -47,6 +59,47 @@ function cloneVinylMaterials(
     nextMaterial.envMapIntensity = isLight ? 1.2 : 1.55;
     nextMaterial.emissive.set(isLight ? "#f1bed6" : "#8f4f92");
     nextMaterial.emissiveIntensity = IDLE_EMISSIVE;
+    nextMaterial.onBeforeCompile = (shader) => {
+      shader.uniforms.labelMap = { value: labelTexture };
+      shader.uniforms.labelRadius = { value: LABEL_RADIUS };
+      shader.uniforms.labelSoftness = { value: LABEL_SOFTNESS };
+      shader.uniforms.labelSpindle = { value: LABEL_SPINDLE };
+      shader.uniforms.labelAxisU = { value: labelAxisU };
+      shader.uniforms.labelAxisV = { value: labelAxisV };
+      shader.uniforms.labelPlaneRadius = { value: labelPlaneRadius };
+
+      shader.vertexShader = `
+        varying vec3 vLabelPosition;
+      ` + shader.vertexShader.replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+         vLabelPosition = transformed;`,
+      );
+
+      shader.fragmentShader = `
+        uniform sampler2D labelMap;
+        uniform float labelRadius;
+        uniform float labelSoftness;
+        uniform float labelSpindle;
+        uniform vec3 labelAxisU;
+        uniform vec3 labelAxisV;
+        uniform float labelPlaneRadius;
+        varying vec3 vLabelPosition;
+      ` + shader.fragmentShader.replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+         vec2 labelPlane = vec2(dot(vLabelPosition, labelAxisU), dot(vLabelPosition, labelAxisV));
+         vec2 normalizedLabel = labelPlane / labelPlaneRadius;
+         float labelDistance = length(normalizedLabel);
+         float outerMask = 1.0 - smoothstep(labelRadius, labelRadius + labelSoftness, labelDistance);
+         float spindleMask = smoothstep(labelSpindle, labelSpindle + labelSoftness, labelDistance);
+         float finalLabelMask = outerMask * spindleMask;
+         vec2 labelSampleUv = (normalizedLabel / labelRadius) * 0.5 + 0.5;
+         vec4 labelSample = texture2D(labelMap, labelSampleUv);
+         diffuseColor.rgb = mix(diffuseColor.rgb, labelSample.rgb, finalLabelMask);`,
+      );
+    };
+    nextMaterial.needsUpdate = true;
     return nextMaterial;
   });
 }
@@ -77,6 +130,10 @@ export function VinylRecord({
 
   const { gl } = useThree();
   const { scene } = useGLTF("/models/vinyl-record/vinyl-record.glb");
+  const labelTexture = useLoader(
+    TextureLoader,
+    "/textures/artist/playfunction-profile.png",
+  );
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
 
@@ -105,6 +162,11 @@ export function VinylRecord({
       type: scene.type,
     });
   }, [logger, scene]);
+
+  useEffect(() => {
+    labelTexture.colorSpace = SRGBColorSpace;
+    logger.emit("label-texture-ready");
+  }, [labelTexture, logger]);
 
   /**
    * Motion system (Z-axis idle spin, drag tilt, inertia)
@@ -151,8 +213,25 @@ export function VinylRecord({
 
     geometry.translate(-center.x, -center.y, -center.z);
     geometry.scale(scale, scale, scale);
+    geometry.computeBoundingBox();
 
-    const materials = cloneVinylMaterials(sourceMesh.material, isLight);
+    const scaledBounds = geometry.boundingBox ?? new Box3();
+    const scaledSize = scaledBounds.getSize(new Vector3());
+    const labelAxes = [
+      { axis: new Vector3(1, 0, 0), size: scaledSize.x },
+      { axis: new Vector3(0, 1, 0), size: scaledSize.y },
+      { axis: new Vector3(0, 0, 1), size: scaledSize.z },
+    ].sort((left, right) => right.size - left.size);
+    const labelPlaneRadius = Math.max(labelAxes[0]?.size ?? 1, labelAxes[1]?.size ?? 1) / 2;
+
+    const materials = cloneVinylMaterials(
+      sourceMesh.material,
+      isLight,
+      labelTexture,
+      labelAxes[0]?.axis ?? new Vector3(1, 0, 0),
+      labelAxes[1]?.axis ?? new Vector3(0, 1, 0),
+      labelPlaneRadius,
+    );
 
     logger.emit("model-ready", {
       meshName: sourceMesh.name,
@@ -163,13 +242,14 @@ export function VinylRecord({
         y: size.y,
         z: size.z,
       },
+      labelPlaneRadius,
     });
 
     return {
       geometry,
       material: materials.length === 1 ? materials[0] : materials,
     };
-  }, [isLight, logger, scene]);
+  }, [isLight, labelTexture, logger, scene]);
 
   /**
    * Frame loop
@@ -227,6 +307,7 @@ export function VinylRecord({
         current +
         (emissiveTarget.current - current) * Math.min(delta * 6, 1);
     }
+
   });
 
   if (!vinylObject) {

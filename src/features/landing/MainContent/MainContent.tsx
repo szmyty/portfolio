@@ -1,5 +1,4 @@
 import { Footer } from "@portfolio/features/landing/Footer";
-import { GalaxyBackground } from "@portfolio/components/ui/GalaxyBackground";
 import { NavBar } from "@portfolio/components/ui/NavBar";
 import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared/SharedSectionVisualCanvas";
 import {
@@ -25,7 +24,6 @@ import {
 export function MainContent() {
   return (
     <div className="flex flex-col w-full">
-      <GalaxyBackground />
       {/* Layer 3 — chrome: sticky header is always interactive.
            pt-[env(safe-area-inset-top)] pads the header content below the device
            notch/status bar when viewport-fit=cover is active (e.g. PWA mode on

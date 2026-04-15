@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   Box3,
+  BufferGeometry,
   Group,
   Mesh,
   MeshStandardMaterial,
@@ -22,19 +23,13 @@ const TARGET_SIZE = 4.25;
 const BASE_ROTATION_X = -0.28;
 const BASE_ROTATION_Y = 0.55;
 
-function setMaterialEmissive(root: Group, intensity: number) {
-  root.traverse((child) => {
-    if (!(child instanceof Mesh)) return;
-
-    const materials = Array.isArray(child.material)
-      ? child.material
-      : [child.material];
-
-    for (const material of materials) {
-      if (material instanceof MeshStandardMaterial) {
-        material.emissiveIntensity = intensity;
-      }
-    }
+function cloneFloppyMaterial(isLight: boolean) {
+  return new MeshStandardMaterial({
+    color: isLight ? "#fff8fd" : "#f2dff5",
+    roughness: isLight ? 0.34 : 0.42,
+    metalness: isLight ? 0.12 : 0.08,
+    emissive: isLight ? "#f0a5d1" : "#8a3f86",
+    emissiveIntensity: IDLE_EMISSIVE,
   });
 }
 
@@ -80,37 +75,61 @@ export function FloppyDisk() {
   }, [logger, obj]);
 
   const floppyObject = useMemo(() => {
-    const clone = obj.clone(true);
-    const bounds = new Box3().setFromObject(clone);
+    const objClone = obj.clone(true);
+    objClone.updateMatrixWorld(true);
+
+    const bakedMeshes: Array<{
+      geometry: BufferGeometry;
+      material: MeshStandardMaterial;
+    }> = [];
+
+    objClone.traverse((child) => {
+      if (!(child instanceof Mesh)) return;
+
+      const geometry = child.geometry.clone() as BufferGeometry;
+      geometry.applyMatrix4(child.matrixWorld);
+
+      bakedMeshes.push({
+        geometry,
+        material: cloneFloppyMaterial(isLight),
+      });
+    });
+
+    if (bakedMeshes.length === 0) {
+      logger.emit("source-mesh-missing");
+      return null;
+    }
+
+    const bounds = new Box3();
+    for (const mesh of bakedMeshes) {
+      mesh.geometry.computeBoundingBox();
+      if (mesh.geometry.boundingBox) {
+        bounds.union(mesh.geometry.boundingBox);
+      }
+    }
+
     const size = bounds.getSize(new Vector3());
     const center = bounds.getCenter(new Vector3());
     const maxDimension = Math.max(size.x, size.y, size.z) || 1;
     const scale = TARGET_SIZE / maxDimension;
 
-    clone.position.sub(center);
-    clone.scale.setScalar(scale);
-
-    clone.traverse((child) => {
-      if (!(child instanceof Mesh)) return;
-
-      child.castShadow = false;
-      child.receiveShadow = true;
-      child.material = new MeshStandardMaterial({
-        color: isLight ? "#fff8fd" : "#f2dff5",
-        roughness: isLight ? 0.34 : 0.42,
-        metalness: isLight ? 0.12 : 0.08,
-        emissive: isLight ? "#f0a5d1" : "#8a3f86",
-        emissiveIntensity: IDLE_EMISSIVE,
-      });
-    });
+    for (const mesh of bakedMeshes) {
+      mesh.geometry.translate(-center.x, -center.y, -center.z);
+      mesh.geometry.scale(scale, scale, scale);
+    }
 
     logger.emit("material-ready", {
       isLight,
       scale,
-      childCount: clone.children.length,
+      meshCount: bakedMeshes.length,
+      size: {
+        x: size.x,
+        y: size.y,
+        z: size.z,
+      },
     });
 
-    return clone;
+    return bakedMeshes;
   }, [isLight, logger, obj]);
 
   const interaction = useInfinityInteraction({
@@ -124,7 +143,7 @@ export function FloppyDisk() {
   });
 
   useFrame((_, delta) => {
-    if (!rootRef.current) return;
+    if (!rootRef.current || !floppyObject) return;
 
     logger.emitOnce("first-frame", "first-frame", {
       rotationX: BASE_ROTATION_X,
@@ -149,11 +168,18 @@ export function FloppyDisk() {
       currentNorm + (targetNorm - currentNorm) * Math.min(delta * 8, 1);
     rootRef.current.scale.setScalar(nextNorm);
 
-    setMaterialEmissive(
-      rootRef.current,
-      emissiveTarget.current,
-    );
+    const materials = floppyObject.map((mesh) => mesh.material);
+    for (const material of materials) {
+      const current = material.emissiveIntensity;
+      material.emissiveIntensity =
+        current +
+        (emissiveTarget.current - current) * Math.min(delta * 6, 1);
+    }
   });
+
+  if (!floppyObject) {
+    return null;
+  }
 
   return (
     <group
@@ -162,7 +188,15 @@ export function FloppyDisk() {
       onPointerEnter={interaction.handlePointerEnter}
       onPointerLeave={interaction.handlePointerLeave}
     >
-      <primitive object={floppyObject} />
+      {floppyObject.map((mesh, index) => (
+        <mesh
+          key={index}
+          geometry={mesh.geometry}
+          material={mesh.material}
+          castShadow={false}
+          receiveShadow
+        />
+      ))}
     </group>
   );
 }

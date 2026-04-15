@@ -26,7 +26,7 @@ export async function Footer() {
   const tAuthor = await getTranslations("Author");
 
   return (
-    <footer className="w-full py-6 px-4 sm:px-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border bg-background/80 backdrop-blur-sm pointer-events-auto">
+    <footer className="sticky bottom-0 z-20 w-full py-4 px-4 sm:px-8 pb-[max(1rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border bg-background/80 backdrop-blur-sm pointer-events-auto">
       <p className="text-xs text-text-muted tracking-wide">
         {t("madeWith")}{" "}
         <span className="text-red-400" aria-label={t("love")}>

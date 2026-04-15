@@ -30,7 +30,11 @@ export function PageShell({ children }: PageShellProps) {
         <header className="pt-[env(safe-area-inset-top)]">
           <NavBar />
         </header>
-        <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 outline-none"
+        >
           <Center className="min-h-full py-16">{children}</Center>
         </main>
         <Footer />

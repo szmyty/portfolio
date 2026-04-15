@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { LandingBackground } from "@portfolio/features/landing/LandingBackground";
 import { EntryTrigger } from "@portfolio/features/landing/EntryTrigger";
 import { Center } from "@portfolio/components/ui/Center";
+import { GalaxyBackground } from "@portfolio/components/ui/GalaxyBackground";
 import { SkipToContent } from "@portfolio/components/ui/SkipToContent";
 import { LANDING_ENTERED_KEY } from "@portfolio/lib/storageKeys";
 
@@ -56,6 +57,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
 
   return (
     <div className="relative min-h-screen min-h-dvh w-full overflow-x-hidden bg-background">
+      <GalaxyBackground />
       {/*
        * Layer 0 + 1 — background & 3D canvas (z-0).
        * CosmicBackground is pointer-events-none; LandingVisualLayer is pointer-events-auto.
