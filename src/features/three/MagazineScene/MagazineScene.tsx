@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Magazine } from "../Magazine";
 import { useTheme } from "@portfolio/lib/theme";
+import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 
 /**
  * MagazineScene — Canvas wrapper for the interactive 3D magazine object.
@@ -21,6 +22,7 @@ import { useTheme } from "@portfolio/lib/theme";
  * Lighting intensities adapt to the active theme (light / dark).
  */
 export function MagazineScene() {
+  const logger = useLifecycleLogger("MagazineScene");
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
 
@@ -29,6 +31,20 @@ export function MagazineScene() {
       camera={{ position: [0, 0, 6], fov: 40 }}
       style={{ width: "100%", height: "100%" }}
       gl={{ alpha: true }}
+      onCreated={({ gl }) => {
+        logger.emit("canvas-created", {
+          dpr: gl.getPixelRatio(),
+          isLight,
+        });
+
+        gl.domElement.addEventListener("webglcontextlost", () => {
+          logger.emit("webgl-context-lost");
+        });
+
+        gl.domElement.addEventListener("webglcontextrestored", () => {
+          logger.emit("webgl-context-restored");
+        });
+      }}
     >
       {/* Warm ambient — substantially higher in dark mode so paper surface is legible */}
       <ambientLight intensity={isLight ? 0.7 : 0.9} />

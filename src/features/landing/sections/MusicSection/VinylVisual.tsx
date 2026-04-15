@@ -1,14 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const VinylRecordScene = dynamic(
-  () =>
-    import("@portfolio/features/three/VinylRecordScene").then(
-      (mod) => mod.VinylRecordScene,
-    ),
-  { ssr: false },
-);
+import { SectionVisualTarget } from "../shared/SectionVisualTarget";
 
 /**
  * VinylVisual — client component wrapper that lazy-loads the 3D vinyl record
@@ -21,11 +13,10 @@ const VinylRecordScene = dynamic(
  */
 export function VinylVisual() {
   return (
-    <div
+    <SectionVisualTarget
+      kind="vinyl"
       className="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[320px]"
-      style={{ position: "relative", height: "320px" }}
-    >
-      <VinylRecordScene />
-    </div>
+      height={320}
+    />
   );
 }

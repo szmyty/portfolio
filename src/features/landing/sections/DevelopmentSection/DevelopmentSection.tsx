@@ -1,4 +1,5 @@
 import { ContentSectionTemplate } from "@portfolio/features/landing/sections/ContentSectionTemplate";
+import { FloppyDiskVisual } from "./FloppyDiskVisual";
 
 export function DevelopmentSection() {
   return (
@@ -7,6 +8,7 @@ export function DevelopmentSection() {
       namespace="DevelopmentSection"
       background="surface"
       href="/development"
+      visual={<FloppyDiskVisual />}
     />
   );
 }

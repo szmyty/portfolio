@@ -166,7 +166,7 @@ export function DebugPanel({ info }: DebugPanelProps) {
         aria-label="Toggle debug panel"
         className={[
           "pointer-events-auto",
-          "absolute right-4 top-[calc(env(safe-area-inset-top)+4.75rem)]",
+          "absolute right-4 top-[calc(env(safe-area-inset-top)+5.25rem)]",
           "flex items-center gap-1.5",
           "rounded-lg px-2.5 py-1.5",
           "text-[11px] font-semibold font-mono",
@@ -190,7 +190,7 @@ export function DebugPanel({ info }: DebugPanelProps) {
         }}
         className={[
           "pointer-events-auto",
-          "absolute right-4 top-[calc(env(safe-area-inset-top)+7.5rem)]",
+          "absolute right-4 top-[calc(env(safe-area-inset-top)+8rem)]",
           "w-72 max-h-[calc(100vh-6rem)]",
           "overflow-y-auto overscroll-contain",
           "rounded-xl border border-white/10",

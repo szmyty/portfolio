@@ -13,6 +13,7 @@ import { useInfinityMotion } from "../hooks/useInfinityMotion";
 import type { InfinityProps } from "./Infinity.types";
 import { isDev } from "@portfolio/config";
 import { setDebugInteraction } from "@portfolio/lib/debug/debugStore";
+import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 
 /**
  * Emissive intensity levels
@@ -45,6 +46,7 @@ export function Infinity({
   effects = { glow: true, particles: true, rotation: true },
   position = [0, 0, 0],
 }: InfinityProps) {
+  const logger = useLifecycleLogger("Infinity");
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
 
@@ -65,11 +67,15 @@ export function Infinity({
     reducedMotion.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-  }, []);
+    logger.emit("reduced-motion-detected", {
+      enabled: reducedMotion.current,
+    });
+  }, [logger]);
 
   useEffect(() => {
     canvasRef.current = gl.domElement;
-  }, [gl]);
+    logger.emitOnce("canvas-bound", "canvas-bound");
+  }, [gl, logger]);
 
   /**
    * Motion system (rotation, velocity, inertia, idle fallback)
@@ -94,6 +100,11 @@ export function Infinity({
    */
   useFrame((state, delta) => {
     if (!meshRef.current) return;
+
+    logger.emitOnce("first-frame", "first-frame", {
+      position,
+      rotationEnabled: effects.rotation !== false,
+    });
 
     const isEngaged = interaction.interactionState.current === "engaged";
 

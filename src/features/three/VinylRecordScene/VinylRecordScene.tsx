@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { VinylRecord } from "../VinylRecord";
 import { useTheme } from "@portfolio/lib/theme";
+import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 
 /**
  * VinylRecordScene — Canvas wrapper for the interactive 3D vinyl record object.
@@ -21,6 +22,7 @@ import { useTheme } from "@portfolio/lib/theme";
  * Lighting intensities adapt to the active theme (light / dark).
  */
 export function VinylRecordScene() {
+  const logger = useLifecycleLogger("VinylRecordScene");
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
 
@@ -29,6 +31,20 @@ export function VinylRecordScene() {
       camera={{ position: [0, 0, 5], fov: 40 }}
       style={{ width: "100%", height: "100%" }}
       gl={{ alpha: true }}
+      onCreated={({ gl }) => {
+        logger.emit("canvas-created", {
+          dpr: gl.getPixelRatio(),
+          isLight,
+        });
+
+        gl.domElement.addEventListener("webglcontextlost", () => {
+          logger.emit("webgl-context-lost");
+        });
+
+        gl.domElement.addEventListener("webglcontextrestored", () => {
+          logger.emit("webgl-context-restored");
+        });
+      }}
     >
       {/* Low ambient — keeps shadows visible on the dark disc */}
       <ambientLight intensity={isLight ? 0.4 : 0.5} />

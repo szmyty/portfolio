@@ -9,6 +9,7 @@ import { VinylRecordMaterial } from "../materials/VinylRecordMaterial";
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
 import { useVinylRecordMotion } from "../hooks/useVinylRecordMotion";
 import type { VinylRecordProps } from "./VinylRecord.types";
+import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 
 /**
  * Emissive intensity levels (subtle sheen on a dark vinyl surface)
@@ -37,6 +38,7 @@ export function VinylRecord({
   MaterialComponent = VinylRecordMaterial,
   effects = { rotation: true },
 }: VinylRecordProps) {
+  const logger = useLifecycleLogger("VinylRecord");
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
 
@@ -54,11 +56,15 @@ export function VinylRecord({
     reducedMotion.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-  }, []);
+    logger.emit("reduced-motion-detected", {
+      enabled: reducedMotion.current,
+    });
+  }, [logger]);
 
   useEffect(() => {
     canvasRef.current = gl.domElement;
-  }, [gl]);
+    logger.emitOnce("canvas-bound", "canvas-bound");
+  }, [gl, logger]);
 
   /**
    * Motion system (Z-axis idle spin, drag tilt, inertia)
@@ -83,6 +89,10 @@ export function VinylRecord({
    */
   useFrame((_, delta) => {
     if (!meshRef.current) return;
+
+    logger.emitOnce("first-frame", "first-frame", {
+      rotationEnabled: effects.rotation !== false,
+    });
 
     const isEngaged = interaction.interactionState.current === "engaged";
 
@@ -138,4 +148,3 @@ export function VinylRecord({
     </>
   );
 }
-

@@ -1,14 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const MagazineScene = dynamic(
-  () =>
-    import("@portfolio/features/three/MagazineScene").then(
-      (mod) => mod.MagazineScene,
-    ),
-  { ssr: false },
-);
+import { SectionVisualTarget } from "../shared/SectionVisualTarget";
 
 /**
  * MagazineVisual — client component wrapper that lazy-loads the 3D magazine
@@ -22,11 +14,10 @@ const MagazineScene = dynamic(
  */
 export function MagazineVisual() {
   return (
-    <div
+    <SectionVisualTarget
+      kind="magazine"
       className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px]"
-      style={{ position: "relative", height: "360px" }}
-    >
-      <MagazineScene />
-    </div>
+      height={360}
+    />
   );
 }

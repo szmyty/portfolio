@@ -1,5 +1,6 @@
 import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
+import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared/SharedSectionVisualCanvas";
 import {
   DevelopmentSection,
   HeroSection,
@@ -29,12 +30,17 @@ export function MainContent() {
            iOS). On standard browser visits the inset is 0 so no extra padding
            is applied. */}
       <header
-        className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto pt-[env(safe-area-inset-top)]"
+        className="fixed inset-x-0 top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto pt-[env(safe-area-inset-top)]"
       >
         <NavBar />
       </header>
       {/* Layer 2 — UI overlay: pointer-events-none on container; sections restore as needed */}
-      <main id="main-content" tabIndex={-1} className="flex-1 outline-none pointer-events-none">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 outline-none pointer-events-none pt-[calc(env(safe-area-inset-top)+4.5rem)] sm:pt-[calc(env(safe-area-inset-top)+5rem)]"
+      >
+        <SharedSectionVisualCanvas />
         <HeroSection />
         <MusicSection />
         <PublishingSection />

@@ -7,6 +7,7 @@ import type { Mesh, MeshStandardMaterial } from "three";
 import { MagazineGeometry } from "../geometry/MagazineGeometry";
 import { useInfinityInteraction } from "../hooks/useInfinityInteraction";
 import { useMagazineMotion } from "../hooks/useMagazineMotion";
+import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 
 /**
  * Emissive intensity levels (subtle, matches a matte paper surface)
@@ -29,6 +30,7 @@ const ENGAGED_EMISSIVE = 0.6;
  * Textures will be applied in a follow-up issue.
  */
 export function Magazine() {
+  const logger = useLifecycleLogger("Magazine");
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<MeshStandardMaterial>(null);
 
@@ -46,11 +48,15 @@ export function Magazine() {
     reducedMotion.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-  }, []);
+    logger.emit("reduced-motion-detected", {
+      enabled: reducedMotion.current,
+    });
+  }, [logger]);
 
   useEffect(() => {
     canvasRef.current = gl.domElement;
-  }, [gl]);
+    logger.emitOnce("canvas-bound", "canvas-bound");
+  }, [gl, logger]);
 
   /**
    * Motion system (Y-axis idle rotation, drag, inertia)
@@ -75,6 +81,8 @@ export function Magazine() {
    */
   useFrame((_, delta) => {
     if (!meshRef.current) return;
+
+    logger.emitOnce("first-frame", "first-frame");
 
     const isEngaged = interaction.interactionState.current === "engaged";
 

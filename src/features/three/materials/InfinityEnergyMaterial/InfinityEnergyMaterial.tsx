@@ -4,11 +4,13 @@ import { useCallback, useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { MeshStandardMaterial } from "three";
 import type { ExtendedShader } from "../types";
-import vertexBeginShader from "../shaders/infinityEnergy.vertex.begin.glsl";
-import vertexCommonShader from "../shaders/infinityEnergy.vertex.common.glsl";
-import fragmentColorShader from "../shaders/infinityEnergy.fragment.color.glsl";
-import fragmentCommonShader from "../shaders/infinityEnergy.fragment.common.glsl";
-import fragmentEmissiveShader from "../shaders/infinityEnergy.fragment.emissive.glsl";
+import {
+  infinityEnergyFragmentColor,
+  infinityEnergyFragmentCommon,
+  infinityEnergyFragmentEmissive,
+  infinityEnergyVertexBegin,
+  infinityEnergyVertexCommon,
+} from "../shaders/infinityEnergyShaderSources";
 
 type InfinityEnergyMaterialProps = {
   matRef?: React.Ref<MeshStandardMaterial>;
@@ -43,29 +45,29 @@ export function InfinityEnergyMaterial({
     shader.vertexShader = shader.vertexShader.replace(
       "#include <common>",
       `#include <common>
-${vertexCommonShader}`,
+${infinityEnergyVertexCommon}`,
     );
 
     shader.vertexShader = shader.vertexShader.replace(
       "#include <begin_vertex>",
       `#include <begin_vertex>
-${vertexBeginShader}`,
+${infinityEnergyVertexBegin}`,
     );
 
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <common>",
       `#include <common>
-${fragmentCommonShader}`,
+${infinityEnergyFragmentCommon}`,
     );
 
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <color_fragment>",
-      fragmentColorShader,
+      infinityEnergyFragmentColor,
     );
 
     shader.fragmentShader = shader.fragmentShader.replace(
       "#include <emissivemap_fragment>",
-      fragmentEmissiveShader,
+      infinityEnergyFragmentEmissive,
     );
   }, []);
 

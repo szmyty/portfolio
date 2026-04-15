@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Infinity } from "../Infinity";
 import { useTheme } from "@portfolio/lib/theme";
+import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 
 /**
  * Scene renders a Three.js canvas using React Three Fiber.
@@ -31,11 +32,28 @@ import { useTheme } from "@portfolio/lib/theme";
  *   - light: brighter ambient, softer key, warmer rim to suit the pale background.
  */
 export function Scene() {
+  const logger = useLifecycleLogger("HeroScene");
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
 
   return (
-    <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
+    <Canvas
+      camera={{ position: [0, 0, 4], fov: 50 }}
+      onCreated={({ gl }) => {
+        logger.emit("canvas-created", {
+          dpr: gl.getPixelRatio(),
+          isLight,
+        });
+
+        gl.domElement.addEventListener("webglcontextlost", () => {
+          logger.emit("webgl-context-lost");
+        });
+
+        gl.domElement.addEventListener("webglcontextrestored", () => {
+          logger.emit("webgl-context-restored");
+        });
+      }}
+    >
       {/* Ambient stays restrained so the shader-driven glow retains contrast. */}
       <ambientLight intensity={isLight ? 0.4 : 0.14} color={isLight ? "#e5eefb" : "#1d2340"} />
       {/* Cool key light shapes the top arc without flattening the shader colors. */}
