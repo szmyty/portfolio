@@ -15,8 +15,9 @@ export function VinylVisual() {
   return (
     <SectionVisualTarget
       kind="vinyl"
-      className="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[320px]"
-      height={320}
+      className="w-full max-w-[420px] sm:max-w-[500px] md:max-w-[580px]"
+      height={420}
+      frameClassName="rounded-2xl bg-transparent border border-transparent"
     />
   );
 }

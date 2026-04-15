@@ -12,12 +12,14 @@ type SectionVisualTargetProps = {
   kind: SectionVisualKind;
   className: string;
   height: number;
+  frameClassName?: string;
 };
 
 export function SectionVisualTarget({
   kind,
   className,
   height,
+  frameClassName = "rounded-2xl border border-border bg-surface-overlay",
 }: SectionVisualTargetProps) {
   const slotId = useId();
   const ref = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export function SectionVisualTarget({
       className={className}
       style={{ position: "relative", height }}
     >
-      <div className="absolute inset-0 rounded-2xl border border-border bg-surface-overlay" />
+      <div className={`absolute inset-0 ${frameClassName}`} />
     </div>
   );
 }

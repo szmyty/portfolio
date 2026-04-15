@@ -27,8 +27,8 @@ const CAMERA_CONFIG: Record<
   { position: [number, number, number]; fov: number }
 > = {
   vinyl: {
-    position: [0, 0, 5],
-    fov: 40,
+    position: [0, 0.05, 6.2],
+    fov: 34,
   },
   magazine: {
     position: [0, 0, 6],
@@ -143,7 +143,7 @@ export function SharedSectionVisualCanvas() {
     if (!activeElement) return;
 
     const updateRect = () => {
-      const bounds = activeElement.getBoundingClientRect();
+      const bounds: DOMRect = activeElement.getBoundingClientRect();
       setRect({
         left: bounds.left,
         top: bounds.top,
