@@ -170,7 +170,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
     ? `color-mix(in srgb, ${tokens.color.accent} 12%, transparent)`
     : `color-mix(in srgb, ${tokens.color.accent} 8%, transparent)`;
 
-  const overlayBackground = isLight ? "rgba(245,245,245,0.55)" : "rgba(0,0,0,0.55)";
+  const overlayBackground = isLight ? "rgba(245,245,245,0.4)" : "rgba(0,0,0,0.28)";
 
   return (
     <div
@@ -179,7 +179,7 @@ export function CosmicBackground({ mode = "hero" }: CosmicBackgroundProps) {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
       {/* Background fill — picks up the theme's --background CSS variable */}
-      <div className="absolute inset-0 bg-background" />
+      <div className="absolute inset-0 bg-background/0" />
 
       {/* Starfield parallax — only one scroll source is active at a time */}
       {isHero ? (

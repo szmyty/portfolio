@@ -1,0 +1,1 @@
+export { GalaxyBackground } from "./GalaxyBackground";

@@ -7,7 +7,9 @@
       "editorGutter.deletedBackground": "#ff79c6",
       "editorOverviewRuler.modifiedForeground": "#ff79c6",
       "editorOverviewRuler.addedForeground": "#50fa7b",
-      "editorOverviewRuler.deletedForeground": "#ff79c6"
+      "editorOverviewRuler.deletedForeground": "#ff79c6",
+      "typescript.tsdk": "node_modules/typescript/lib",
+      "typescript.enablePromptUseWorkspaceTsdk": true
     }
   }
 }

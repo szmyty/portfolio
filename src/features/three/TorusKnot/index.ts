@@ -1,1 +1,0 @@
-export { TorusKnot } from "./TorusKnot";

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { Scene } from "./Scene";
+import type { ReactElement } from "react";
+import { Scene } from "@portfolio/features/three/scenes";
 
 const meta: Meta<typeof Scene> = {
   title: "Three/Scene",
@@ -15,7 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   decorators: [
-    (Story) => (
+    (Story: () => ReactElement) => (
       <div style={{ width: "100%", height: "100vh" }}>
         <Story />
       </div>
@@ -28,7 +29,7 @@ export const Contained: Story = {
     layout: "centered",
   },
   decorators: [
-    (Story) => (
+    (Story: () => ReactElement) => (
       <div style={{ width: "600px", height: "400px" }}>
         <Story />
       </div>

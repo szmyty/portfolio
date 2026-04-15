@@ -10,7 +10,7 @@
  * DebugPanel itself is conditionally rendered only in dev.
  */
 
-import type { InteractionState } from "@portfolio/features/three/hooks/useInfinityInteraction";
+import type { InteractionState } from "@portfolio/features/three/hooks";
 
 export type { InteractionState };
 

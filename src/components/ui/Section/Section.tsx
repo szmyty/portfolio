@@ -32,7 +32,11 @@ export function Section({
   cosmicBackground = true,
   className,
 }: SectionProps) {
-  const bgClass = background === "surface" ? "bg-surface" : "bg-background";
+  const bgClass = cosmicBackground
+    ? "bg-transparent"
+    : background === "surface"
+      ? "bg-surface"
+      : "bg-background";
   const outerClasses = [
     "relative px-4 sm:px-8 py-24 sm:py-32 scroll-mt-16 pointer-events-auto",
     bgClass,

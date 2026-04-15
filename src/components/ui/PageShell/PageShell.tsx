@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Center } from "@portfolio/components/ui/Center";
+import { GalaxyBackground } from "@portfolio/components/ui/GalaxyBackground";
 import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
 import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
@@ -23,6 +24,7 @@ type PageShellProps = {
 export function PageShell({ children }: PageShellProps) {
   return (
     <div className="relative min-h-screen min-h-dvh w-full overflow-hidden bg-background">
+      <GalaxyBackground />
       <CosmicBackground mode="content" />
       <div className="absolute inset-0 z-10 flex flex-col">
         <header className="pt-[env(safe-area-inset-top)]">

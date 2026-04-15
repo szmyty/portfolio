@@ -63,13 +63,26 @@ function SectionVisualRig({ kind }: { kind: SectionVisualKind }) {
   if (kind === "vinyl") {
     return (
       <>
-        <ambientLight intensity={isLight ? 0.4 : 0.5} />
-        <directionalLight position={[3, 5, 4]} intensity={isLight ? 1.2 : 1.6} />
-        <directionalLight position={[-3, -2, -3]} intensity={isLight ? 0.3 : 0.4} />
+        <ambientLight intensity={isLight ? 0.52 : 0.72} />
+        <directionalLight
+          position={[3, 5, 4]}
+          intensity={isLight ? 1.3 : 1.9}
+          color={isLight ? "#ffffff" : "#ffe5f7"}
+        />
+        <directionalLight
+          position={[-3, -2, -3]}
+          intensity={isLight ? 0.42 : 0.62}
+          color={isLight ? "#e7dcff" : "#c7f2ff"}
+        />
         <directionalLight
           position={[4, 3, -5]}
-          intensity={isLight ? 0.4 : 0.5}
+          intensity={isLight ? 0.55 : 0.8}
           color={isLight ? "#e0d8f0" : "#c8c0dc"}
+        />
+        <pointLight
+          position={[0, 0.25, 3.75]}
+          intensity={isLight ? 0.55 : 0.9}
+          color={isLight ? "#fff6fb" : "#ffd4fb"}
         />
         <VinylRecord />
       </>

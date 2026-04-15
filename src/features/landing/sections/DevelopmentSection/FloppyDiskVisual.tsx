@@ -5,7 +5,7 @@ import { SectionVisualTarget } from "../shared/SectionVisualTarget";
 
 const FloppyDiskScene = dynamic(
   () =>
-    import("@portfolio/features/three/FloppyDiskScene").then(
+    import("@portfolio/features/three/scenes").then(
       (mod) => mod.FloppyDiskScene,
     ),
   { ssr: false },

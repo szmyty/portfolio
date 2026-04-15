@@ -1,13 +1,6 @@
-export { Scene } from "./Scene";
-export { TorusKnot } from "./TorusKnot";
-export { Infinity } from "./Infinity";
-export type { InfinityProps } from "./Infinity";
-export { Magazine } from "./Magazine";
-export { MagazineScene } from "./MagazineScene";
-export { FloppyDisk } from "./FloppyDisk";
-export { FloppyDiskScene } from "./FloppyDiskScene";
-export { VinylRecord } from "./VinylRecord";
-export { VinylRecordScene } from "./VinylRecordScene";
+export * from "./objects";
+export * from "./scenes";
+export * from "./hooks";
 export { TorusKnotGeometry } from "./geometry";
 export { StandardMaterial, GradientMaterial } from "./materials";
 export type { MaterialProps } from "./materials";

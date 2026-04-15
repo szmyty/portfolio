@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
 const Scene = dynamic(
-  () => import("@portfolio/features/three/Scene").then((mod) => mod.Scene),
+  () => import("@portfolio/features/three/scenes").then((mod) => mod.Scene),
   { ssr: false },
 );
 

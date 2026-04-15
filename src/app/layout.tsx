@@ -153,7 +153,6 @@ export default async function RootLayout({
                 "console.groupCollapsed('[THREE.Clock deprecation]');",
                 "console.trace();",
                 "console.groupEnd();",
-                "debugger;",
                 "}",
                 "}catch(e){}",
                 "return originalWarn.apply(this,arguments);",
