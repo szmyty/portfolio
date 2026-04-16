@@ -27,13 +27,14 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   icons: {
     icon: [
-      { url: "/favicon.svg?v=20260412", type: "image/svg+xml" },
-      { url: "/favicon-96x96.png?v=20260412", type: "image/png", sizes: "96x96" },
-      { url: "/favicon.ico?v=20260412" },
+      { url: "/icons/app/favicon.svg", type: "image/svg+xml" },
+      { url: "/icons/app/icon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icons/app/icon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/icons/app/favicon.ico" },
     ],
-    shortcut: ["/favicon.ico?v=20260412"],
+    shortcut: ["/icons/app/favicon.ico"],
     apple: [
-      { url: "/apple-touch-icon.png?v=20260412", sizes: "180x180" },
+      { url: "/icons/app/icon-192x192.png", sizes: "192x192" },
     ],
   },
   keywords: siteConfig.keywords,
@@ -112,7 +113,6 @@ export default async function RootLayout({
     >
       <head>
         <meta name="apple-mobile-web-app-title" content="Portfolio" />
-        <link rel="manifest" href="/site.webmanifest?v=20260412" />
         {/*
          * Anti-flicker theme script — runs synchronously before paint so the
          * correct theme is applied before React hydrates, eliminating any

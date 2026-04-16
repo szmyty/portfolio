@@ -1,1 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0a0a0a" rx="18"/><circle cx="35" cy="50" r="18" fill="none" stroke="#5b9cf6" stroke-width="7"/><circle cx="65" cy="50" r="18" fill="none" stroke="#5b9cf6" stroke-width="7"/></svg>
+<!-- assets/icons/infinity-gradient-v2.svg -->
+<svg
+  viewBox="0 0 256 128"
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+>
+  <defs>
+    <!-- 🌈 Smooth multi-stop gradient -->
+    <linearGradient id="infinityGradient" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#4fd1c5"/>
+      <stop offset="25%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="75%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#d946ef"/>
+    </linearGradient>
+
+    <!-- ✨ Soft glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ✨ Glow layer (behind) -->
+  <path
+    d="M32 64 C32 16, 96 16, 128 64
+       S224 112, 224 64
+       S160 16, 128 64
+       S32 112, 32 64"
+    stroke="url(#infinityGradient)"
+    stroke-width="20"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.4"
+    filter="url(#glow)"
+  />
+
+  <!-- 🎯 Main stroke -->
+  <path
+    d="M32 64 C32 16, 96 16, 128 64
+       S224 112, 224 64
+       S160 16, 128 64
+       S32 112, 32 64"
+    stroke="url(#infinityGradient)"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
+
