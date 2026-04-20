@@ -37,8 +37,8 @@ export function GitHubDashboard(_props: GitHubDashboardProps) {
       title="GitHub Dashboard"
       background="surface"
       cosmicBackground={false}
-      className="py-10 sm:py-14 lg:py-16"
-      contentClassName="max-w-6xl gap-8 lg:gap-10"
+      className="py-12 sm:py-16 lg:py-20 pb-16"
+      contentClassName="w-full max-w-6xl gap-8 lg:gap-10"
     >
       <div className="flex flex-col gap-10 lg:gap-12">
         <div className="flex flex-col gap-5 sm:gap-6">

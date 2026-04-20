@@ -28,7 +28,7 @@ export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
         aria-selected={selectedScopeId === null}
         onClick={() => dispatch(setSelectedScope(null))}
         className={[
-          "inline-flex items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-200",
+          "inline-flex cursor-pointer items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-200",
           selectedScopeId === null
             ? "border-accent bg-accent text-accent-foreground"
             : "border-border bg-surface text-text-secondary hover:border-accent hover:text-text-primary",
@@ -47,7 +47,7 @@ export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
             aria-selected={isActive}
             onClick={() => dispatch(setSelectedScope(scope.id))}
             className={[
-              "inline-flex items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-200",
+              "inline-flex cursor-pointer items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-200",
               isActive
                 ? "border-accent bg-accent text-accent-foreground"
                 : "border-border bg-surface text-text-secondary hover:border-accent hover:text-text-primary",

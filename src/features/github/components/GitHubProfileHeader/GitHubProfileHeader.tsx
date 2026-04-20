@@ -9,7 +9,12 @@ export function GitHubProfileHeader(_props: GitHubProfileHeaderProps) {
       <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:gap-6 sm:text-left">
         <div className="relative shrink-0">
           <div className="absolute inset-0 rounded-full bg-accent/20 blur-xl" aria-hidden="true" />
-          <div className="relative overflow-hidden rounded-full border border-border bg-background p-1 shadow-[0_0_0_1px_color-mix(in_srgb,var(--border)_45%,transparent)]">
+          <a
+            href="https://github.com/szmyty/szmyty"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative block overflow-hidden rounded-full border border-border bg-background p-1 shadow-[0_0_0_1px_color-mix(in_srgb,var(--border)_45%,transparent)] transition-transform duration-200 hover:scale-105"
+          >
             <Image
               src="/textures/github/github-profile.png"
               alt="Alan Szmyt GitHub profile"
@@ -18,7 +23,7 @@ export function GitHubProfileHeader(_props: GitHubProfileHeaderProps) {
               className="h-28 w-28 rounded-full object-cover"
               priority
             />
-          </div>
+          </a>
         </div>
 
         <div className="min-w-0 space-y-2.5">

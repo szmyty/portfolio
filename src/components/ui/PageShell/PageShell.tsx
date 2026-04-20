@@ -28,7 +28,7 @@ export function PageShell({ children }: PageShellProps) {
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 outline-none"
+          className="flex-1 outline-none bg-background"
         >
           <div className="flex flex-col w-full py-16">
             {children}
