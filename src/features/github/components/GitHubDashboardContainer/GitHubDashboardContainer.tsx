@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider, useDispatch } from "react-redux";
 import { githubReducer, setScopes } from "@portfolio/features/github/store/github.slice";
+import { GitHubScopeSelector } from "@portfolio/features/github/components/GitHubScopeSelector";
 import type { GitHubDashboardContainerProps } from "./GitHubDashboardContainer.types";
 
 function createGitHubDashboardStore() {
@@ -25,7 +26,12 @@ function GitHubDashboardContainerContent({
     dispatch(setScopes(initialScopes));
   }, [dispatch, initialScopes]);
 
-  return <div>GitHub Dashboard</div>;
+  return (
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
+      <GitHubScopeSelector />
+      <div>GitHub Dashboard</div>
+    </div>
+  );
 }
 
 export function GitHubDashboardContainer({
