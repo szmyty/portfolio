@@ -1,10 +1,22 @@
 import { PageShell } from "@portfolio/components/ui/PageShell";
-import { UnderConstruction } from "@portfolio/components/ui/UnderConstruction";
+import { MusicClient } from "@portfolio/features/music/components/MusicClient";
+import { fetchSoundCloudRssItems } from "@portfolio/features/music/lib/soundcloud-service";
+import { transformSoundCloudItems } from "@portfolio/features/music/lib/soundcloud-transform";
 
-export default function MusicPage() {
+export default async function MusicPage() {
+  const rawItems = await fetchSoundCloudRssItems();
+  const tracks = transformSoundCloudItems(rawItems);
+
   return (
     <PageShell>
-      <UnderConstruction />
+      <section className="flex flex-col gap-12 max-w-6xl mx-auto px-4 sm:px-8">
+        {/* 🎧 Title */}
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+          Music
+        </h1>
+
+        <MusicClient tracks={tracks} />
+      </section>
     </PageShell>
   );
 }
