@@ -1,13 +1,9 @@
-import type { ReactNode } from "react";
 import { Center } from "@portfolio/components/ui/Center";
 import { GalaxyBackground } from "@portfolio/components/ui/GalaxyBackground";
 import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
 import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
-
-type PageShellProps = {
-  children: ReactNode;
-}
+import type { PageShellProps } from "./PageShell.types";
 
 /**
  * PageShell — shared layout for sub-pages (/music, /development, /publishing, etc.).

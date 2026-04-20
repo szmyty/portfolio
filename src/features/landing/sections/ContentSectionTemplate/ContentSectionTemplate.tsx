@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Section } from "@portfolio/components/ui/Section";
-import { LottieAnimation } from "@portfolio/components/animation/LottieAnimation";
+import { LottieAnimation } from "@portfolio/components/animation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
 import type { ContentSectionTemplateProps } from "./ContentSectionTemplate.types";
 

@@ -8,7 +8,7 @@ export type ErrorStateProps = {
   /** Optional action element (e.g. a retry button) rendered below the description. */
   action?: ReactNode;
   /** Heading element to use for the title. Defaults to "h2". */
-  headingLevel?: ElementType;
+  headingLevel?: ElementType<{ children?: ReactNode; className?: string }>;
   /** Additional class names applied to the root wrapper. */
   className?: string;
 };

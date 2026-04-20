@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { SectionBackground } from "@portfolio/components/ui/Section/Section.types";
+import type { SectionBackground } from "@portfolio/components/ui/Section";
 
 export type ContentSectionTemplateProps = {
   id: string;

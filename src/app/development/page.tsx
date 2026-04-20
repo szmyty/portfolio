@@ -1,6 +1,6 @@
 import { PageShell } from "@portfolio/components/ui/PageShell";
 import { getTranslations } from "next-intl/server";
-import { StandaloneFloppyDiskVisual } from "@portfolio/features/landing/sections/DevelopmentSection/FloppyDiskVisual";
+import { StandaloneFloppyDiskVisual } from "@portfolio/features/landing/sections/DevelopmentSection";
 
 export default async function DevelopmentPage() {
   const t = await getTranslations("DevelopmentSection");

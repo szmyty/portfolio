@@ -3,11 +3,7 @@
 import { useTranslations } from "next-intl";
 import { LottieAnimation } from "@portfolio/components/animation";
 import placeholderAnimation from "@portfolio/animations/placeholder.json";
-
-type UnderConstructionProps = {
-  title?: string;
-  description?: string;
-}
+import type { UnderConstructionProps } from "./UnderConstruction.types";
 
 export function UnderConstruction({ title, description }: UnderConstructionProps) {
   const t = useTranslations("UnderConstruction");

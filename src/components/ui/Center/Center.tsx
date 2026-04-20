@@ -1,9 +1,4 @@
-import type { ReactNode } from "react";
-
-type CenterProps = {
-  children: ReactNode;
-  className?: string;
-}
+import type { CenterProps } from "./Center.types";
 
 export function Center({ children, className }: CenterProps) {
   const classes = ["flex items-center justify-center", className]

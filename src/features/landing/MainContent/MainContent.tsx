@@ -1,6 +1,6 @@
 import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
-import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared/SharedSectionVisualCanvas";
+import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared";
 import {
   DevelopmentSection,
   HeroSection,

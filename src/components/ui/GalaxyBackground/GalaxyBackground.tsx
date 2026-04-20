@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js";
 import { EquirectangularReflectionMapping } from "three";
+import type { GalaxyBackgroundProps } from "./GalaxyBackground.types";
 
 function GalaxyEnvironment() {
   const texture = useLoader(EXRLoader, "/environments/galaxy.exr");
@@ -26,7 +27,7 @@ function GalaxyEnvironment() {
   return null;
 }
 
-export function GalaxyBackground() {
+export function GalaxyBackground(_props: GalaxyBackgroundProps) {
   return (
     <div
       aria-hidden="true"
