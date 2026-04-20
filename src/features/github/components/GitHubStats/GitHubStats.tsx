@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container } from "@portfolio/components/ui/Container";
+import {
+  logGitHubDebug,
+  logGitHubLifecycle,
+} from "@portfolio/features/github/lib/github-debug";
 import { selectRepositoriesForActiveScope } from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubStatsProps } from "./GitHubStats.types";
@@ -25,6 +30,7 @@ function StatCard({ label, value }: StatCardProps) {
 }
 
 export function GitHubStats(_props: GitHubStatsProps) {
+  const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
   );
@@ -37,6 +43,18 @@ export function GitHubStats(_props: GitHubStatsProps) {
   const uniqueLanguages = new Set(
     repositories.flatMap((repository) => (repository.language ? [repository.language] : [])),
   ).size;
+
+  useEffect(() => {
+    logGitHubLifecycle("GitHubStats");
+  }, []);
+
+  useEffect(() => {
+    logGitHubDebug("GitHub state:", githubState);
+  }, [githubState]);
+
+  useEffect(() => {
+    logGitHubDebug("Selected repos:", repositories);
+  }, [repositories]);
 
   return (
     <Container className="max-w-6xl">

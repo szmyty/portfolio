@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   Cell,
@@ -9,6 +10,10 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import {
+  logGitHubDebug,
+  logGitHubLifecycle,
+} from "@portfolio/features/github/lib/github-debug";
 import { selectRepositoriesForActiveScope } from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubLanguageChartProps } from "./GitHubLanguageChart.types";
@@ -50,7 +55,27 @@ function buildLanguageData(state: GitHubStoreState): LanguageDatum[] {
 }
 
 export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
+  const githubState = useSelector((state: GitHubStoreState) => state.github);
+  const repositories = useSelector((state: GitHubStoreState) =>
+    selectRepositoriesForActiveScope(state),
+  );
   const languageData = useSelector(buildLanguageData);
+
+  useEffect(() => {
+    logGitHubLifecycle("GitHubLanguageChart");
+  }, []);
+
+  useEffect(() => {
+    logGitHubDebug("GitHub state:", githubState);
+  }, [githubState]);
+
+  useEffect(() => {
+    logGitHubDebug("Selected repos:", repositories);
+  }, [repositories]);
+
+  useEffect(() => {
+    logGitHubDebug("Language chart data:", languageData);
+  }, [languageData]);
 
   return (
     <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">

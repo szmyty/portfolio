@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   Bar,
@@ -11,6 +12,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  logGitHubDebug,
+  logGitHubLifecycle,
+} from "@portfolio/features/github/lib/github-debug";
 import { selectRepositoriesForActiveScope } from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubStarsChartProps } from "./GitHubStarsChart.types";
@@ -51,8 +56,28 @@ function buildStarsData(state: GitHubStoreState): StarDatum[] {
 }
 
 export function GitHubStarsChart(_props: GitHubStarsChartProps) {
+  const githubState = useSelector((state: GitHubStoreState) => state.github);
+  const repositories = useSelector((state: GitHubStoreState) =>
+    selectRepositoriesForActiveScope(state),
+  );
   const starsData = useSelector(buildStarsData);
   const hasStarData = starsData.some((entry) => entry.value > 0);
+
+  useEffect(() => {
+    logGitHubLifecycle("GitHubStarsChart");
+  }, []);
+
+  useEffect(() => {
+    logGitHubDebug("GitHub state:", githubState);
+  }, [githubState]);
+
+  useEffect(() => {
+    logGitHubDebug("Selected repos:", repositories);
+  }, [repositories]);
+
+  useEffect(() => {
+    logGitHubDebug("Stars chart data:", starsData);
+  }, [starsData]);
 
   return (
     <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">

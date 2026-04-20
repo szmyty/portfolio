@@ -10,6 +10,10 @@ import { LoadingState } from "@portfolio/components/ui/LoadingState";
 import { Section } from "@portfolio/components/ui/Section";
 import { GitHubDashboard } from "@portfolio/features/github/components/GitHubDashboard";
 import {
+  logGitHubDebug,
+  logGitHubLifecycle,
+} from "@portfolio/features/github/lib/github-debug";
+import {
   githubReducer,
   setScopes,
   setStatus,
@@ -52,15 +56,26 @@ function GitHubDashboardContainerContent({
   initialScopes,
 }: GitHubDashboardContainerProps) {
   const dispatch = useDispatch<GitHubDashboardStore["dispatch"]>();
+  const githubState = useSelector((state: GitHubDashboardRootState) => state.github);
   const status = useSelector((state: GitHubDashboardRootState) => state.github.status);
   const repositories = useSelector((state: GitHubDashboardRootState) =>
     selectRepositoriesForActiveScope(state),
   );
 
   useEffect(() => {
+    logGitHubLifecycle("GitHubDashboardContainerContent");
+    logGitHubDebug("Initial scopes:", initialScopes);
     dispatch(setScopes(initialScopes));
     dispatch(setStatus("success"));
   }, [dispatch, initialScopes]);
+
+  useEffect(() => {
+    logGitHubDebug("GitHub state:", githubState);
+  }, [githubState]);
+
+  useEffect(() => {
+    logGitHubDebug("Selected repos:", repositories);
+  }, [repositories]);
 
   if (status === "loading" || status === "idle") {
     return (
@@ -107,6 +122,7 @@ export function GitHubDashboardContainer({
   const storeRef = useRef<GitHubDashboardStore | null>(null);
 
   if (!storeRef.current) {
+    logGitHubDebug("Initial scopes:", initialScopes);
     storeRef.current = createGitHubDashboardStore({
       github: {
         scopes: initialScopes,

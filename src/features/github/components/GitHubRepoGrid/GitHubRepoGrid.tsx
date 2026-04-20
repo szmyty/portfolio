@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container } from "@portfolio/components/ui/Container";
+import {
+  logGitHubDebug,
+  logGitHubLifecycle,
+} from "@portfolio/features/github/lib/github-debug";
 import { selectRepositoriesForActiveScope } from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import { GitHubRepoCard } from "@portfolio/features/github/components/GitHubRepoCard";
@@ -12,9 +17,22 @@ type GitHubStoreState = {
 };
 
 export function GitHubRepoGrid(_props: GitHubRepoGridProps) {
+  const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
   );
+
+  useEffect(() => {
+    logGitHubLifecycle("GitHubRepoGrid");
+  }, []);
+
+  useEffect(() => {
+    logGitHubDebug("GitHub state:", githubState);
+  }, [githubState]);
+
+  useEffect(() => {
+    logGitHubDebug("Selected repos:", repositories);
+  }, [repositories]);
 
   return (
     <Container className="max-w-6xl">

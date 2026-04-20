@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Section } from "@portfolio/components/ui/Section";
 import { GitHubLanguageChart } from "@portfolio/features/github/components/GitHubLanguageChart";
 import { GitHubProfileHeader } from "@portfolio/features/github/components/GitHubProfileHeader";
@@ -7,9 +9,28 @@ import { GitHubRepoGrid } from "@portfolio/features/github/components/GitHubRepo
 import { GitHubScopeSelector } from "@portfolio/features/github/components/GitHubScopeSelector";
 import { GitHubStarsChart } from "@portfolio/features/github/components/GitHubStarsChart";
 import { GitHubStats } from "@portfolio/features/github/components/GitHubStats";
+import {
+  logGitHubDebug,
+  logGitHubLifecycle,
+} from "@portfolio/features/github/lib/github-debug";
+import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubDashboardProps } from "./GitHubDashboard.types";
 
+type GitHubStoreState = {
+  github: GitHubState;
+};
+
 export function GitHubDashboard(_props: GitHubDashboardProps) {
+  const githubState = useSelector((state: GitHubStoreState) => state.github);
+
+  useEffect(() => {
+    logGitHubLifecycle("GitHubDashboard");
+  }, []);
+
+  useEffect(() => {
+    logGitHubDebug("GitHub state:", githubState);
+  }, [githubState]);
+
   return (
     <Section
       aria-label="GitHub Dashboard"
