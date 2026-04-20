@@ -1,96 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ThemeToggle } from "@portfolio/components/ui/ThemeToggle";
 
-type SectionNavItem = {
-  id: string;
+type NavItem = {
+  href: string;
   labelKey: string;
-}
+};
 
-const sectionItems: SectionNavItem[] = [
-  { id: "music", labelKey: "music" },
-  { id: "publishing", labelKey: "publishing" },
-  { id: "development", labelKey: "development" },
+const navItems: NavItem[] = [
+  { href: "/", labelKey: "home" },
+  { href: "/music", labelKey: "music" },
+  { href: "/publishing", labelKey: "publishing" },
+  { href: "/development", labelKey: "development" },
 ];
-
-const sectionIds = sectionItems.map((item) => item.id);
-
-function useSectionObserver(ids: string[], enabled: boolean): string | null {
-  const [activeId, setActiveId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        }
-      },
-      {
-        // Top margin trims the hero area so a section is only "active" once
-        // it's scrolled ~20% into view. Bottom margin removes the lower 60%
-        // of the viewport so only one section is active at a time.
-        rootMargin: "-20% 0px -60% 0px",
-        threshold: 0,
-      }
-    );
-
-    for (const id of ids) {
-      const element = document.getElementById(id);
-      if (element) observer.observe(element);
-    }
-
-    return () => observer.disconnect();
-  }, [ids, enabled]);
-
-  return activeId;
-}
 
 export function NavBar() {
   const t = useTranslations("NavBar");
   const pathname = usePathname();
-  const router = useRouter();
-  const isHome = pathname === "/";
-  const activeId = useSectionObserver(sectionIds, isHome);
-
-  function getSectionHref(id: string): string {
-    return `/#${id}`;
-  }
 
   return (
     <nav
       aria-label={t("ariaLabel")}
       className="w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-6 overflow-x-auto"
     >
-      <Link
-        href="/"
-        onClick={(event) => {
-          if (!isHome || typeof window === "undefined") return;
-
-          if (window.location.hash) {
-            event.preventDefault();
-            router.replace("/");
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }
-        }}
-        className="text-sm font-medium text-text-secondary hover:text-accent transition-colors duration-200"
-      >
-        {t("home")}
-      </Link>
-      {sectionItems.map(({ id, labelKey }) => {
-        const isActive = isHome && activeId === id;
+      {navItems.map(({ href, labelKey }) => {
+        const isActive = pathname === href;
         return (
           <Link
-            key={id}
-            href={getSectionHref(id)}
-            aria-current={isActive ? "location" : undefined}
+            key={href}
+            href={href}
+            aria-current={isActive ? "page" : undefined}
             className={`text-sm font-medium transition-colors duration-200 ${
               isActive
                 ? "text-accent"

@@ -37,7 +37,7 @@ const meta: Meta<typeof NavBar> = {
 export default meta;
 type Story = StoryObj<typeof NavBar>;
 
-/** NavBar on the home page — section links use hash hrefs and the observer is active. */
+/** NavBar on the home page. */
 export const HomePage: Story = {
   parameters: {
     nextjs: {
@@ -48,7 +48,7 @@ export const HomePage: Story = {
   },
 };
 
-/** NavBar on a sub-page — section links point to `/#section` instead of `#section`. */
+/** NavBar on a sub-page with the active route highlighted. */
 export const SubPage: Story = {
   parameters: {
     nextjs: {
