@@ -55,7 +55,7 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
   const hasStarData = starsData.some((entry) => entry.value > 0);
 
   return (
-    <div className="rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
+    <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-text-primary">
@@ -72,7 +72,7 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
           No star data available for the selected scope.
         </div>
       ) : (
-        <div className="h-80 w-full sm:h-84">
+        <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={starsData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
               <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />

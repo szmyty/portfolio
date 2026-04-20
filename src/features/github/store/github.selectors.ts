@@ -1,3 +1,4 @@
+import { createSelector } from "reselect";
 import type { GitHubRepository, GitHubScope } from "@portfolio/features/github/types";
 import type { GitHubState } from "./github.slice";
 
@@ -7,30 +8,34 @@ function selectGitHubState(state: GitHubSelectorState): GitHubState {
   return "github" in state ? state.github : state;
 }
 
-export function selectActiveScope(state: GitHubSelectorState): GitHubScope | null {
-  const githubState = selectGitHubState(state);
+const selectScopes = (state: GitHubSelectorState): GitHubScope[] => selectGitHubState(state).scopes;
+const selectSelectedScopeId = (state: GitHubSelectorState): string | null =>
+  selectGitHubState(state).selectedScopeId;
 
-  if (!githubState.selectedScopeId) {
-    return null;
-  }
+export const selectActiveScope = createSelector(
+  [selectScopes, selectSelectedScopeId],
+  (scopes, selectedScopeId): GitHubScope | null => {
+    if (!selectedScopeId) {
+      return null;
+    }
 
-  return (
-    githubState.scopes.find((scope) => scope.id === githubState.selectedScopeId) ?? null
-  );
-}
+    return scopes.find((scope) => scope.id === selectedScopeId) ?? null;
+  },
+);
 
-export function selectGlobalRepositories(state: GitHubSelectorState): GitHubRepository[] {
-  return selectGitHubState(state).scopes.flatMap((scope) => scope.repositories);
-}
+export const selectGlobalRepositories = createSelector(
+  [selectScopes],
+  (scopes): GitHubRepository[] => scopes.flatMap((scope) => scope.repositories),
+);
 
-export function selectRepositoriesForActiveScope(
-  state: GitHubSelectorState,
-): GitHubRepository[] {
-  const activeScope = selectActiveScope(state);
+export const selectRepositoriesForActiveScope = createSelector(
+  [selectScopes, selectSelectedScopeId],
+  (scopes, selectedScopeId): GitHubRepository[] => {
+    if (!selectedScopeId) {
+      return scopes.flatMap((scope) => scope.repositories);
+    }
 
-  if (!activeScope) {
-    return selectGlobalRepositories(state);
-  }
-
-  return activeScope.repositories;
-}
+    const scope = scopes.find((candidate) => candidate.id === selectedScopeId);
+    return scope?.repositories ?? [];
+  },
+);
