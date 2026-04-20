@@ -1,3 +1,5 @@
+export { GitHubDashboard } from "./components/GitHubDashboard";
+export type { GitHubDashboardProps } from "./components/GitHubDashboard";
 export { GitHubDashboardContainer } from "./components/GitHubDashboardContainer";
 export type { GitHubDashboardContainerProps } from "./components/GitHubDashboardContainer";
 export { GitHubRepoCard } from "./components/GitHubRepoCard";
