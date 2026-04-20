@@ -16,17 +16,15 @@ import {
   logGitHubDebug,
   logGitHubLifecycle,
 } from "@portfolio/features/github/lib/github-debug";
-import { selectRepositoriesForActiveScope } from "@portfolio/features/github/store/github.selectors";
+import {
+  selectRepositoriesForActiveScope,
+  selectStarsChartData,
+} from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubStarsChartProps } from "./GitHubStarsChart.types";
 
 type GitHubStoreState = {
   github: GitHubState;
-};
-
-type StarDatum = {
-  name: string;
-  value: number;
 };
 
 const CHART_COLORS = [
@@ -38,29 +36,12 @@ const CHART_COLORS = [
   "#38bdf8",
 ] as const;
 
-function buildStarsData(state: GitHubStoreState): StarDatum[] {
-  return selectRepositoriesForActiveScope(state)
-    .slice()
-    .sort((left, right) => {
-      if (right.stargazers_count !== left.stargazers_count) {
-        return right.stargazers_count - left.stargazers_count;
-      }
-
-      return left.name.localeCompare(right.name);
-    })
-    .slice(0, 6)
-    .map((repository) => ({
-      name: repository.name,
-      value: repository.stargazers_count,
-    }));
-}
-
 export function GitHubStarsChart(_props: GitHubStarsChartProps) {
   const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
   );
-  const starsData = useSelector(buildStarsData);
+  const starsData = useSelector((state: GitHubStoreState) => selectStarsChartData(state));
   const hasStarData = starsData.some((entry) => entry.value > 0);
 
   useEffect(() => {
@@ -84,7 +65,7 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
   }
 
   return (
-    <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
+    <div className="flex h-full min-w-0 flex-col rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-text-primary">
@@ -96,8 +77,8 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
         </div>
       </div>
 
-      <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[320px] w-full min-w-0">
+        <ResponsiveContainer width="100%" height={320} minWidth={0}>
           <BarChart data={starsData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
             <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
             <XAxis

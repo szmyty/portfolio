@@ -2,35 +2,16 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedScope, type GitHubState } from "@portfolio/features/github/store/github.slice";
-import type { GitHubScope } from "@portfolio/features/github/types";
+import { selectSortedScopes } from "@portfolio/features/github/store/github.selectors";
 import type { GitHubScopeSelectorProps } from "./GitHubScopeSelector.types";
 
 type GitHubStoreState = {
   github: GitHubState;
 };
 
-const SCOPE_ORDER: Record<string, number> = {
-  egohygiene: 0,
-  incomprisllc: 1,
-  szmyty: 2,
-};
-
-function sortScopes(scopes: GitHubScope[]): GitHubScope[] {
-  return [...scopes].sort((left, right) => {
-    const leftOrder = SCOPE_ORDER[left.id] ?? Number.MAX_SAFE_INTEGER;
-    const rightOrder = SCOPE_ORDER[right.id] ?? Number.MAX_SAFE_INTEGER;
-
-    if (leftOrder !== rightOrder) {
-      return leftOrder - rightOrder;
-    }
-
-    return left.name.localeCompare(right.name);
-  });
-}
-
 export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
   const dispatch = useDispatch();
-  const scopes = useSelector((state: GitHubStoreState) => sortScopes(state.github.scopes));
+  const scopes = useSelector((state: GitHubStoreState) => selectSortedScopes(state));
   const selectedScopeId = useSelector(
     (state: GitHubStoreState) => state.github.selectedScopeId,
   );

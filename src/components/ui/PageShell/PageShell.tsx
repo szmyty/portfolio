@@ -1,4 +1,3 @@
-import { Center } from "@portfolio/components/ui/Center";
 import { GalaxyBackground } from "@portfolio/components/ui/GalaxyBackground";
 import { Footer } from "@portfolio/features/landing/Footer";
 import { NavBar } from "@portfolio/components/ui/NavBar";
@@ -19,10 +18,10 @@ import type { PageShellProps } from "./PageShell.types";
  */
 export function PageShell({ children }: PageShellProps) {
   return (
-    <div className="relative min-h-screen min-h-dvh w-full overflow-hidden bg-background">
+    <div className="relative min-h-screen min-h-dvh w-full overflow-x-hidden bg-background flex flex-col">
       <GalaxyBackground />
       <CosmicBackground mode="content" />
-      <div className="absolute inset-0 z-10 flex flex-col">
+      <div className="relative z-10 flex min-h-screen min-h-dvh flex-col">
         <header className="pt-[env(safe-area-inset-top)]">
           <NavBar />
         </header>
@@ -31,7 +30,9 @@ export function PageShell({ children }: PageShellProps) {
           tabIndex={-1}
           className="flex-1 outline-none"
         >
-          <Center className="min-h-full py-16">{children}</Center>
+          <div className="flex flex-col w-full py-16">
+            {children}
+          </div>
         </main>
         <Footer />
       </div>

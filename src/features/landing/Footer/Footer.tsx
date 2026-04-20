@@ -26,7 +26,8 @@ export async function Footer() {
   const tAuthor = await getTranslations("Author");
 
   return (
-    <footer className="sticky bottom-0 z-20 w-full py-4 px-4 sm:px-8 pb-[max(1rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border bg-background/80 backdrop-blur-sm pointer-events-auto">
+    <footer className="w-full py-4 px-4 sm:px-8 border-t border-border bg-background/80 backdrop-blur-sm pointer-events-auto">
+      <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
       <p className="text-xs text-text-muted tracking-wide">
         {t("madeWith")}{" "}
         <span className="text-red-400" aria-label={t("love")}>
@@ -76,6 +77,7 @@ export async function Footer() {
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           </svg>
         </FooterLink>
+      </div>
       </div>
     </footer>
   );

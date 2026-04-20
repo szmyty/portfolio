@@ -3,6 +3,7 @@ import type { GitHubRepository, GitHubScope } from "@portfolio/features/github/t
 import type { GitHubState } from "./github.slice";
 
 export type GitHubSelectorState = GitHubState | { github: GitHubState };
+type ChartDatum = { name: string; value: number };
 
 function selectGitHubState(state: GitHubSelectorState): GitHubState {
   return "github" in state ? state.github : state;
@@ -11,6 +12,11 @@ function selectGitHubState(state: GitHubSelectorState): GitHubState {
 const selectScopes = (state: GitHubSelectorState): GitHubScope[] => selectGitHubState(state).scopes;
 const selectSelectedScopeId = (state: GitHubSelectorState): string | null =>
   selectGitHubState(state).selectedScopeId;
+const SCOPE_ORDER: Record<string, number> = {
+  egohygiene: 0,
+  incomprisllc: 1,
+  szmyty: 2,
+};
 
 export const selectActiveScope = createSelector(
   [selectScopes, selectSelectedScopeId],
@@ -38,4 +44,56 @@ export const selectRepositoriesForActiveScope = createSelector(
     const scope = scopes.find((candidate) => candidate.id === selectedScopeId);
     return scope?.repositories ?? [];
   },
+);
+
+export const selectSortedScopes = createSelector(
+  [selectScopes],
+  (scopes): GitHubScope[] =>
+    [...scopes].sort((left, right) => {
+      const leftOrder = SCOPE_ORDER[left.id] ?? Number.MAX_SAFE_INTEGER;
+      const rightOrder = SCOPE_ORDER[right.id] ?? Number.MAX_SAFE_INTEGER;
+
+      if (leftOrder !== rightOrder) {
+        return leftOrder - rightOrder;
+      }
+
+      return left.name.localeCompare(right.name);
+    }),
+);
+
+export const selectLanguageChartData = createSelector(
+  [selectRepositoriesForActiveScope],
+  (repositories): ChartDatum[] => {
+    const distribution = repositories.reduce<Record<string, number>>((languages, repository) => {
+      if (!repository.language) {
+        return languages;
+      }
+
+      languages[repository.language] = (languages[repository.language] ?? 0) + 1;
+      return languages;
+    }, {});
+
+    return Object.entries(distribution)
+      .map(([name, value]) => ({ name, value }))
+      .sort((left, right) => right.value - left.value || left.name.localeCompare(right.name));
+  },
+);
+
+export const selectStarsChartData = createSelector(
+  [selectRepositoriesForActiveScope],
+  (repositories): ChartDatum[] =>
+    repositories
+      .slice()
+      .sort((left, right) => {
+        if (right.stargazers_count !== left.stargazers_count) {
+          return right.stargazers_count - left.stargazers_count;
+        }
+
+        return left.name.localeCompare(right.name);
+      })
+      .slice(0, 6)
+      .map((repository) => ({
+        name: repository.name,
+        value: repository.stargazers_count,
+      })),
 );

@@ -167,7 +167,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full bg-background text-foreground">
+      <body className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden">
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
             {children}

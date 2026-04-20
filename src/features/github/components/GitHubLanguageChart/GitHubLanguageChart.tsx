@@ -14,17 +14,15 @@ import {
   logGitHubDebug,
   logGitHubLifecycle,
 } from "@portfolio/features/github/lib/github-debug";
-import { selectRepositoriesForActiveScope } from "@portfolio/features/github/store/github.selectors";
+import {
+  selectLanguageChartData,
+  selectRepositoriesForActiveScope,
+} from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubLanguageChartProps } from "./GitHubLanguageChart.types";
 
 type GitHubStoreState = {
   github: GitHubState;
-};
-
-type LanguageDatum = {
-  name: string;
-  value: number;
 };
 
 const CHART_COLORS = [
@@ -38,28 +36,12 @@ const CHART_COLORS = [
   "#fb7185",
 ] as const;
 
-function buildLanguageData(state: GitHubStoreState): LanguageDatum[] {
-  const repositories = selectRepositoriesForActiveScope(state);
-  const distribution = repositories.reduce<Record<string, number>>((languages, repository) => {
-    if (!repository.language) {
-      return languages;
-    }
-
-    languages[repository.language] = (languages[repository.language] ?? 0) + 1;
-    return languages;
-  }, {});
-
-  return Object.entries(distribution)
-    .map(([name, value]) => ({ name, value }))
-    .sort((left, right) => right.value - left.value || left.name.localeCompare(right.name));
-}
-
 export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
   const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
   );
-  const languageData = useSelector(buildLanguageData);
+  const languageData = useSelector((state: GitHubStoreState) => selectLanguageChartData(state));
 
   useEffect(() => {
     logGitHubLifecycle("GitHubLanguageChart");
@@ -82,7 +64,7 @@ export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
   }
 
   return (
-    <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
+    <div className="flex h-full min-w-0 flex-col rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-text-primary">
@@ -94,8 +76,8 @@ export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
         </div>
       </div>
 
-      <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[320px] w-full min-w-0">
+        <ResponsiveContainer width="100%" height={320} minWidth={0}>
           <PieChart>
             <Pie
               data={languageData}

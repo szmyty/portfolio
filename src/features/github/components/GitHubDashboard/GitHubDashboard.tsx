@@ -50,9 +50,13 @@ export function GitHubDashboard(_props: GitHubDashboardProps) {
 
         <div className="flex flex-col gap-6 lg:gap-8">
           <GitHubStats />
-          <div className="grid gap-6 xl:grid-cols-2">
-            <GitHubLanguageChart />
-            <GitHubStarsChart />
+          <div className="grid items-stretch gap-6 xl:grid-cols-2">
+            <div className="min-w-0 min-h-[320px]">
+              <GitHubLanguageChart />
+            </div>
+            <div className="min-w-0 min-h-[320px]">
+              <GitHubStarsChart />
+            </div>
           </div>
         </div>
 
