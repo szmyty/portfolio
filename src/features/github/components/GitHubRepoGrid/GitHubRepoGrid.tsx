@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container } from "@portfolio/components/ui/Container";
+import { EmptyState } from "@portfolio/components/ui/EmptyState";
 import {
   logGitHubDebug,
   logGitHubLifecycle,
@@ -33,6 +34,18 @@ export function GitHubRepoGrid(_props: GitHubRepoGridProps) {
   useEffect(() => {
     logGitHubDebug("Selected repos:", repositories);
   }, [repositories]);
+
+  if (!repositories.length) {
+    return (
+      <Container className="max-w-6xl">
+        <EmptyState
+          title="No repositories available"
+          description="There are no repositories to display for the selected GitHub scope yet."
+          className="rounded-3xl border border-dashed border-border bg-background/60"
+        />
+      </Container>
+    );
+  }
 
   return (
     <Container className="max-w-6xl">

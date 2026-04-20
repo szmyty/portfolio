@@ -79,6 +79,10 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
     logGitHubDebug("Stars chart data:", starsData);
   }, [starsData]);
 
+  if (!starsData.length || !hasStarData) {
+    return null;
+  }
+
   return (
     <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
       <div className="mb-5 flex items-start justify-between gap-4">
@@ -92,54 +96,48 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
         </div>
       </div>
 
-      {!hasStarData ? (
-        <div className="flex min-h-80 items-center justify-center rounded-2xl border border-dashed border-border bg-background/60 px-6 text-center text-sm text-text-muted">
-          No star data available for the selected scope.
-        </div>
-      ) : (
-        <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={starsData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
-              <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
-              <XAxis
-                dataKey="name"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
-              />
-              <YAxis
-                allowDecimals={false}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
-              />
-              <Tooltip
-                cursor={{ fill: "rgba(124, 156, 255, 0.08)" }}
-                formatter={(value) => [`${value ?? 0}`, "Stars"]}
-                contentStyle={{
-                  borderRadius: "16px",
-                  border: "1px solid var(--border)",
-                  background: "color-mix(in srgb, var(--surface) 92%, transparent)",
-                  color: "var(--text-primary)",
-                }}
-              />
-              <Bar
-                dataKey="value"
-                radius={[10, 10, 4, 4]}
-                isAnimationActive
-                animationDuration={500}
-              >
-                {starsData.map((entry, index) => (
-                  <Cell
-                    key={entry.name}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
+      <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={starsData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
+            <CartesianGrid stroke="rgba(148, 163, 184, 0.12)" vertical={false} />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
+            />
+            <YAxis
+              allowDecimals={false}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
+            />
+            <Tooltip
+              cursor={{ fill: "rgba(124, 156, 255, 0.08)" }}
+              formatter={(value) => [`${value ?? 0}`, "Stars"]}
+              contentStyle={{
+                borderRadius: "16px",
+                border: "1px solid var(--border)",
+                background: "color-mix(in srgb, var(--surface) 92%, transparent)",
+                color: "var(--text-primary)",
+              }}
+            />
+            <Bar
+              dataKey="value"
+              radius={[10, 10, 4, 4]}
+              isAnimationActive
+              animationDuration={500}
+            >
+              {starsData.map((entry, index) => (
+                <Cell
+                  key={entry.name}
+                  fill={CHART_COLORS[index % CHART_COLORS.length]}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

@@ -56,6 +56,10 @@ export function GitHubStats(_props: GitHubStatsProps) {
     logGitHubDebug("Selected repos:", repositories);
   }, [repositories]);
 
+  if (!repositories.length) {
+    return null;
+  }
+
   return (
     <Container className="max-w-6xl">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">

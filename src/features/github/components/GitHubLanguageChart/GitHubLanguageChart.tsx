@@ -77,6 +77,10 @@ export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
     logGitHubDebug("Language chart data:", languageData);
   }, [languageData]);
 
+  if (!languageData.length) {
+    return null;
+  }
+
   return (
     <div className="min-h-[300px] rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
       <div className="mb-5 flex items-start justify-between gap-4">
@@ -90,53 +94,47 @@ export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
         </div>
       </div>
 
-      {languageData.length === 0 ? (
-        <div className="flex min-h-80 items-center justify-center rounded-2xl border border-dashed border-border bg-background/60 px-6 text-center text-sm text-text-muted">
-          No language data available for the selected scope.
-        </div>
-      ) : (
-        <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={languageData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={62}
-                outerRadius={108}
-                paddingAngle={3}
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth={1}
-                isAnimationActive
-                animationDuration={500}
-              >
-                {languageData.map((entry, index) => (
-                  <Cell
-                    key={entry.name}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) => [`${value ?? 0}`, "Repositories"]}
-                contentStyle={{
-                  borderRadius: "16px",
-                  border: "1px solid var(--border)",
-                  background: "color-mix(in srgb, var(--surface) 92%, transparent)",
-                  color: "var(--text-primary)",
-                }}
-              />
-              <Legend
-                verticalAlign="bottom"
-                wrapperStyle={{
-                  paddingTop: "16px",
-                  color: "var(--text-secondary)",
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      )}
+      <div className="h-[300px] w-full min-h-[300px] sm:h-[336px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={languageData}
+              dataKey="value"
+              nameKey="name"
+              innerRadius={62}
+              outerRadius={108}
+              paddingAngle={3}
+              stroke="rgba(255,255,255,0.08)"
+              strokeWidth={1}
+              isAnimationActive
+              animationDuration={500}
+            >
+              {languageData.map((entry, index) => (
+                <Cell
+                  key={entry.name}
+                  fill={CHART_COLORS[index % CHART_COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) => [`${value ?? 0}`, "Repositories"]}
+              contentStyle={{
+                borderRadius: "16px",
+                border: "1px solid var(--border)",
+                background: "color-mix(in srgb, var(--surface) 92%, transparent)",
+                color: "var(--text-primary)",
+              }}
+            />
+            <Legend
+              verticalAlign="bottom"
+              wrapperStyle={{
+                paddingTop: "16px",
+                color: "var(--text-secondary)",
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
