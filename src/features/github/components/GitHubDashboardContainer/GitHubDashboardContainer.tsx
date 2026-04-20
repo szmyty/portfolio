@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider, useDispatch } from "react-redux";
 import { githubReducer, setScopes } from "@portfolio/features/github/store/github.slice";
+import { GitHubRepoGrid } from "@portfolio/features/github/components/GitHubRepoGrid";
 import { GitHubScopeSelector } from "@portfolio/features/github/components/GitHubScopeSelector";
+import { GitHubStats } from "@portfolio/features/github/components/GitHubStats";
 import type { GitHubDashboardContainerProps } from "./GitHubDashboardContainer.types";
 
 function createGitHubDashboardStore() {
@@ -29,7 +31,8 @@ function GitHubDashboardContainerContent({
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
       <GitHubScopeSelector />
-      <div>GitHub Dashboard</div>
+      <GitHubStats />
+      <GitHubRepoGrid />
     </div>
   );
 }

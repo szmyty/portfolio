@@ -1,4 +1,10 @@
 export { GitHubDashboardContainer } from "./components/GitHubDashboardContainer";
 export type { GitHubDashboardContainerProps } from "./components/GitHubDashboardContainer";
+export { GitHubRepoCard } from "./components/GitHubRepoCard";
+export type { GitHubRepoCardProps } from "./components/GitHubRepoCard";
+export { GitHubRepoGrid } from "./components/GitHubRepoGrid";
+export type { GitHubRepoGridProps } from "./components/GitHubRepoGrid";
 export { GitHubScopeSelector } from "./components/GitHubScopeSelector";
 export type { GitHubScopeSelectorProps } from "./components/GitHubScopeSelector";
+export { GitHubStats } from "./components/GitHubStats";
+export type { GitHubStatsProps } from "./components/GitHubStats";

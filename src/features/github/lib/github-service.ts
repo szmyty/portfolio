@@ -6,6 +6,7 @@ type GitHubRepositoryApiResponse = {
   id: number;
   name: string;
   full_name: string;
+  description: string | null;
   stargazers_count: number;
   language: string | null;
   updated_at: string;
@@ -16,6 +17,7 @@ function mapGitHubRepository(repository: GitHubRepositoryApiResponse): GitHubRep
     id: repository.id,
     name: repository.name,
     full_name: repository.full_name,
+    description: repository.description,
     stargazers_count: repository.stargazers_count,
     language: repository.language,
     updated_at: repository.updated_at,
