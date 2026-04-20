@@ -32,7 +32,7 @@ export function BloomEffect({ enabled = true }: BloomEffectProps) {
   return (
     <EffectComposer>
       <Bloom
-        intensity={1.1}
+        intensity={0.1}
         luminanceThreshold={0.08}
         luminanceSmoothing={0.35}
         mipmapBlur

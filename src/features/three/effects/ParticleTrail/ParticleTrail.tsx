@@ -6,7 +6,7 @@ import { AdditiveBlending, BufferAttribute, Color, DynamicDrawUsage, Vector3 } f
 import type { Mesh, Points } from "three";
 import { getInfinityPoint } from "../../geometry/InfinityGeometry/infinityCurve";
 
-const DEFAULT_COUNT = 220;
+const DEFAULT_COUNT: number = 220;
 
 type ParticleTrailProps = {
   meshRef: React.RefObject<Mesh | null>;
