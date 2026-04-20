@@ -4,7 +4,7 @@ import type { GitHubRepoCardProps } from "./GitHubRepoCard.types";
 
 export function GitHubRepoCard({ repository }: GitHubRepoCardProps) {
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-border bg-surface px-5 py-5 shadow-sm">
+    <article className="flex h-full flex-col rounded-2xl border border-border bg-surface px-5 py-5 shadow-sm sm:px-6 sm:py-6">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 className="truncate text-lg font-semibold tracking-tight text-text-primary">

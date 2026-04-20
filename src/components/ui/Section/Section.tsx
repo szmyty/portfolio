@@ -31,6 +31,7 @@ export function Section({
   background = "background",
   cosmicBackground = true,
   className,
+  contentClassName,
 }: SectionProps) {
   const bgClass = cosmicBackground
     ? "bg-transparent"
@@ -56,6 +57,7 @@ export function Section({
           visual
             ? "max-w-5xl flex flex-col md:flex-row md:items-center gap-10 md:gap-16"
             : "max-w-3xl flex flex-col gap-6",
+          contentClassName,
         ].join(" ")}
       >
         {/* Text column */}

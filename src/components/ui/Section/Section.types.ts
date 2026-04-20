@@ -11,4 +11,5 @@ export type SectionProps = {
   background?: SectionBackground;
   cosmicBackground?: boolean;
   className?: string;
-}
+  contentClassName?: string;
+};

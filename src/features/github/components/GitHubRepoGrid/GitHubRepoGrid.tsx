@@ -18,7 +18,7 @@ export function GitHubRepoGrid(_props: GitHubRepoGridProps) {
 
   return (
     <Container className="max-w-6xl">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {repositories.map((repository) => (
           <GitHubRepoCard key={repository.id} repository={repository} />
         ))}

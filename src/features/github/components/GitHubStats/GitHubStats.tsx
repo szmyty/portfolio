@@ -17,7 +17,7 @@ type StatCardProps = {
 
 function StatCard({ label, value }: StatCardProps) {
   return (
-    <div className="rounded-2xl border border-border bg-surface px-5 py-6 shadow-sm">
+    <div className="rounded-2xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-6 sm:py-7">
       <p className="text-sm font-medium text-text-muted">{label}</p>
       <p className="mt-2 text-3xl font-bold tracking-tight text-text-primary">{value}</p>
     </div>
@@ -40,7 +40,7 @@ export function GitHubStats(_props: GitHubStatsProps) {
 
   return (
     <Container className="max-w-6xl">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         <StatCard label="Repositories" value={totalRepositories} />
         <StatCard label="Stars" value={totalStars} />
         <StatCard label="Languages" value={uniqueLanguages} />
