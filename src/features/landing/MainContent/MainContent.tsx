@@ -1,5 +1,5 @@
+import { AppNavBar } from "@portfolio/components/app/AppNavBar";
 import { Footer } from "@portfolio/features/landing/Footer";
-import { NavBar } from "@portfolio/components/ui/NavBar";
 import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared";
 import {
   DevelopmentSection,
@@ -32,7 +32,7 @@ export function MainContent() {
       <header
         className="fixed inset-x-0 top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto pt-[env(safe-area-inset-top)]"
       >
-        <NavBar />
+        <AppNavBar />
       </header>
       {/* Layer 2 — UI overlay: pointer-events-none on container; sections restore as needed */}
       <main

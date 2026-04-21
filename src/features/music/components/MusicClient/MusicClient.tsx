@@ -44,7 +44,7 @@ export function MusicClient({ tracks }: MusicClientProps) {
             </p>
 
             <ReactPlayer
-              url={activeTrack.link}
+              src={activeTrack.link}
               controls
               width="100%"
               height="60px"

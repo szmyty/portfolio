@@ -1,6 +1,6 @@
+import { AppNavBar } from "@portfolio/components/app/AppNavBar";
 import { GalaxyBackground } from "@portfolio/components/ui/GalaxyBackground";
 import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
-import { NavBar } from "@portfolio/components/ui/NavBar";
 import { Footer } from "@portfolio/features/landing/Footer";
 import type { PageShellProps } from "./PageShell.types";
 
@@ -49,7 +49,7 @@ function PageShellLayout({ children }: PageShellLayoutProps) {
   return (
     <div className="relative z-10 flex min-h-screen min-h-dvh flex-col">
       <header className="pt-[env(safe-area-inset-top)]">
-        <NavBar />
+        <AppNavBar />
       </header>
 
       {children}
