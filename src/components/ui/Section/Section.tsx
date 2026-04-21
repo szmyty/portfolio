@@ -4,23 +4,7 @@ import type { SectionProps } from "./Section.types";
 /**
  * Section — reusable page-section layout primitive.
  *
- * Provides consistent spacing, responsive layout, and the shared cosmic
- * background across all landing-page sections. Supports an optional right-side
- * visual slot for Lottie animations, 3D canvases, or any supplemental element.
- *
- * Usage (text-only):
- * ```tsx
- * <Section id="music" aria-label="Music" title="Music" background="surface">
- *   <p>Description…</p>
- * </Section>
- * ```
- *
- * Usage (with visual):
- * ```tsx
- * <Section id="dev" aria-label="Development" title="Development" visual={<MyLottie />}>
- *   <p>Description…</p>
- * </Section>
- * ```
+ * Pure layout + composition component.
  */
 export function Section({
   id,
@@ -33,50 +17,97 @@ export function Section({
   className,
   contentClassName,
 }: SectionProps) {
-  const bgClass = cosmicBackground
+  const backgroundClassName = cosmicBackground
     ? "bg-transparent"
     : background === "surface"
       ? "bg-surface"
       : "bg-background";
-  const outerClasses = [
+
+  const rootClassName = [
     "relative px-4 sm:px-8 py-24 sm:py-32 scroll-mt-16 pointer-events-auto",
-    bgClass,
+    backgroundClassName,
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <section id={id} aria-label={ariaLabel} className={outerClasses}>
+    <section id={id} aria-label={ariaLabel} className={rootClassName}>
       {cosmicBackground && <CosmicBackground mode="content" />}
 
-      {/* Content wrapper — single or two-column depending on whether a visual is provided */}
-      <div
-        className={[
-          "relative z-10 mx-auto",
-          visual
-            ? "max-w-5xl flex flex-col md:flex-row md:items-center gap-10 md:gap-16"
-            : "max-w-3xl flex flex-col gap-6",
-          contentClassName,
-        ].join(" ")}
-      >
-        {/* Text column */}
-        <div className={["flex flex-col gap-6", visual && "flex-1"].filter(Boolean).join(" ")}>
-          {title && (
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
-              {title}
-            </h2>
-          )}
+      <SectionContent visual={visual} className={contentClassName}>
+        <SectionText title={title} hasVisual={!!visual}>
           {children}
-        </div>
+        </SectionText>
 
-        {/* Optional visual column */}
-        {visual && (
-          <div className="flex-shrink-0 flex items-center justify-center w-full max-w-[360px] sm:max-w-[440px] md:w-[30rem] lg:w-[36rem]">
-            {visual}
-          </div>
-        )}
-      </div>
+        <SectionVisual visual={visual} />
+      </SectionContent>
     </section>
+  );
+}
+
+/* -------------------------------------------------------------------------------------------------
+ * Internal components (private to Section)
+ * -----------------------------------------------------------------------------------------------*/
+
+type SectionContentProps = {
+  visual?: React.ReactNode;
+  className?: string;
+  children: React.ReactNode;
+};
+
+function SectionContent({ visual, className, children }: SectionContentProps) {
+  const layoutClassName = visual
+    ? "max-w-5xl flex flex-col md:flex-row md:items-center gap-10 md:gap-16"
+    : "max-w-3xl flex flex-col gap-6";
+
+  const rootClassName = [
+    "relative z-10 mx-auto",
+    layoutClassName,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return <div className={rootClassName}>{children}</div>;
+}
+
+type SectionTextProps = {
+  title?: React.ReactNode;
+  children?: React.ReactNode;
+  hasVisual?: boolean;
+};
+
+function SectionText({ title, children, hasVisual }: SectionTextProps) {
+  const rootClassName = [
+    "flex flex-col gap-6",
+    hasVisual && "flex-1",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className={rootClassName}>
+      {title && (
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
+          {title}
+        </h2>
+      )}
+      {children}
+    </div>
+  );
+}
+
+type SectionVisualProps = {
+  visual?: React.ReactNode;
+};
+
+function SectionVisual({ visual }: SectionVisualProps) {
+  if (!visual) return null;
+
+  return (
+    <div className="flex-shrink-0 flex items-center justify-center w-full max-w-[360px] sm:max-w-[440px] md:w-[30rem] lg:w-[36rem]">
+      {visual}
+    </div>
   );
 }

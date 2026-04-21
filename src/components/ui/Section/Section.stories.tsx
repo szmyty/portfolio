@@ -32,7 +32,6 @@ const meta: Meta<typeof Section> = {
 export default meta;
 type Story = StoryObj<typeof Section>;
 
-/** Minimal section — title and a short paragraph. */
 export const Default: Story = {
   args: {
     id: "demo",
@@ -49,7 +48,6 @@ export const Default: Story = {
   },
 };
 
-/** Surface background variant — slightly elevated background token. */
 export const SurfaceBackground: Story = {
   args: {
     ...Default.args,
@@ -58,7 +56,6 @@ export const SurfaceBackground: Story = {
   },
 };
 
-/** Section without the cosmic background overlay. */
 export const NoCosmicBackground: Story = {
   args: {
     ...Default.args,
@@ -67,7 +64,6 @@ export const NoCosmicBackground: Story = {
   },
 };
 
-/** Two-column layout — text on the left, a visual placeholder on the right. */
 export const WithVisual: Story = {
   args: {
     id: "visual-demo",
@@ -89,15 +85,13 @@ export const WithVisual: Story = {
   },
 };
 
-/** Section without a title — children fill the full text column. */
 export const NoTitle: Story = {
   args: {
     id: "no-title",
     "aria-label": "Section without title",
     children: (
       <p className="text-text-secondary text-base leading-relaxed">
-        A section without a title. The children occupy the full text column
-        without a preceding heading.
+        A section without a title. The children occupy the full text column.
       </p>
     ),
     background: "background",
@@ -105,7 +99,6 @@ export const NoTitle: Story = {
   },
 };
 
-/** Light-mode appearance. */
 export const LightMode: Story = {
   args: Default.args,
   parameters: {
