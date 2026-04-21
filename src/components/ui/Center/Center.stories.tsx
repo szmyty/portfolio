@@ -23,13 +23,15 @@ export const Default: Story = {
   },
 };
 
-export const WithCustomWidth: Story = {
+export const ConstrainedWidth: Story = {
   args: {
-    className: "w-full max-w-xl rounded-2xl border border-border bg-surface-overlay p-8",
+    className: "w-full max-w-xl",
     children: (
-      <p className="text-center text-text-secondary">
-        Center keeps the child block horizontally and vertically aligned.
-      </p>
+      <div className="rounded-2xl border border-border bg-surface-overlay p-8">
+        <p className="text-center text-text-secondary">
+          Center keeps the child block horizontally and vertically aligned.
+        </p>
+      </div>
     ),
   },
 };

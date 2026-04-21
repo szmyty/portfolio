@@ -1,8 +1,16 @@
 import type { CenterProps } from "./Center.types";
 
+/**
+ * Center — primitive layout component for centering content
+ * horizontally and vertically using flexbox.
+ */
 export function Center({ children, className }: CenterProps) {
-  const classes = ["flex items-center justify-center", className]
+  const rootClassName = [
+    "flex items-center justify-center",
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
-  return <div className={classes}>{children}</div>;
+
+  return <div className={rootClassName}>{children}</div>;
 }
