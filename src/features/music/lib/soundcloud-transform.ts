@@ -1,6 +1,8 @@
 // src/features/music/lib/soundcloud-transform.ts
 
 import type {
+  SoundCloudProfile,
+  SoundCloudRssChannel,
   SoundCloudRssItem,
   SoundCloudTrack,
 } from "@portfolio/features/music/types";
@@ -116,4 +118,20 @@ export function transformSoundCloudItems(
   items: SoundCloudRssItem[],
 ): SoundCloudTrack[] {
   return items.map(transformSoundCloudItem);
+}
+
+export function transformSoundCloudProfile(
+  channel: SoundCloudRssChannel,
+): SoundCloudProfile {
+  const itunesImage = channel.itunes?.image;
+  const avatar =
+    (typeof itunesImage === "string" ? itunesImage : itunesImage?.href) ??
+    channel.image?.url ??
+    null;
+
+  return {
+    name: channel.title?.trim() || "SoundCloud",
+    url: channel.link?.trim() || "#",
+    avatar,
+  };
 }

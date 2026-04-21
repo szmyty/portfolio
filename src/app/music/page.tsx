@@ -1,13 +1,17 @@
 import { PageShell } from "@portfolio/components/ui/PageShell";
 import { MusicClient } from "@portfolio/features/music/components/MusicClient";
 import { fetchSoundCloudRssItems } from "@portfolio/features/music/lib/soundcloud-service";
-import { transformSoundCloudItems } from "@portfolio/features/music/lib/soundcloud-transform";
+import {
+  transformSoundCloudItems,
+  transformSoundCloudProfile,
+} from "@portfolio/features/music/lib/soundcloud-transform";
 
 export default async function MusicPage() {
-  const rawItems = await fetchSoundCloudRssItems();
-  console.log("RAW SOUND CLOUD ITEMS:", rawItems.slice(0, 3));
+  const { items, channel } = await fetchSoundCloudRssItems();
+  console.log("RAW SOUND CLOUD ITEMS:", items.slice(0, 3));
 
-  const tracks = transformSoundCloudItems(rawItems);
+  const tracks = transformSoundCloudItems(items);
+  const profile = transformSoundCloudProfile(channel);
   console.log("TRANSFORMED TRACKS:", tracks.slice(0, 3));
 
   return (
@@ -18,7 +22,7 @@ export default async function MusicPage() {
           Music
         </h1>
 
-        <MusicClient tracks={tracks} />
+        <MusicClient tracks={tracks} profile={profile} />
       </section>
     </PageShell>
   );

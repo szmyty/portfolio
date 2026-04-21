@@ -2,10 +2,10 @@
 
 import { useEffect, useId, useRef } from "react";
 import {
+  notifySectionVisualLayoutChange,
   type SectionVisualKind,
   registerSectionVisualSlot,
   unregisterSectionVisualSlot,
-  updateSectionVisualVisibility,
 } from "./sectionVisualStore";
 
 type SectionVisualTargetProps = {
@@ -26,6 +26,7 @@ export function SectionVisualTarget({
 
   useEffect(() => {
     registerSectionVisualSlot(slotId, kind, ref.current);
+    notifySectionVisualLayoutChange();
 
     return () => {
       unregisterSectionVisualSlot(slotId);
@@ -36,25 +37,18 @@ export function SectionVisualTarget({
     const node = ref.current;
     if (!node) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        updateSectionVisualVisibility(
-          slotId,
-          entry.isIntersecting,
-          entry.intersectionRatio,
-        );
-      },
-      {
-        rootMargin: "120px 0px 120px 0px",
-        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-      },
-    );
+    const resizeObserver = new ResizeObserver(() => {
+      notifySectionVisualLayoutChange();
+    });
+    resizeObserver.observe(node);
 
-    observer.observe(node);
+    const frameId = window.requestAnimationFrame(() => {
+      notifySectionVisualLayoutChange();
+    });
 
     return () => {
-      observer.disconnect();
-      updateSectionVisualVisibility(slotId, false, 0);
+      window.cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
     };
   }, [slotId]);
 

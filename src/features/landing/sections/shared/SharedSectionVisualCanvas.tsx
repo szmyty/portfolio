@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
+import type { PerspectiveCamera } from "three";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 import {
@@ -24,34 +25,65 @@ type RectState = {
 
 const CAMERA_CONFIG: Record<
   SectionVisualKind,
-  { position: [number, number, number]; fov: number }
+  {
+    fitWidth: number;
+    fitHeight: number;
+    fov: number;
+    offsetX: number;
+    offsetY: number;
+    padding: number;
+  }
 > = {
   vinyl: {
-    position: [0, 0.05, 6.2],
+    fitWidth: 4.2,
+    fitHeight: 4.2,
     fov: 34,
+    offsetX: 0,
+    offsetY: 0.05,
+    padding: 0.55,
   },
   magazine: {
-    position: [0, 0, 6],
+    fitWidth: 2.4,
+    fitHeight: 3.35,
     fov: 40,
+    offsetX: 0,
+    offsetY: 0,
+    padding: 0.6,
   },
   floppy: {
-    position: [0, 0.1, 5],
+    fitWidth: 4.9,
+    fitHeight: 4.5,
     fov: 28,
+    offsetX: 0,
+    offsetY: 0.1,
+    padding: 0.55,
   },
 };
 
 function CameraRig({ kind }: { kind: SectionVisualKind }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const target = CAMERA_CONFIG[kind];
 
   useEffect(() => {
-    camera.position.set(target.position[0], target.position[1], target.position[2]);
-    if ("fov" in camera) {
-      camera.fov = target.fov;
-      camera.updateProjectionMatrix();
-    }
+    const perspectiveCamera = camera as PerspectiveCamera;
+    const aspect = Math.max(size.width / Math.max(size.height, 1), 0.1);
+    const verticalFovRadians = (target.fov * Math.PI) / 180;
+    const horizontalFovRadians =
+      2 * Math.atan(Math.tan(verticalFovRadians / 2) * aspect);
+    const verticalDistance =
+      target.fitHeight / 2 / Math.tan(verticalFovRadians / 2);
+    const horizontalDistance =
+      target.fitWidth / 2 / Math.tan(horizontalFovRadians / 2);
+    const distance =
+      Math.max(verticalDistance, horizontalDistance) + target.padding;
+
+    perspectiveCamera.fov = target.fov;
+    perspectiveCamera.position.set(target.offsetX, target.offsetY, distance);
+    perspectiveCamera.near = 0.1;
+    perspectiveCamera.far = 100;
+    perspectiveCamera.updateProjectionMatrix();
     camera.lookAt(0, 0, 0);
-  }, [camera, target]);
+  }, [camera, size.height, size.width, target]);
 
   return null;
 }
@@ -60,9 +92,9 @@ function SectionVisualRig({ kind }: { kind: SectionVisualKind }) {
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
 
-  if (kind === "vinyl") {
-    return (
-      <>
+  return (
+    <>
+      <group visible={kind === "vinyl"}>
         <ambientLight intensity={isLight ? 0.52 : 0.72} />
         <directionalLight
           position={[3, 5, 4]}
@@ -85,13 +117,8 @@ function SectionVisualRig({ kind }: { kind: SectionVisualKind }) {
           color={isLight ? "#fff6fb" : "#ffd4fb"}
         />
         <VinylRecord />
-      </>
-    );
-  }
-
-  if (kind === "magazine") {
-    return (
-      <>
+      </group>
+      <group visible={kind === "magazine"}>
         <ambientLight intensity={isLight ? 0.7 : 0.9} />
         <directionalLight position={[3, 5, 4]} intensity={isLight ? 1.0 : 1.4} />
         <directionalLight position={[-3, -2, -3]} intensity={isLight ? 0.4 : 0.5} />
@@ -101,12 +128,8 @@ function SectionVisualRig({ kind }: { kind: SectionVisualKind }) {
           color={isLight ? "#f0e8d8" : "#ddd0bc"}
         />
         <Magazine />
-      </>
-    );
-  }
-
-  return (
-    <>
+      </group>
+      <group visible={kind === "floppy"}>
       <ambientLight intensity={isLight ? 0.95 : 0.6} />
       <directionalLight
         position={[4, 5, 4]}
@@ -124,6 +147,7 @@ function SectionVisualRig({ kind }: { kind: SectionVisualKind }) {
         color={isLight ? "#ffd5ea" : "#ff7fd7"}
       />
       <FloppyDisk />
+      </group>
     </>
   );
 }

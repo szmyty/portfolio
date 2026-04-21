@@ -41,6 +41,12 @@ export type SoundCloudTrack = {
   audioUrl: string | null;
 };
 
+export type SoundCloudProfile = {
+  name: string;
+  url: string;
+  avatar: string | null;
+};
+
 /**
  * Raw RSS item shape from SoundCloud feed
  * This is intentionally loose because RSS is inconsistent
@@ -70,3 +76,20 @@ export type SoundCloudRssItem = {
   };
 };
 
+export type SoundCloudRssChannel = {
+  title?: string;
+  link?: string;
+  image?: {
+    url?: string;
+  };
+  itunes?: {
+    image?: {
+      href?: string;
+    } | string;
+  };
+};
+
+export type SoundCloudFeed = {
+  items: SoundCloudRssItem[];
+  channel: SoundCloudRssChannel;
+};

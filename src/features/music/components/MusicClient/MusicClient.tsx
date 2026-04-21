@@ -2,13 +2,17 @@
 
 import { useState, useRef } from "react";
 import ReactPlayer from "react-player";
-import type { SoundCloudTrack } from "@portfolio/features/music/types";
+import type {
+  SoundCloudProfile,
+  SoundCloudTrack,
+} from "@portfolio/features/music/types";
 
 type MusicClientProps = {
   tracks: SoundCloudTrack[];
+  profile: SoundCloudProfile;
 };
 
-export function MusicClient({ tracks }: MusicClientProps) {
+export function MusicClient({ tracks, profile }: MusicClientProps) {
   console.log("CLIENT TRACKS:", tracks);
 
   const [activeTrack, setActiveTrack] = useState<SoundCloudTrack | null>(
@@ -40,17 +44,35 @@ export function MusicClient({ tracks }: MusicClientProps) {
           )}
 
           {/* Player UI */}
-          <div className="p-4 flex flex-col gap-3">
+          <div className="p-4 flex flex-col gap-4">
+            <a
+              href={profile.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 transition-opacity hover:opacity-80"
+            >
+              {profile.avatar && (
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              )}
+
+              <span className="text-sm font-medium text-text-primary">
+                {profile.name}
+              </span>
+            </a>
+
             <p className="font-semibold text-lg">
               {activeTrack.title}
             </p>
 
-            <div className="pt-2">
+            <div>
               {activeTrack.audioUrl && (
                 <ReactPlayer
                   src={activeTrack.audioUrl}
                   controls
-                  playing
                   width="100%"
                   height="50px"
                 />

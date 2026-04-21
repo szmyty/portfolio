@@ -6,9 +6,6 @@ type SectionVisualSlot = {
   id: string;
   kind: SectionVisualKind;
   element: HTMLDivElement | null;
-  isVisible: boolean;
-  intersectionRatio: number;
-  lastVisibleAt: number;
 };
 
 type SectionVisualSnapshot = {
@@ -29,39 +26,78 @@ function emitChange() {
   listeners.forEach((listener) => listener());
 }
 
-function getActiveSlot(): SectionVisualSlot | null {
-  const visibleSlots = Array.from(slots.values()).filter(
-    (slot) => slot.isVisible && slot.element,
-  );
+function getViewportMetrics() {
+  if (typeof window === "undefined") {
+    return {
+      width: 0,
+      height: 0,
+      centerX: 0,
+      centerY: 0,
+    };
+  }
 
-  if (visibleSlots.length === 0) {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    centerX: window.innerWidth / 2,
+    centerY: window.innerHeight / 2,
+  };
+}
+
+function getVisibleRatio(rect: DOMRect, viewportWidth: number, viewportHeight: number) {
+  const visibleWidth =
+    Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
+  const visibleHeight =
+    Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+  const visibleArea = visibleWidth * visibleHeight;
+  const totalArea = Math.max(rect.width * rect.height, 1);
+
+  return visibleArea / totalArea;
+}
+
+function getActiveSlot(): SectionVisualSlot | null {
+  const availableSlots = Array.from(slots.values()).filter((slot) => slot.element);
+
+  if (availableSlots.length === 0) {
     return null;
   }
 
-  visibleSlots.sort((a, b) => {
-    if (b.intersectionRatio !== a.intersectionRatio) {
-      return b.intersectionRatio - a.intersectionRatio;
+  const viewport = getViewportMetrics();
+  const rankedSlots = availableSlots.map((slot) => {
+    const rect = slot.element?.getBoundingClientRect();
+    if (!rect) {
+      return {
+        slot,
+        visibleRatio: -1,
+        centerDistance: Number.POSITIVE_INFINITY,
+      };
     }
 
-    return b.lastVisibleAt - a.lastVisibleAt;
+    const visibleRatio = getVisibleRatio(rect, viewport.width, viewport.height);
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const centerDistance = Math.hypot(
+      centerX - viewport.centerX,
+      centerY - viewport.centerY,
+    );
+
+    return {
+      slot,
+      visibleRatio,
+      centerDistance,
+    };
   });
 
-  const candidate = visibleSlots[0] ?? null;
+  rankedSlots.sort((left, right) => {
+    if (right.visibleRatio !== left.visibleRatio) {
+      return right.visibleRatio - left.visibleRatio;
+    }
+
+    return left.centerDistance - right.centerDistance;
+  });
+
+  const candidate = rankedSlots[0]?.slot ?? null;
   if (!candidate) return null;
-
-  const currentActive = cachedSnapshot.activeId
-    ? slots.get(cachedSnapshot.activeId) ?? null
-    : null;
-
-  if (
-    currentActive &&
-    currentActive.isVisible &&
-    currentActive.element &&
-    currentActive.kind === cachedSnapshot.activeKind &&
-    currentActive.intersectionRatio >= candidate.intersectionRatio - 0.18
-  ) {
-    return currentActive;
-  }
 
   return candidate;
 }
@@ -105,9 +141,6 @@ export function registerSectionVisualSlot(
     id,
     kind,
     element,
-    isVisible: existing?.isVisible ?? false,
-    intersectionRatio: existing?.intersectionRatio ?? 0,
-    lastVisibleAt: existing?.lastVisibleAt ?? 0,
   });
 
   emitChange();
@@ -118,19 +151,6 @@ export function unregisterSectionVisualSlot(id: string) {
   emitChange();
 }
 
-export function updateSectionVisualVisibility(
-  id: string,
-  isVisible: boolean,
-  intersectionRatio: number,
-) {
-  const slot = slots.get(id);
-  if (!slot) return;
-
-  slot.isVisible = isVisible;
-  slot.intersectionRatio = intersectionRatio;
-  if (isVisible) {
-    slot.lastVisibleAt = performance.now();
-  }
-
+export function notifySectionVisualLayoutChange() {
   emitChange();
 }
