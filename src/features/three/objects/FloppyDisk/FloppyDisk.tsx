@@ -5,9 +5,14 @@ import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   Box3,
   BufferGeometry,
+  DoubleSide,
   Group,
   Mesh,
+  MeshPhysicalMaterial,
   MeshStandardMaterial,
+  SRGBColorSpace,
+  Texture,
+  TextureLoader,
   Vector3,
 } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
@@ -22,14 +27,44 @@ const ENGAGED_EMISSIVE = 0.35;
 const TARGET_SIZE = 4.25;
 const BASE_ROTATION_X = -0.28;
 const BASE_ROTATION_Y = 0.55;
+const BODY_OPACITY = 0.78;
+const BODY_CLEARCOAT = 0.2;
 
-function cloneFloppyMaterial(isLight: boolean) {
+function createTranslucentFloppyMaterial(isLight: boolean) {
+  return new MeshPhysicalMaterial({
+    color: isLight ? "#f4a9cf" : "#d86db0",
+    roughness: isLight ? 0.32 : 0.36,
+    metalness: 0.02,
+    transparent: true,
+    opacity: BODY_OPACITY,
+    transmission: isLight ? 0.1 : 0.14,
+    thickness: 0.14,
+    ior: 1.1,
+    clearcoat: BODY_CLEARCOAT,
+    clearcoatRoughness: 0.34,
+    attenuationColor: isLight ? "#ffcae4" : "#f08ac5",
+    attenuationDistance: 0.85,
+    emissive: isLight ? "#f2a1cb" : "#9f4b8a",
+    emissiveIntensity: IDLE_EMISSIVE + 0.015,
+    side: DoubleSide,
+  });
+}
+
+function createLabelPlateMaterial() {
   return new MeshStandardMaterial({
-    color: isLight ? "#fff8fd" : "#f2dff5",
-    roughness: isLight ? 0.34 : 0.42,
-    metalness: isLight ? 0.12 : 0.08,
-    emissive: isLight ? "#f0a5d1" : "#8a3f86",
-    emissiveIntensity: IDLE_EMISSIVE,
+    color: "#fffdf8",
+    roughness: 0.76,
+    metalness: 0.02,
+  });
+}
+
+function createLabelImageMaterial(labelTexture: Texture) {
+  return new MeshStandardMaterial({
+    map: labelTexture,
+    color: "#ffffff",
+    roughness: 0.64,
+    metalness: 0,
+    transparent: false,
   });
 }
 
@@ -48,6 +83,10 @@ export function FloppyDisk() {
   const reducedMotion = useRef(false);
 
   const obj = useLoader(OBJLoader, "/models/floppy-disk.obj");
+  const labelTexture = useLoader(
+    TextureLoader,
+    "/textures/github/github-profile.png",
+  );
   const motion = useFloppyDiskMotion();
   const { gl } = useThree();
   const { resolvedTheme } = useTheme();
@@ -74,13 +113,18 @@ export function FloppyDisk() {
     });
   }, [logger, obj]);
 
+  useEffect(() => {
+    labelTexture.colorSpace = SRGBColorSpace;
+    logger.emit("label-texture-ready");
+  }, [labelTexture, logger]);
+
   const floppyObject = useMemo(() => {
     const objClone = obj.clone(true);
     objClone.updateMatrixWorld(true);
 
     const bakedMeshes: Array<{
       geometry: BufferGeometry;
-      material: MeshStandardMaterial;
+      material: MeshPhysicalMaterial;
     }> = [];
 
     objClone.traverse((child) => {
@@ -91,7 +135,7 @@ export function FloppyDisk() {
 
       bakedMeshes.push({
         geometry,
-        material: cloneFloppyMaterial(isLight),
+        material: createTranslucentFloppyMaterial(isLight),
       });
     });
 
@@ -118,6 +162,25 @@ export function FloppyDisk() {
       mesh.geometry.scale(scale, scale, scale);
     }
 
+    const scaledBounds = new Box3();
+    for (const mesh of bakedMeshes) {
+      mesh.geometry.computeBoundingBox();
+      if (mesh.geometry.boundingBox) {
+        scaledBounds.union(mesh.geometry.boundingBox);
+      }
+    }
+
+    const scaledSize = scaledBounds.getSize(new Vector3());
+    const frontZ = scaledBounds.max.z + 0.012;
+    const labelWidth = scaledSize.x * 0.58;
+    const labelHeight = scaledSize.y * 0.27;
+    const labelCenterY = scaledBounds.max.y - labelHeight * 0.86;
+    const avatarSize = Math.min(labelHeight * 0.84, labelWidth * 0.4);
+    const avatarCenterX = -labelWidth * 0.23;
+
+    const labelPlateMaterial = createLabelPlateMaterial();
+    const labelImageMaterial = createLabelImageMaterial(labelTexture);
+
     logger.emit("material-ready", {
       isLight,
       scale,
@@ -127,10 +190,40 @@ export function FloppyDisk() {
         y: size.y,
         z: size.z,
       },
+      label: {
+        width: labelWidth,
+        height: labelHeight,
+      },
     });
 
-    return bakedMeshes;
-  }, [isLight, logger, obj]);
+    return {
+      bodyMeshes: bakedMeshes,
+      label: {
+        plateMaterial: labelPlateMaterial,
+        imageMaterial: labelImageMaterial,
+        width: labelWidth,
+        height: labelHeight,
+        centerY: labelCenterY,
+        frontZ,
+        avatarSize,
+        avatarCenterX,
+      },
+    };
+  }, [isLight, labelTexture, logger, obj]);
+
+  useEffect(() => {
+    if (!floppyObject) {
+      return;
+    }
+
+    return () => {
+      for (const mesh of floppyObject.bodyMeshes) {
+        mesh.material.dispose();
+      }
+      floppyObject.label.plateMaterial.dispose();
+      floppyObject.label.imageMaterial.dispose();
+    };
+  }, [floppyObject]);
 
   const interaction = useInfinityInteraction({
     canvasRef,
@@ -168,7 +261,7 @@ export function FloppyDisk() {
       currentNorm + (targetNorm - currentNorm) * Math.min(delta * 8, 1);
     rootRef.current.scale.setScalar(nextNorm);
 
-    const materials = floppyObject.map((mesh) => mesh.material);
+    const materials = floppyObject.bodyMeshes.map((mesh) => mesh.material);
     for (const material of materials) {
       const current = material.emissiveIntensity;
       material.emissiveIntensity =
@@ -188,7 +281,7 @@ export function FloppyDisk() {
       onPointerEnter={interaction.handlePointerEnter}
       onPointerLeave={interaction.handlePointerLeave}
     >
-      {floppyObject.map((mesh, index) => (
+      {floppyObject.bodyMeshes.map((mesh, index) => (
         <mesh
           key={index}
           geometry={mesh.geometry}
@@ -197,6 +290,29 @@ export function FloppyDisk() {
           receiveShadow
         />
       ))}
+      <mesh
+        position={[0, floppyObject.label.centerY, floppyObject.label.frontZ]}
+        material={floppyObject.label.plateMaterial}
+      >
+        <planeGeometry
+          args={[floppyObject.label.width, floppyObject.label.height]}
+        />
+      </mesh>
+      <mesh
+        position={[
+          floppyObject.label.avatarCenterX,
+          floppyObject.label.centerY,
+          floppyObject.label.frontZ + 0.002,
+        ]}
+        material={floppyObject.label.imageMaterial}
+      >
+        <planeGeometry
+          args={[
+            floppyObject.label.avatarSize,
+            floppyObject.label.avatarSize,
+          ]}
+        />
+      </mesh>
     </group>
   );
 }

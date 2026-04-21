@@ -19,6 +19,7 @@ export function FloppyDiskVisual() {
     <SectionVisualTarget
       kind="floppy"
       className="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[340px]"
+      frameClassName="rounded-2xl bg-transparent border border-transparent"
       height={320}
     />
   );
