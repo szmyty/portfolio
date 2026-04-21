@@ -97,10 +97,6 @@ export function MusicClient({ tracks }: MusicClientProps) {
                   {track.description}
                 </p>
 
-                <p className="text-xs text-red-500 break-all">
-                  {track.artwork ?? "NO ARTWORK"}
-                </p>
-
                 <div className="flex justify-between text-xs text-muted-foreground pt-1">
                   <span>{track.duration}</span>
                   <span>

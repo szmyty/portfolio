@@ -51,6 +51,8 @@ export type SoundCloudRssItem = {
   pubDate?: string;
 
   description?: string;
+  content?: string;
+  contentSnippet?: string;
 
   enclosure?: {
     url?: string;
@@ -58,14 +60,13 @@ export type SoundCloudRssItem = {
     length?: string;
   };
 
-  "itunes:duration"?: string;
-
-  "itunes:summary"?: string;
-
-  "itunes:image"?: {
-    $?: {
-      href?: string;
-    };
-    href?: string;
+  itunes?: {
+    author?: string;
+    duration?: string;
+    explicit?: string;
+    image?: string;
+    subtitle?: string;
+    summary?: string;
   };
 };
+

@@ -6,103 +6,111 @@ import type {
 } from "@portfolio/features/music/types";
 
 /**
- * Normalize a duration string from RSS.
- *
- * SoundCloud RSS appears to provide durations like:
- * - "00:03:50"
- * - "03:50"
- *
- * This function normalizes them into a cleaner display format:
- * - "3:50"
- * - "1:02:14"
+ * Convert seconds → mm:ss
  */
-function normalizeDuration(rawDuration: string | undefined): string {
-  if (!rawDuration) {
-    return "0:00";
-  }
-
-  const durationParts = rawDuration.split(":").map((part) => part.trim());
-
-  if (durationParts.length === 3) {
-    const [hours, minutes, seconds] = durationParts;
-    const normalizedHours = Number(hours);
-    const normalizedMinutes = Number(minutes);
-    const normalizedSeconds = Number(seconds);
-
-    if (normalizedHours > 0) {
-      return `${normalizedHours}:${String(normalizedMinutes).padStart(2, "0")}:${String(normalizedSeconds).padStart(2, "0")}`;
-    }
-
-    return `${normalizedMinutes}:${String(normalizedSeconds).padStart(2, "0")}`;
-  }
-
-  if (durationParts.length === 2) {
-    const [minutes, seconds] = durationParts;
-    return `${Number(minutes)}:${String(Number(seconds)).padStart(2, "0")}`;
-  }
-
-  return rawDuration;
+function secondsToTime(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
 /**
- * Extract artwork URL from SoundCloud RSS item.
+ * Normalize duration
+ * Priority:
+ * 1. itunes.duration (already formatted)
+ * 2. enclosure.length (bytes → approximate duration)
  */
-function extractArtworkUrl(item: SoundCloudRssItem): string | null {
-  const possibleImageValue = item["itunes:image"];
+function normalizeDuration(item: SoundCloudRssItem): string {
+  const itunes = (item as any).itunes;
 
-  if (!possibleImageValue) {
-    return null;
+  if (itunes?.duration) {
+    // already "00:03:50" → normalize to "3:50"
+    const parts = itunes.duration.split(":").map(Number);
+
+    if (parts.length === 3) {
+      const [, minutes, seconds] = parts;
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    if (parts.length === 2) {
+      const [minutes, seconds] = parts;
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    return itunes.duration;
   }
 
-  if (typeof possibleImageValue === "object") {
-    if ("href" in possibleImageValue && typeof possibleImageValue.href === "string") {
-      return possibleImageValue.href;
-    }
+  // fallback: enclosure.length (bytes → seconds approximation)
+  if (item.enclosure?.length) {
+    const bytes = Number(item.enclosure.length);
+    const seconds = bytes / 16000; // rough mp3 bitrate estimate
+    return secondsToTime(seconds);
+  }
 
-    if (
-      "$" in possibleImageValue &&
-      possibleImageValue.$ &&
-      typeof possibleImageValue.$.href === "string"
-    ) {
-      return possibleImageValue.$.href;
-    }
+  return "0:00";
+}
+
+/**
+ * Extract artwork
+ */
+function extractArtworkUrl(item: SoundCloudRssItem): string | null {
+  const itunes = (item as any).itunes;
+
+  if (itunes?.image) {
+    return itunes.image;
   }
 
   return null;
 }
 
 /**
- * Choose the best available description field.
+ * Extract description
  */
 function extractDescription(item: SoundCloudRssItem): string {
+  const itunes = (item as any).itunes;
+
   return (
-    item["itunes:summary"]?.trim() ||
+    item.content?.trim() ||
+    itunes?.summary?.trim() ||
+    itunes?.subtitle?.trim() ||
     item.description?.trim() ||
     "Listen on SoundCloud"
   );
 }
 
 /**
- * Transform a single raw SoundCloud RSS item into a normalized track model.
+ * Transform single item
  */
 export function transformSoundCloudItem(
   item: SoundCloudRssItem,
 ): SoundCloudTrack {
+  const itunes = (item as any).itunes;
+
+  console.log("Transforming SoundCloud item:", {
+    title: item.title,
+    artwork: itunes?.image,
+    duration: itunes?.duration,
+    audio: item.enclosure?.url,
+  });
+
   return {
     title: item.title?.trim() || "Untitled Track",
     link: item.link?.trim() || "#",
     pubDate: item.pubDate
       ? new Date(item.pubDate).toISOString()
       : new Date().toISOString(),
+
     description: extractDescription(item),
     artwork: extractArtworkUrl(item),
-    duration: normalizeDuration(item["itunes:duration"]),
+
+    duration: normalizeDuration(item),
+
     audioUrl: item.enclosure?.url?.trim() || null,
   };
 }
 
 /**
- * Transform an array of raw SoundCloud RSS items into normalized tracks.
+ * Transform array
  */
 export function transformSoundCloudItems(
   items: SoundCloudRssItem[],
