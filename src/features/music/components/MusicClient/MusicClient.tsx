@@ -28,14 +28,14 @@ export function MusicClient({ tracks }: MusicClientProps) {
       {activeTrack && (
         <div
           ref={playerRef}
-          className="w-full max-w-xl mx-auto rounded-2xl border overflow-hidden"
+          className="w-full max-w-md mx-auto rounded-2xl border overflow-hidden"
         >
           {/* Artwork */}
           {activeTrack.artwork && (
             <img
               src={activeTrack.artwork}
               alt={activeTrack.title}
-              className="w-full aspect-square object-cover"
+              className="w-full aspect-square object-cover max-h-[400px]"
             />
           )}
 
@@ -45,12 +45,17 @@ export function MusicClient({ tracks }: MusicClientProps) {
               {activeTrack.title}
             </p>
 
-            <ReactPlayer
-              src={activeTrack.link}
-              controls
-              width="100%"
-              height="60px"
-            />
+            <div className="pt-2">
+              {activeTrack.audioUrl && (
+                <ReactPlayer
+                  src={activeTrack.audioUrl}
+                  controls
+                  playing
+                  width="100%"
+                  height="50px"
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
