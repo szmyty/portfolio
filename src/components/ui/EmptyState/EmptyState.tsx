@@ -1,29 +1,18 @@
 import type { EmptyStateProps } from "./EmptyState.types";
 
 /**
- * EmptyState — a reusable component for scenarios where content is unavailable,
- * not yet implemented, or still loading.
+ * EmptyState — reusable component for when content is unavailable.
  *
- * Inspired by the PatternFly Empty State pattern: centered layout with an
- * optional icon, a required title, optional description, and an optional action.
- *
- * Usage (minimal):
- * ```tsx
- * <EmptyState title="No results found" />
- * ```
- *
- * Usage (full):
- * ```tsx
- * <EmptyState
- *   icon={<SearchIcon />}
- *   title="No results found"
- *   description="Try adjusting your search terms."
- *   action={<button>Clear filters</button>}
- * />
- * ```
+ * Pure UI component. Content is passed via props (i18n-ready).
  */
-export function EmptyState({ title, description, icon, action, className }: EmptyStateProps) {
-  const classes = [
+export function EmptyState({
+  title,
+  description,
+  icon,
+  action,
+  className,
+}: EmptyStateProps) {
+  const rootClassName = [
     "flex flex-col items-center justify-center gap-4 text-center w-full px-4 py-12 sm:py-16",
     className,
   ]
@@ -31,16 +20,18 @@ export function EmptyState({ title, description, icon, action, className }: Empt
     .join(" ");
 
   return (
-    <div className={classes} role="status" aria-live="polite">
+    <div className={rootClassName} role="status" aria-live="polite">
       {icon && (
         <div className="text-text-muted mb-2" aria-hidden="true">
           {icon}
         </div>
       )}
 
-      <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
-        {title}
-      </h2>
+      {title && (
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
+          {title}
+        </h2>
+      )}
 
       {description && (
         <p className="text-base sm:text-lg text-text-secondary max-w-sm sm:max-w-md leading-relaxed">

@@ -9,6 +9,8 @@ type MusicClientProps = {
 };
 
 export function MusicClient({ tracks }: MusicClientProps) {
+  console.log("CLIENT TRACKS:", tracks);
+
   const [activeTrack, setActiveTrack] = useState<SoundCloudTrack | null>(
     tracks[0] ?? null,
   );
@@ -21,7 +23,7 @@ export function MusicClient({ tracks }: MusicClientProps) {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="w-full flex flex-col gap-10">
       {/* 🎧 PLAYER */}
       {activeTrack && (
         <div
@@ -54,8 +56,10 @@ export function MusicClient({ tracks }: MusicClientProps) {
       )}
 
       {/* 🎶 GRID */}
-      <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
+      <div className="w-full grid gap-6 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
         {tracks.map((track) => {
+          console.log("TRACK ITEM:", track);
+
           const isActive = activeTrack?.link === track.link;
 
           return (
@@ -91,6 +95,10 @@ export function MusicClient({ tracks }: MusicClientProps) {
 
                 <p className="text-xs text-muted-foreground line-clamp-1">
                   {track.description}
+                </p>
+
+                <p className="text-xs text-red-500 break-all">
+                  {track.artwork ?? "NO ARTWORK"}
                 </p>
 
                 <div className="flex justify-between text-xs text-muted-foreground pt-1">

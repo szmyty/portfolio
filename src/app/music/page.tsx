@@ -5,11 +5,14 @@ import { transformSoundCloudItems } from "@portfolio/features/music/lib/soundclo
 
 export default async function MusicPage() {
   const rawItems = await fetchSoundCloudRssItems();
+  console.log("RAW SOUND CLOUD ITEMS:", rawItems.slice(0, 3));
+
   const tracks = transformSoundCloudItems(rawItems);
+  console.log("TRANSFORMED TRACKS:", tracks.slice(0, 3));
 
   return (
     <PageShell>
-      <section className="flex flex-col gap-12 max-w-6xl mx-auto px-4 sm:px-8">
+      <section className="flex w-full max-w-6xl flex-col gap-12 mx-auto px-4 sm:px-8">
         {/* 🎧 Title */}
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
           Music

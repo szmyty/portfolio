@@ -24,7 +24,7 @@ export const Default: Story = {
 
 export const WithIcon: Story = {
   args: {
-    icon: <Icon icon={Search} size={48} strokeWidth={1.5} />,
+    icon: <Icon icon={Search} size={48} strokeWidth={1.5} ariaLabel="Search" />,
     title: "No results found",
     description: "Try adjusting your search terms or clearing any active filters.",
   },
@@ -47,7 +47,7 @@ export const WithAction: Story = {
 
 export const WithIconAndAction: Story = {
   args: {
-    icon: <Icon icon={FileText} size={48} strokeWidth={1.5} />,
+    icon: <Icon icon={FileText} size={48} strokeWidth={1.5} ariaLabel="Documents" />,
     title: "No documents found",
     description: "Upload a document or check back later.",
     action: (

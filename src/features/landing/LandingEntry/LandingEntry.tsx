@@ -63,7 +63,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
        * CosmicBackground is pointer-events-none; LandingVisualLayer is pointer-events-auto.
        * See LandingBackground for the full layering breakdown.
        */}
-      <LandingBackground />
+      {entered ? <LandingBackground /> : null}
       <SkipToContent
         label={t("skipToContent")}
         onSkip={(e) => {
