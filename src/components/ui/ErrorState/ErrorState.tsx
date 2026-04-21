@@ -5,26 +5,10 @@ import type { ErrorStateProps } from "./ErrorState.types";
 /**
  * ErrorState — a reusable component for displaying error feedback.
  *
- * Renders a warning icon, a required title, an optional description, and an
- * optional action (e.g. a retry button). Keeps the same visual rhythm as
- * `EmptyState` so both states feel cohesive.
- *
- * Usage (minimal):
- * ```tsx
- * <ErrorState title="Something went wrong" />
- * ```
- *
- * Usage (full):
- * ```tsx
- * <ErrorState
- *   title="Failed to load projects"
- *   description="Check your connection and try again."
- *   action={<button onClick={retry}>Retry</button>}
- * />
- * ```
+ * Pure UI component. All content is passed via props (i18n-ready).
  */
 export function ErrorState({
-  title = "Something went wrong",
+  title,
   description,
   action,
   className,
@@ -43,9 +27,11 @@ export function ErrorState({
         <Icon icon={AlertCircle} size={48} strokeWidth={1.5} />
       </div>
 
-      <Heading className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
-        {title}
-      </Heading>
+      {title && (
+        <Heading className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
+          {title}
+        </Heading>
+      )}
 
       {description && (
         <p className="text-base sm:text-lg text-text-secondary max-w-sm sm:max-w-md leading-relaxed">

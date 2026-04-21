@@ -13,7 +13,11 @@ const meta: Meta<typeof ErrorState> = {
 export default meta;
 type Story = StoryObj<typeof ErrorState>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    title: "Something went wrong",
+  },
+};
 
 export const WithDescription: Story = {
   args: {

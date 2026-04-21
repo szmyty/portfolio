@@ -1,81 +1,103 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ReactPlayer from "react-player";
 import type { SoundCloudTrack } from "@portfolio/features/music/types";
-import type { MusicClientProps } from "./MusicClient.types";
 
-function formatPublishedDate(pubDate: string): string {
-  return new Date(pubDate).toLocaleDateString();
-}
+type MusicClientProps = {
+  tracks: SoundCloudTrack[];
+};
 
-function TrackArtwork({ track }: { track: SoundCloudTrack }) {
-  if (!track.artwork) {
-    return null;
+export function MusicClient({ tracks }: MusicClientProps) {
+  const [activeTrack, setActiveTrack] = useState<SoundCloudTrack | null>(
+    tracks[0] ?? null,
+  );
+
+  const playerRef = useRef<HTMLDivElement | null>(null);
+
+  function handleTrackClick(track: SoundCloudTrack) {
+    setActiveTrack(track);
+    playerRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
-    <img
-      src={track.artwork}
-      alt={track.title}
-      className="aspect-square w-full object-cover"
-    />
-  );
-}
-
-export function MusicClient({ tracks }: MusicClientProps) {
-  const [activeTrack, setActiveTrack] = useState<SoundCloudTrack | null>(null);
-
-  return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
+      {/* 🎧 PLAYER */}
       {activeTrack && (
-        <div className="flex flex-col gap-4 rounded-2xl border p-4">
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold text-text-primary">
+        <div
+          ref={playerRef}
+          className="w-full max-w-xl mx-auto rounded-2xl border overflow-hidden"
+        >
+          {/* Artwork */}
+          {activeTrack.artwork && (
+            <img
+              src={activeTrack.artwork}
+              alt={activeTrack.title}
+              className="w-full aspect-square object-cover"
+            />
+          )}
+
+          {/* Player UI */}
+          <div className="p-4 flex flex-col gap-3">
+            <p className="font-semibold text-lg">
               {activeTrack.title}
             </p>
 
-            <p className="text-sm text-muted-foreground">
-              Now playing from SoundCloud
-            </p>
+            <ReactPlayer
+              url={activeTrack.link}
+              controls
+              width="100%"
+              height="60px"
+            />
           </div>
-
-          <ReactPlayer
-            src={activeTrack.link}
-            controls
-            width="100%"
-            height="50px"
-          />
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* 🎶 GRID */}
+      <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
         {tracks.map((track) => {
           const isActive = activeTrack?.link === track.link;
 
           return (
             <button
               key={track.link}
-              type="button"
-              onClick={() => setActiveTrack(track)}
-              className={`overflow-hidden rounded-2xl border text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer ${
-                isActive ? "border-accent shadow-lg" : ""
-              }`}
+              onClick={() => handleTrackClick(track)}
+              className={`text-left rounded-2xl border overflow-hidden transition-all duration-200 cursor-pointer
+                hover:shadow-lg hover:-translate-y-1
+                ${isActive ? "border-primary" : ""}
+              `}
             >
-              <TrackArtwork track={track} />
+              {/* Artwork */}
+              {track.artwork && (
+                <div className="relative">
+                  <img
+                    src={track.artwork}
+                    alt={track.title}
+                    className="w-full aspect-square object-cover"
+                  />
 
-              <div className="flex flex-col gap-2 p-4">
-                <p className="font-semibold leading-tight text-text-primary">
+                  {/* ▶ overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
+                    <span className="text-white text-xl">▶</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Info */}
+              <div className="p-3 flex flex-col gap-1">
+                <p className="font-medium text-sm leading-tight">
                   {track.title}
                 </p>
 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground line-clamp-1">
                   {track.description}
                 </p>
 
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="flex justify-between text-xs text-muted-foreground pt-1">
                   <span>{track.duration}</span>
-                  <span>{formatPublishedDate(track.pubDate)}</span>
+                  <span>
+                    {new Date(track.pubDate).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
             </button>
