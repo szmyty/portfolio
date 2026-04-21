@@ -1,5 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { Search, FileText, FolderOpen, AlertCircle, Music, Code, BookOpen } from "lucide-react";
+import {
+  Search,
+  FileText,
+  FolderOpen,
+  AlertCircle,
+  Music,
+  Code,
+  BookOpen,
+} from "lucide-react";
 import { Icon } from "./Icon";
 
 const meta: Meta<typeof Icon> = {
@@ -57,13 +65,26 @@ export const CustomStrokeWidth: Story = {
 };
 
 export const Gallery: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-6 items-center justify-center p-4">
-      {[Search, FileText, FolderOpen, AlertCircle, Music, Code, BookOpen].map((LucideIcon, i) => (
-        <div key={i} className="flex flex-col items-center gap-2 text-text-muted">
-          <Icon icon={LucideIcon} size={32} strokeWidth={1.5} />
-        </div>
-      ))}
-    </div>
-  ),
+  render: () => {
+    const icons = [
+      { icon: Search, label: "Search" },
+      { icon: FileText, label: "File" },
+      { icon: FolderOpen, label: "Folder" },
+      { icon: AlertCircle, label: "Alert" },
+      { icon: Music, label: "Music" },
+      { icon: Code, label: "Code" },
+      { icon: BookOpen, label: "Book" },
+    ];
+
+    return (
+      <div className="flex flex-wrap gap-6 items-center justify-center p-4">
+        {icons.map(({ icon: LucideIcon, label }) => (
+          <div key={label} className="flex flex-col items-center gap-2 text-text-muted">
+            <Icon icon={LucideIcon} size={32} strokeWidth={1.5} />
+            <span className="text-xs">{label}</span>
+          </div>
+        ))}
+      </div>
+    );
+  },
 };
