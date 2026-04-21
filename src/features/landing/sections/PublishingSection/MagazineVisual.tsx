@@ -17,6 +17,7 @@ export function MagazineVisual() {
     <SectionVisualTarget
       kind="magazine"
       className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px]"
+      frameClassName="rounded-2xl bg-transparent border border-transparent"
       height={360}
     />
   );

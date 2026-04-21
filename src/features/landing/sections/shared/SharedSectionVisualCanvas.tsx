@@ -198,7 +198,7 @@ export function SharedSectionVisualCanvas() {
 
   return (
     <div aria-hidden="true" style={containerStyle}>
-      <div className="h-full w-full rounded-2xl overflow-hidden pointer-events-auto">
+      <div className="h-full w-full pointer-events-auto">
         <Canvas
           camera={{ position: [0, 0, 5], fov: 40 }}
           style={{ width: "100%", height: "100%" }}

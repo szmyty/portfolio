@@ -1,6 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
+import { SRGBColorSpace } from "three";
 import { Magazine } from "@portfolio/features/three/objects";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
@@ -32,6 +33,8 @@ export function MagazineScene() {
       style={{ width: "100%", height: "100%" }}
       gl={{ alpha: true }}
       onCreated={({ gl }) => {
+        gl.outputColorSpace = SRGBColorSpace;
+
         logger.emit("canvas-created", {
           dpr: gl.getPixelRatio(),
           isLight,
