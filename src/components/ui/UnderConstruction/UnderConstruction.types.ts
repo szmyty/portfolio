@@ -1,4 +1,9 @@
+import type { ReactNode } from "react";
+
 export type UnderConstructionProps = {
-  title?: string;
-  description?: string;
+  /** Heading displayed above the description */
+  title?: ReactNode;
+
+  /** Supporting description text */
+  description?: ReactNode;
 };

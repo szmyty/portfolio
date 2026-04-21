@@ -1,13 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { NextIntlClientProvider } from "next-intl";
 import { UnderConstruction } from "./UnderConstruction";
-
-const messages = {
-  UnderConstruction: {
-    title: "Still building",
-    description: "This page is being assembled and will be available soon.",
-  },
-};
 
 const meta: Meta<typeof UnderConstruction> = {
   title: "UI/UnderConstruction",
@@ -16,19 +8,17 @@ const meta: Meta<typeof UnderConstruction> = {
   parameters: {
     layout: "centered",
   },
-  decorators: [
-    (Story) => (
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <Story />
-      </NextIntlClientProvider>
-    ),
-  ],
 };
 
 export default meta;
 type Story = StoryObj<typeof UnderConstruction>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    title: "Still building",
+    description: "This page is being assembled and will be available soon.",
+  },
+};
 
 export const CustomCopy: Story = {
   args: {
