@@ -15,9 +15,32 @@ type Story = StoryObj<typeof Container>;
 
 export const Default: Story = {
   args: {
+    size: "md",
     children: (
       <p className="text-text-primary p-4">
-        This is a container with max width of 2xl.
+        Default container (md width).
+      </p>
+    ),
+  },
+};
+
+export const Large: Story = {
+  args: {
+    size: "lg",
+    children: (
+      <p className="text-text-primary p-4">
+        Large container.
+      </p>
+    ),
+  },
+};
+
+export const FullWidth: Story = {
+  args: {
+    size: "full",
+    children: (
+      <p className="text-text-primary p-4">
+        Full width container.
       </p>
     ),
   },
@@ -25,10 +48,11 @@ export const Default: Story = {
 
 export const WithCustomClass: Story = {
   args: {
-    className: "max-w-lg bg-surface p-4 rounded",
+    size: "md",
+    className: "bg-surface p-4 rounded",
     children: (
       <p className="text-text-secondary">
-        Container with a custom class applied.
+        Container with custom styling.
       </p>
     ),
   },
