@@ -62,9 +62,6 @@ export async function ContentSectionTemplate({
       <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
         {t("description")}
       </p>
-      <p className="text-sm text-text-muted">
-        {t("placeholder")}
-      </p>
       <div className="mt-2">
         <Link
           href={href}

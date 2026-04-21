@@ -17,6 +17,7 @@ export const siteConfig = {
     github: "https://github.com/szmyty",
     linkedin: "https://linkedin.com/in/alanszmyt",
   },
+  githubRepoUrl: "https://github.com/szmyty/portfolio",
   keywords: [
     "Alan Szmyt",
     "software engineer",

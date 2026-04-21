@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   LinearFilter,
   Mesh,
   MeshStandardMaterial,
   SRGBColorSpace,
+  TextureLoader,
   VideoTexture,
 } from "three";
 
@@ -21,7 +22,8 @@ import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 const IDLE_EMISSIVE = 0.05;
 const HOVER_EMISSIVE = 0.3;
 const ENGAGED_EMISSIVE = 0.6;
-const FRONT_EMISSIVE_BOOST = 0.25;
+const FRONT_EMISSIVE_BOOST = 0.2;
+const BACK_EMISSIVE_BOOST = 0.35;
 
 /**
  * Magazine
@@ -45,6 +47,10 @@ export function Magazine() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const { gl } = useThree();
+  const backTexture = useLoader(
+    TextureLoader,
+    "/textures/publishing/magazine/ego-hygiene-back.png",
+  );
   const [videoTexture, setVideoTexture] = useState<VideoTexture | null>(null);
 
   /**
@@ -65,6 +71,14 @@ export function Magazine() {
     canvasRef.current = gl.domElement;
     logger.emitOnce("canvas-bound", "canvas-bound");
   }, [gl, logger]);
+
+  useEffect(() => {
+    backTexture.colorSpace = SRGBColorSpace;
+    backTexture.flipY = true;
+    backTexture.minFilter = LinearFilter;
+    backTexture.magFilter = LinearFilter;
+    logger.emit("back-texture-ready");
+  }, [backTexture, logger]);
 
   useEffect(() => {
     const video = document.createElement("video");
@@ -139,15 +153,25 @@ export function Magazine() {
     frontMaterial.color.set("#ffffff");
     frontMaterial.emissive.set("#ffffff");
     frontMaterial.emissiveMap = videoTexture;
-    frontMaterial.emissiveIntensity = IDLE_EMISSIVE + FRONT_EMISSIVE_BOOST;
+    frontMaterial.emissiveIntensity = 0.25;
     frontMaterial.envMapIntensity = 1.1;
     frontMaterial.needsUpdate = true;
 
+    const backMaterial = createPaperMaterial();
+    backMaterial.map = backTexture;
+    backMaterial.toneMapped = false;
+    backMaterial.color.set("#ffffff");
+    backMaterial.emissive.set("#ffffff");
+    backMaterial.emissiveMap = backTexture;
+    backMaterial.emissiveIntensity = 0.4;
+    backMaterial.needsUpdate = true;
+
     // BoxGeometry material order: right, left, top, bottom, front, back.
     nextMaterials[4] = frontMaterial;
+    nextMaterials[5] = backMaterial;
 
     return nextMaterials;
-  }, [videoTexture]);
+  }, [backTexture, videoTexture]);
 
   useEffect(() => {
     return () => {
@@ -197,6 +221,8 @@ export function Magazine() {
       const target =
         material.map === videoTexture
           ? emissiveTarget.current + FRONT_EMISSIVE_BOOST
+          : material.map === backTexture
+            ? emissiveTarget.current + BACK_EMISSIVE_BOOST
           : emissiveTarget.current;
 
       material.emissiveIntensity =
