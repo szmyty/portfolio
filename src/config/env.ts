@@ -1,25 +1,15 @@
-// During `next build`, NEXT_PHASE is set to 'phase-production-build'.
-// Allowing fallbacks at build time lets the build succeed when production
-// env vars are injected at runtime (e.g., on Vercel). At production runtime,
-// the full validation runs and throws a clear error if a variable is missing.
-const isNonProduction = process.env.NODE_ENV !== "production";
-const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+// Env config for client-safe variables (NEXT_PUBLIC_*)
 
-function requireEnv(name: string, fallback?: string): string {
-  const value = process.env[name];
-  if (value) return value;
-  if ((isNonProduction || isBuildPhase) && fallback !== undefined) return fallback;
-  throw new Error(
-    `Missing required environment variable: ${name}. ` +
-      `Set it in your .env file or deployment environment.`,
-  );
-}
+// IMPORTANT:
+// - Access NEXT_PUBLIC_* variables directly so Next.js can inline them
+// - Do NOT use dynamic lookups like process.env[name]
+// - Provide a safe production fallback to avoid runtime crashes
+
+const nextPublicSiteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://szmyty.vercel.app";
 
 export const env = {
-  NEXT_PUBLIC_SITE_URL: requireEnv(
-    "NEXT_PUBLIC_SITE_URL",
-    "http://localhost:3000",
-  ),
+  NEXT_PUBLIC_SITE_URL: nextPublicSiteUrl,
 } as const;
 
 /** True only in `NODE_ENV=development` (local dev server). */
