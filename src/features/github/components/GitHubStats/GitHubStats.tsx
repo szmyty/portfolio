@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslations } from "next-intl";
 import { Container } from "@portfolio/components/ui/Container";
 import {
   logGitHubDebug,
@@ -30,6 +31,7 @@ function StatCard({ label, value }: StatCardProps) {
 }
 
 export function GitHubStats(_props: GitHubStatsProps) {
+  const t = useTranslations("GitHub");
   const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
@@ -63,9 +65,9 @@ export function GitHubStats(_props: GitHubStatsProps) {
   return (
     <Container className="max-w-6xl">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-        <StatCard label="Repositories" value={totalRepositories} />
-        <StatCard label="Stars" value={totalStars} />
-        <StatCard label="Languages" value={uniqueLanguages} />
+        <StatCard label={t("stats.repositories")} value={totalRepositories} />
+        <StatCard label={t("stats.stars")} value={totalStars} />
+        <StatCard label={t("stats.languages")} value={uniqueLanguages} />
       </div>
     </Container>
   );

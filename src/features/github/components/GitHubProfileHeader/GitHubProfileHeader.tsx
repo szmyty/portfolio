@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import type { GitHubProfileHeaderProps } from "./GitHubProfileHeader.types";
 
 export function GitHubProfileHeader(_props: GitHubProfileHeaderProps) {
+  const t = useTranslations("GitHub");
+
   return (
     <div className="rounded-3xl border border-border bg-surface px-5 py-6 shadow-sm sm:px-7 sm:py-7">
       <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:gap-6 sm:text-left">
@@ -17,7 +20,7 @@ export function GitHubProfileHeader(_props: GitHubProfileHeaderProps) {
           >
             <Image
               src="/textures/github/github-profile.png"
-              alt="Alan Szmyt GitHub profile"
+              alt={t("profile.imageAlt")}
               width={112}
               height={112}
               className="h-28 w-28 rounded-full object-cover"
@@ -28,13 +31,13 @@ export function GitHubProfileHeader(_props: GitHubProfileHeaderProps) {
 
         <div className="min-w-0 space-y-2.5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
-            GitHub Intelligence
+            {t("profile.eyebrow")}
           </p>
           <h2 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
-            Alan Szmyt
+            {t("profile.title")}
           </h2>
           <p className="text-base leading-relaxed text-text-secondary sm:text-lg">
-            Development Systems &amp; Intelligence
+            {t("profile.subtitle")}
           </p>
         </div>
       </div>

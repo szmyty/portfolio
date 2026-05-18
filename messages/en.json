@@ -28,12 +28,24 @@
     "home": "Home",
     "music": "Music",
     "publishing": "Publishing",
-    "development": "Development"
+    "development": "Development",
+    "repositoryLink": "View portfolio repository on GitHub"
   },
   "HeroSection": {
+    "ariaLabel": "Hero",
     "description": "Software engineer, musician, and creator — exploring the intersections of technology, sound, and the written word.",
     "viewWork": "View Work",
     "exploreMusic": "Explore Music"
+  },
+  "Common": {
+    "loading": "Loading…"
+  },
+  "ThemeToggle": {
+    "ariaLabel": "Theme selection",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "useTheme": "Use {theme} theme"
   },
   "MusicSection": {
     "title": "Music",
@@ -41,17 +53,73 @@
     "placeholder": "Placeholder — full content coming soon.",
     "link": "Explore Music →"
   },
+  "MusicPage": {
+    "title": "Music"
+  },
   "PublishingSection": {
     "title": "Publishing",
     "description": "Writing, essays, and published works exploring ideas across technology, philosophy, and creative practice.",
     "placeholder": "Placeholder — full content coming soon.",
     "link": "Explore Publishing →"
   },
+  "PublishingPage": {
+    "title": "Publishing",
+    "comicsTitle": "Comics",
+    "articlesTitle": "Articles",
+    "comicStatusComingSoon": "Coming soon",
+    "articleReadTime": "{minutes} min read",
+    "comics": {
+      "egoHygieneEdition1": {
+        "title": "Ego Hygiene Edition 1",
+        "imageAlt": "Ego Hygiene Edition 1"
+      },
+      "foreverAndAlways": {
+        "title": "Forever & Always",
+        "imageAlt": "Forever & Always"
+      }
+    }
+  },
   "DevelopmentSection": {
     "title": "Development",
     "description": "Software projects, open-source contributions, and engineering explorations. Building thoughtful, reliable systems at the intersection of craft and technology.",
     "placeholder": "Placeholder — full content coming soon.",
     "link": "Explore Development →"
+  },
+  "GitHub": {
+    "dashboardTitle": "GitHub Dashboard",
+    "scopeSelectorLabel": "GitHub scopes",
+    "allScopes": "All",
+    "loadingLabel": "Loading GitHub dashboard",
+    "loadingDescription": "Fetching repositories and analytics for your GitHub scopes.",
+    "errorTitle": "Unable to load GitHub data",
+    "errorDescription": "The GitHub dashboard could not be prepared. Please try again in a moment.",
+    "emptyTitle": "No repositories available",
+    "emptyDescription": "There are no repositories to display for the selected GitHub scope yet.",
+    "stats": {
+      "repositories": "Repositories",
+      "stars": "Stars",
+      "languages": "Languages"
+    },
+    "languageChart": {
+      "title": "Language Distribution",
+      "description": "Repository counts by primary language for the active GitHub scope.",
+      "repositories": "Repositories"
+    },
+    "starsChart": {
+      "title": "Top Repositories by Stars",
+      "description": "Highest-starred repositories in the active GitHub scope.",
+      "stars": "Stars"
+    },
+    "repoCard": {
+      "noDescription": "No description available.",
+      "unspecifiedLanguage": "Unspecified"
+    },
+    "profile": {
+      "imageAlt": "Alan Szmyt GitHub profile",
+      "eyebrow": "GitHub Intelligence",
+      "title": "Alan Szmyt",
+      "subtitle": "Development Systems & Intelligence"
+    }
   },
   "Footer": {
     "madeWith": "made with",

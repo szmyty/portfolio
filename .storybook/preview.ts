@@ -1,6 +1,8 @@
 import type { Decorator, Preview } from "@storybook/nextjs";
 import React, { useEffect } from "react";
+import { NextIntlClientProvider } from "next-intl";
 import "../src/app/globals.css";
+import messages from "../messages/en.json";
 
 /**
  * Hex value of the "light" entry in the Storybook backgrounds panel.
@@ -25,7 +27,11 @@ const ThemeApplicator: React.FC<{
     }
   }, [isLight]);
 
-  return React.createElement(Story);
+  return React.createElement(
+    NextIntlClientProvider,
+    { locale: "en", messages },
+    React.createElement(Story),
+  );
 };
 
 /**

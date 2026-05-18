@@ -1,28 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "@portfolio/lib/theme";
 import { PageShell } from "./PageShell";
-
-const messages = {
-  NavBar: {
-    ariaLabel: "Main navigation",
-    home: "Home",
-    music: "Music",
-    publishing: "Publishing",
-    development: "Development",
-  },
-  Footer: {
-    madeWith: "Made with",
-    love: "love",
-    by: "by",
-    github: "GitHub",
-    linkedin: "LinkedIn",
-    email: "Email",
-  },
-  Author: {
-    handle: "@szmyty",
-  },
-};
 
 const meta: Meta<typeof PageShell> = {
   title: "UI/PageShell",
@@ -38,11 +16,9 @@ const meta: Meta<typeof PageShell> = {
   },
   decorators: [
     (Story) => (
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <ThemeProvider>
-          <Story />
-        </ThemeProvider>
-      </NextIntlClientProvider>
+      <ThemeProvider>
+        <Story />
+      </ThemeProvider>
     ),
   ],
 };

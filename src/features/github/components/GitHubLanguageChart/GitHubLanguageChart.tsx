@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslations } from "next-intl";
 import {
   Cell,
   Legend,
@@ -37,6 +38,7 @@ const CHART_COLORS = [
 ] as const;
 
 export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
+  const t = useTranslations("GitHub");
   const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
@@ -68,10 +70,10 @@ export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-text-primary">
-            Language Distribution
+            {t("languageChart.title")}
           </h3>
           <p className="mt-1 text-sm text-text-muted">
-            Repository counts by primary language for the active GitHub scope.
+            {t("languageChart.description")}
           </p>
         </div>
       </div>
@@ -99,7 +101,7 @@ export function GitHubLanguageChart(_props: GitHubLanguageChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value) => [`${value ?? 0}`, "Repositories"]}
+              formatter={(value) => [`${value ?? 0}`, t("languageChart.repositories")]}
               contentStyle={{
                 borderRadius: "16px",
                 border: "1px solid var(--border)",

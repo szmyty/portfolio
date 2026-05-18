@@ -1,8 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { GitHubRepoCardProps } from "./GitHubRepoCard.types";
 
 export function GitHubRepoCard({ repository }: GitHubRepoCardProps) {
+  const t = useTranslations("GitHub");
+
   return (
     <article className="flex h-full flex-col rounded-2xl border border-border bg-surface px-5 py-5 shadow-sm transition-all duration-200 hover:border-accent hover:shadow-lg sm:px-6 sm:py-6">
       <div className="flex items-start justify-between gap-4">
@@ -32,12 +35,12 @@ export function GitHubRepoCard({ repository }: GitHubRepoCardProps) {
       </div>
 
       <p className="mt-4 flex-1 text-sm leading-6 text-text-secondary">
-        {repository.description ?? "No description available."}
+        {repository.description ?? t("repoCard.noDescription")}
       </p>
 
       <div className="mt-4 flex items-center justify-between gap-3 text-sm">
         <span className="rounded-full bg-surface-overlay px-3 py-1 text-text-secondary">
-          {repository.language ?? "Unspecified"}
+          {repository.language ?? t("repoCard.unspecifiedLanguage")}
         </span>
         <span className="text-text-muted">{new Date(repository.updated_at).toLocaleDateString()}</span>
       </div>

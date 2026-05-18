@@ -1,8 +1,11 @@
+import { useTranslations } from "next-intl";
 import type { PublishingArticleCardProps } from "./PublishingArticleCard.types";
 
 export function PublishingArticleCard({
   article,
 }: PublishingArticleCardProps) {
+  const t = useTranslations("PublishingPage");
+
   return (
     <a
       href={article.link}
@@ -28,7 +31,7 @@ export function PublishingArticleCard({
         </p>
 
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>{article.readTime} min read</span>
+          <span>{t("articleReadTime", { minutes: article.readTime })}</span>
           <span>{new Date(article.pubDate).toLocaleDateString()}</span>
         </div>
 

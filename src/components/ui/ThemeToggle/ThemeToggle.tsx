@@ -1,17 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Sun, Moon, Monitor } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Icon } from "@portfolio/components/ui/Icon";
 import { useTheme } from "@portfolio/lib/theme";
 import type { ThemeMode } from "@portfolio/lib/theme";
 import type { ThemeToggleProps } from "./ThemeToggle.types";
-
-const DEFAULT_LABELS: Record<ThemeMode, string> = {
-  light: "Light",
-  dark: "Dark",
-  system: "System",
-};
 
 const ICONS: Record<ThemeMode, LucideIcon> = {
   light: Sun,
@@ -22,11 +17,18 @@ const ICONS: Record<ThemeMode, LucideIcon> = {
 const OPTIONS: ThemeMode[] = ["dark", "light", "system"];
 
 export function ThemeToggle({
-  labels = DEFAULT_LABELS,
-  ariaLabel = "Theme selection",
+  labels,
+  ariaLabel,
   className,
 }: ThemeToggleProps) {
+  const t = useTranslations("ThemeToggle");
   const { theme, setTheme } = useTheme();
+  const resolvedLabels: Record<ThemeMode, string> = labels ?? {
+    light: t("light"),
+    dark: t("dark"),
+    system: t("system"),
+  };
+  const resolvedAriaLabel = ariaLabel ?? t("ariaLabel");
 
   const rootClassName = [
     "pointer-events-auto inline-flex items-center gap-1 rounded-full border border-border bg-surface-overlay p-1 backdrop-blur-md",
@@ -37,7 +39,7 @@ export function ThemeToggle({
     .join(" ");
 
   return (
-    <div role="group" aria-label={ariaLabel} className={rootClassName}>
+    <div role="group" aria-label={resolvedAriaLabel} className={rootClassName}>
       {OPTIONS.map((mode) => {
         const isActive = theme === mode;
 
@@ -49,7 +51,7 @@ export function ThemeToggle({
             : "text-text-muted hover:bg-surface-raised hover:text-text-primary",
         ].join(" ");
 
-        const label = labels[mode];
+        const label = resolvedLabels[mode];
 
         return (
           <button
@@ -57,7 +59,7 @@ export function ThemeToggle({
             type="button"
             onClick={() => setTheme(mode)}
             aria-pressed={isActive}
-            aria-label={`Use ${label} theme`}
+            aria-label={t("useTheme", { theme: label })}
             title={label}
             className={buttonClassName}
           >

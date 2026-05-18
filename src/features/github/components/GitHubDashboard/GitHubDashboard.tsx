@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslations } from "next-intl";
 import { Section } from "@portfolio/components/ui/Section";
 import { GitHubLanguageChart } from "@portfolio/features/github/components/GitHubLanguageChart";
 import { GitHubProfileHeader } from "@portfolio/features/github/components/GitHubProfileHeader";
@@ -21,6 +22,7 @@ type GitHubStoreState = {
 };
 
 export function GitHubDashboard(_props: GitHubDashboardProps) {
+  const t = useTranslations("GitHub");
   const githubState = useSelector((state: GitHubStoreState) => state.github);
 
   useEffect(() => {
@@ -33,8 +35,8 @@ export function GitHubDashboard(_props: GitHubDashboardProps) {
 
   return (
     <Section
-      aria-label="GitHub Dashboard"
-      title="GitHub Dashboard"
+      aria-label={t("dashboardTitle")}
+      title={t("dashboardTitle")}
       background="surface"
       cosmicBackground={false}
       className="py-12 sm:py-16 lg:py-20 pb-16"
