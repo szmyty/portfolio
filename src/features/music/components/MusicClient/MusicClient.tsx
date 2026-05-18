@@ -27,7 +27,7 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
   }
 
   return (
-    <div className="w-full flex flex-col gap-10">
+    <div className="flex w-full min-w-0 flex-col gap-10">
       {/* 🎧 PLAYER */}
       {activeTrack && (
         <div
@@ -83,7 +83,7 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
       )}
 
       {/* 🎶 GRID */}
-      <div className="w-full grid gap-6 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
+      <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
         {tracks.map((track) => {
           console.log("TRACK ITEM:", track);
 
@@ -93,7 +93,7 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
             <button
               key={track.link}
               onClick={() => handleTrackClick(track)}
-              className={`text-left rounded-2xl border overflow-hidden transition-all duration-200 cursor-pointer
+              className={`min-w-0 cursor-pointer overflow-hidden rounded-2xl border text-left transition-all duration-200
                 hover:shadow-lg hover:-translate-y-1
                 ${isActive ? "border-primary" : ""}
               `}
