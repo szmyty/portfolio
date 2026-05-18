@@ -9,7 +9,7 @@ export function PublishingPageContent({
   const t = useTranslations("PublishingPage");
 
   return (
-    <section className="flex w-full max-w-6xl flex-col gap-12 px-4 sm:px-8">
+    <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 sm:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
         {t("title")}
       </h1>

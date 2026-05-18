@@ -168,27 +168,52 @@ export function SharedSectionVisualCanvas() {
 
     const updateRect = () => {
       const bounds: DOMRect = activeElement.getBoundingClientRect();
-      setRect({
-        left: bounds.left,
-        top: bounds.top,
-        width: bounds.width,
-        height: bounds.height,
+      setRect((previousRect) => {
+        const nextRect: RectState = {
+          left: bounds.left,
+          top: bounds.top,
+          width: bounds.width,
+          height: bounds.height,
+        };
+
+        if (
+          previousRect &&
+          previousRect.left === nextRect.left &&
+          previousRect.top === nextRect.top &&
+          previousRect.width === nextRect.width &&
+          previousRect.height === nextRect.height
+        ) {
+          return previousRect;
+        }
+
+        return nextRect;
       });
     };
 
-    const frameId = window.requestAnimationFrame(updateRect);
+    let frameId: number | null = null;
+    const scheduleUpdate = () => {
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        updateRect();
+      });
+    };
 
-    const resizeObserver = new ResizeObserver(updateRect);
+    scheduleUpdate();
+
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
     resizeObserver.observe(activeElement);
 
-    window.addEventListener("scroll", updateRect, { passive: true });
-    window.addEventListener("resize", updateRect);
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      window.cancelAnimationFrame(frameId);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
       resizeObserver.disconnect();
-      window.removeEventListener("scroll", updateRect);
-      window.removeEventListener("resize", updateRect);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
     };
   }, [snapshot.activeElement]);
 
@@ -202,8 +227,24 @@ export function SharedSectionVisualCanvas() {
     });
   }, [logger, snapshot.activeId, snapshot.activeKind]);
 
+  const currentKind: SectionVisualKind =
+    snapshot.activeKind ?? canvasKindRef.current ?? "vinyl";
+  const shouldShowCanvas = !!(snapshot.activeKind && snapshot.activeElement && rect);
+
   const containerStyle = useMemo(() => {
-    if (!rect) return { display: "none" } as const;
+    if (!rect) {
+      return {
+        position: "fixed" as const,
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+        zIndex: 15,
+        pointerEvents: "none" as const,
+        opacity: 0,
+        visibility: "hidden" as const,
+      };
+    }
 
     return {
       position: "fixed" as const,
@@ -213,12 +254,10 @@ export function SharedSectionVisualCanvas() {
       height: rect.height,
       zIndex: 15,
       pointerEvents: "none" as const,
+      opacity: shouldShowCanvas ? 1 : 0,
+      visibility: shouldShowCanvas ? ("visible" as const) : ("hidden" as const),
     };
-  }, [rect]);
-
-  if (!snapshot.activeKind || !rect) {
-    return null;
-  }
+  }, [rect, shouldShowCanvas]);
 
   return (
     <div aria-hidden="true" style={containerStyle}>
@@ -229,10 +268,10 @@ export function SharedSectionVisualCanvas() {
           dpr={[1, 1.25]}
           gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
           onCreated={({ gl }) => {
-            canvasKindRef.current = snapshot.activeKind;
+            canvasKindRef.current = currentKind;
             logger.emit("canvas-created", {
               dpr: gl.getPixelRatio(),
-              kind: snapshot.activeKind,
+              kind: currentKind,
             });
 
             gl.domElement.addEventListener("webglcontextlost", () => {
@@ -248,8 +287,8 @@ export function SharedSectionVisualCanvas() {
             });
           }}
         >
-          <CameraRig kind={snapshot.activeKind} />
-          <SectionVisualRig kind={snapshot.activeKind} />
+          <CameraRig kind={currentKind} />
+          <SectionVisualRig kind={currentKind} />
         </Canvas>
       </div>
     </div>

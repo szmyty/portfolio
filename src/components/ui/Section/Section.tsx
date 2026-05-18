@@ -106,7 +106,7 @@ function SectionVisual({ visual }: SectionVisualProps) {
   if (!visual) return null;
 
   return (
-    <div className="flex-shrink-0 flex items-center justify-center w-full max-w-[360px] sm:max-w-[440px] md:w-[30rem] lg:w-[36rem]">
+    <div className="flex w-full items-center justify-center md:flex-shrink-0 max-w-[360px] sm:max-w-[440px] md:max-w-[30rem] lg:max-w-[36rem]">
       {visual}
     </div>
   );
