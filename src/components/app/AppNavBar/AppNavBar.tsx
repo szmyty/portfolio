@@ -25,8 +25,8 @@ export function AppNavBar() {
         target="_blank"
         rel="noopener noreferrer"
         className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface-overlay text-text-secondary backdrop-blur-md transition-colors duration-200 hover:bg-surface-raised hover:text-text-primary"
-        aria-label="View portfolio repository on GitHub"
-        title="View portfolio repository on GitHub"
+        aria-label={t("repositoryLink")}
+        title={t("repositoryLink")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

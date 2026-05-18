@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { LoadingStateProps } from "./LoadingState.types";
 
 /**
@@ -16,7 +17,9 @@ import type { LoadingStateProps } from "./LoadingState.types";
  * <LoadingState label="Loading projects…" description="Fetching your latest work." />
  * ```
  */
-export function LoadingState({ label = "Loading…", description, className }: LoadingStateProps) {
+export function LoadingState({ label, description, className }: LoadingStateProps) {
+  const t = useTranslations("Common");
+  const resolvedLabel = label ?? t("loading");
   const classes = [
     "flex flex-col items-center justify-center gap-4 text-center w-full px-4 py-12 sm:py-16",
     className,
@@ -26,7 +29,7 @@ export function LoadingState({ label = "Loading…", description, className }: L
 
   return (
     <div className={classes} role="status" aria-live="polite">
-      <span className="sr-only">{label}</span>
+      <span className="sr-only">{resolvedLabel}</span>
       <div
         className="w-10 h-10 rounded-full border-4 border-border border-t-accent animate-spin"
         aria-hidden="true"

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
+import { useTranslations } from "next-intl";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { EmptyState } from "@portfolio/components/ui/EmptyState";
 import { ErrorState } from "@portfolio/components/ui/ErrorState";
@@ -39,10 +40,12 @@ function GitHubDashboardStateFrame({
 }: {
   children: ReactNode;
 }) {
+  const t = useTranslations("GitHub");
+
   return (
     <Section
-      aria-label="GitHub Dashboard"
-      title="GitHub Dashboard"
+      aria-label={t("dashboardTitle")}
+      title={t("dashboardTitle")}
       background="surface"
       cosmicBackground={false}
       className="py-12 sm:py-16"
@@ -55,6 +58,7 @@ function GitHubDashboardStateFrame({
 function GitHubDashboardContainerContent({
   initialScopes,
 }: GitHubDashboardContainerProps) {
+  const t = useTranslations("GitHub");
   const dispatch = useDispatch<GitHubDashboardStore["dispatch"]>();
   const githubState = useSelector((state: GitHubDashboardRootState) => state.github);
   const status = useSelector((state: GitHubDashboardRootState) => state.github.status);
@@ -81,8 +85,8 @@ function GitHubDashboardContainerContent({
     return (
       <GitHubDashboardStateFrame>
         <LoadingState
-          label="Loading GitHub dashboard"
-          description="Fetching repositories and analytics for your GitHub scopes."
+          label={t("loadingLabel")}
+          description={t("loadingDescription")}
           className="min-h-[32rem]"
         />
       </GitHubDashboardStateFrame>
@@ -93,8 +97,8 @@ function GitHubDashboardContainerContent({
     return (
       <GitHubDashboardStateFrame>
         <ErrorState
-          title="Unable to load GitHub data"
-          description="The GitHub dashboard could not be prepared. Please try again in a moment."
+          title={t("errorTitle")}
+          description={t("errorDescription")}
           className="min-h-[32rem]"
         />
       </GitHubDashboardStateFrame>
@@ -105,8 +109,8 @@ function GitHubDashboardContainerContent({
     return (
       <GitHubDashboardStateFrame>
         <EmptyState
-          title="No repositories available"
-          description="There are no repositories to display for the selected GitHub scope yet."
+          title={t("emptyTitle")}
+          description={t("emptyDescription")}
           className="min-h-[32rem]"
         />
       </GitHubDashboardStateFrame>

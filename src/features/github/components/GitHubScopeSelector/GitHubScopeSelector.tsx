@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedScope, type GitHubState } from "@portfolio/features/github/store/github.slice";
 import { selectSortedScopes } from "@portfolio/features/github/store/github.selectors";
@@ -10,6 +11,7 @@ type GitHubStoreState = {
 };
 
 export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
+  const t = useTranslations("GitHub");
   const dispatch = useDispatch();
   const scopes = useSelector((state: GitHubStoreState) => selectSortedScopes(state));
   const selectedScopeId = useSelector(
@@ -20,7 +22,7 @@ export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
     <div
       className="flex flex-wrap items-center gap-2.5"
       role="tablist"
-      aria-label="GitHub scopes"
+      aria-label={t("scopeSelectorLabel")}
     >
       <button
         type="button"
@@ -34,7 +36,7 @@ export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
             : "border-border bg-surface text-text-secondary hover:border-accent hover:text-text-primary",
         ].join(" ")}
       >
-        All
+        {t("allScopes")}
       </button>
       {scopes.map((scope) => {
         const isActive = selectedScopeId === scope.id;

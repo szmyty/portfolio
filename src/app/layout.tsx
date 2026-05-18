@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { siteConfig, isDev, env } from "@portfolio/config";
 import { DebugPanel } from "@portfolio/components/debug/DebugPanel";
+import { IntlProvider } from "@portfolio/i18n/IntlProvider";
 import { ThemeProvider } from "@portfolio/lib/theme";
 import nextPkg from "next/package.json";
 import reactPkg from "react/package.json";
@@ -170,9 +170,9 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden">
         <ThemeProvider>
-          <NextIntlClientProvider messages={messages}>
+          <IntlProvider locale={locale} messages={messages}>
             {children}
-          </NextIntlClientProvider>
+          </IntlProvider>
         </ThemeProvider>
         {isDev && (
           <DebugPanel

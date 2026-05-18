@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslations } from "next-intl";
 import {
   Bar,
   BarChart,
@@ -37,6 +38,7 @@ const CHART_COLORS = [
 ] as const;
 
 export function GitHubStarsChart(_props: GitHubStarsChartProps) {
+  const t = useTranslations("GitHub");
   const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
@@ -69,10 +71,10 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-text-primary">
-            Top Repositories by Stars
+            {t("starsChart.title")}
           </h3>
           <p className="mt-1 text-sm text-text-muted">
-            Highest-starred repositories in the active GitHub scope.
+            {t("starsChart.description")}
           </p>
         </div>
       </div>
@@ -95,7 +97,7 @@ export function GitHubStarsChart(_props: GitHubStarsChartProps) {
             />
             <Tooltip
               cursor={{ fill: "rgba(124, 156, 255, 0.08)" }}
-              formatter={(value) => [`${value ?? 0}`, "Stars"]}
+              formatter={(value) => [`${value ?? 0}`, t("starsChart.stars")]}
               contentStyle={{
                 borderRadius: "16px",
                 border: "1px solid var(--border)",

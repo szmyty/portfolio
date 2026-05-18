@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useTranslations } from "next-intl";
 import { Container } from "@portfolio/components/ui/Container";
 import { EmptyState } from "@portfolio/components/ui/EmptyState";
 import {
@@ -18,6 +19,7 @@ type GitHubStoreState = {
 };
 
 export function GitHubRepoGrid(_props: GitHubRepoGridProps) {
+  const t = useTranslations("GitHub");
   const githubState = useSelector((state: GitHubStoreState) => state.github);
   const repositories = useSelector((state: GitHubStoreState) =>
     selectRepositoriesForActiveScope(state),
@@ -39,8 +41,8 @@ export function GitHubRepoGrid(_props: GitHubRepoGridProps) {
     return (
       <Container className="max-w-6xl">
         <EmptyState
-          title="No repositories available"
-          description="There are no repositories to display for the selected GitHub scope yet."
+          title={t("emptyTitle")}
+          description={t("emptyDescription")}
           className="rounded-3xl border border-dashed border-border bg-background/60"
         />
       </Container>

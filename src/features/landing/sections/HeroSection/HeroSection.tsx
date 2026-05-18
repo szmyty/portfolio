@@ -29,7 +29,7 @@ export function HeroSection() {
   return (
     <section
       id="hero"
-      aria-label="Hero"
+      aria-label={t("ariaLabel")}
       className="relative flex flex-col items-center justify-center min-h-screen min-h-dvh px-4 sm:px-8 text-center pointer-events-none"
     >
       <motion.div
