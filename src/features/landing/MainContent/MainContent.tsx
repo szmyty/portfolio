@@ -1,6 +1,5 @@
 import { AppNavBar } from "@portfolio/components/app/AppNavBar";
 import { Footer } from "@portfolio/features/landing/Footer";
-import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared";
 import {
   DevelopmentSection,
   HeroSection,
@@ -40,7 +39,6 @@ export function MainContent() {
         tabIndex={-1}
         className="flex-1 outline-none pointer-events-none pt-[calc(env(safe-area-inset-top)+4.5rem)] sm:pt-[calc(env(safe-area-inset-top)+5rem)]"
       >
-        <SharedSectionVisualCanvas />
         <HeroSection />
         <MusicSection />
         <PublishingSection />

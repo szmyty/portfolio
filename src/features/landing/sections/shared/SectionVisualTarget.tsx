@@ -1,12 +1,7 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
-import {
-  notifySectionVisualLayoutChange,
-  type SectionVisualKind,
-  registerSectionVisualSlot,
-  unregisterSectionVisualSlot,
-} from "./sectionVisualStore";
+import { FloppyDiskScene, MagazineScene, VinylRecordScene } from "@portfolio/features/three/scenes";
+import type { SectionVisualKind } from "./sectionVisualStore";
 
 type SectionVisualTargetProps = {
   kind: SectionVisualKind;
@@ -21,44 +16,26 @@ export function SectionVisualTarget({
   height,
   frameClassName = "rounded-2xl border border-border bg-surface-overlay",
 }: SectionVisualTargetProps) {
-  const slotId = useId();
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    registerSectionVisualSlot(slotId, kind, ref.current);
-    notifySectionVisualLayoutChange();
-
-    return () => {
-      unregisterSectionVisualSlot(slotId);
-    };
-  }, [kind, slotId]);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      notifySectionVisualLayoutChange();
-    });
-    resizeObserver.observe(node);
-
-    const frameId = window.requestAnimationFrame(() => {
-      notifySectionVisualLayoutChange();
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      resizeObserver.disconnect();
-    };
-  }, [slotId]);
+  const scene = (() => {
+    switch (kind) {
+      case "vinyl":
+        return <VinylRecordScene />;
+      case "magazine":
+        return <MagazineScene />;
+      case "floppy":
+        return <FloppyDiskScene />;
+      default:
+        return null;
+    }
+  })();
 
   return (
     <div
-      ref={ref}
       className={className}
       style={{ position: "relative", height }}
     >
-      <div className={`absolute inset-0 ${frameClassName}`} />
+      <div className="absolute inset-0">{scene}</div>
+      <div className={`absolute inset-0 pointer-events-none ${frameClassName}`} />
     </div>
   );
 }
