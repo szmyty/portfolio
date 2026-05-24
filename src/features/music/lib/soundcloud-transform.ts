@@ -88,13 +88,6 @@ export function transformSoundCloudItem(
 ): SoundCloudTrack {
   const itunes = (item as any).itunes;
 
-  console.log("Transforming SoundCloud item:", {
-    title: item.title,
-    artwork: itunes?.image,
-    duration: itunes?.duration,
-    audio: item.enclosure?.url,
-  });
-
   return {
     title: item.title?.trim() || "Untitled Track",
     link: item.link?.trim() || "#",
