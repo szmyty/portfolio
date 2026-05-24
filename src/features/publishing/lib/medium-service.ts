@@ -25,16 +25,8 @@ export async function fetchMediumRssItems(
   try {
     const feed = await parser.parseURL(feedUrl);
 
-    // Debug (optional, remove later)
-    console.log("Medium RSS fetched:", {
-      title: feed.title,
-      itemCount: feed.items.length,
-    });
-
     return (feed.items as MediumRssItem[]) ?? [];
-  } catch (error) {
-    console.error("Failed to fetch Medium RSS:", error);
-
+  } catch {
     return [];
   }
 }

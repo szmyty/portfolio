@@ -13,7 +13,6 @@ type MusicClientProps = {
 };
 
 export function MusicClient({ tracks, profile }: MusicClientProps) {
-  console.log("CLIENT TRACKS:", tracks);
 
   const [activeTrack, setActiveTrack] = useState<SoundCloudTrack | null>(
     tracks[0] ?? null,
@@ -28,11 +27,11 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-10">
-      {/* 🎧 PLAYER */}
+      {/* Player */}
       {activeTrack && (
         <div
           ref={playerRef}
-          className="w-full max-w-md mx-auto rounded-2xl border overflow-hidden"
+          className="w-full max-w-md mx-auto rounded-2xl border border-border bg-surface overflow-hidden shadow-sm"
         >
           {/* Artwork */}
           {activeTrack.artwork && (
@@ -64,7 +63,7 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
               </span>
             </a>
 
-            <p className="font-semibold text-lg">
+            <p className="font-semibold text-lg text-text-primary">
               {activeTrack.title}
             </p>
 
@@ -82,21 +81,22 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
         </div>
       )}
 
-      {/* 🎶 GRID */}
+      {/* Track grid */}
       <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
         {tracks.map((track) => {
-          console.log("TRACK ITEM:", track);
-
           const isActive = activeTrack?.link === track.link;
 
           return (
             <button
               key={track.link}
               onClick={() => handleTrackClick(track)}
-              className={`min-w-0 cursor-pointer overflow-hidden rounded-2xl border text-left transition-all duration-200
-                hover:shadow-lg hover:-translate-y-1
-                ${isActive ? "border-primary" : ""}
-              `}
+              className={[
+                "min-w-0 cursor-pointer overflow-hidden rounded-2xl border text-left transition-all duration-200",
+                "hover:shadow-lg hover:-translate-y-1",
+                isActive
+                  ? "border-accent bg-surface shadow-md"
+                  : "border-border bg-surface",
+              ].join(" ")}
             >
               {/* Artwork */}
               {track.artwork && (
@@ -107,24 +107,31 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
                     className="w-full aspect-square object-cover"
                   />
 
-                  {/* ▶ overlay */}
+                  {/* Play overlay */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
                     <span className="text-white text-xl">▶</span>
                   </div>
+
+                  {/* Active indicator */}
+                  {isActive && (
+                    <div className="absolute bottom-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-accent-foreground text-xs">
+                      ♪
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Info */}
               <div className="p-3 flex flex-col gap-1">
-                <p className="font-medium text-sm leading-tight">
+                <p className={["font-medium text-sm leading-tight", isActive ? "text-accent" : "text-text-primary"].join(" ")}>
                   {track.title}
                 </p>
 
-                <p className="text-xs text-muted-foreground line-clamp-1">
+                <p className="text-xs text-text-muted line-clamp-1">
                   {track.description}
                 </p>
 
-                <div className="flex justify-between text-xs text-muted-foreground pt-1">
+                <div className="flex justify-between text-xs text-text-muted pt-1">
                   <span>{track.duration}</span>
                   <span>
                     {new Date(track.pubDate).toLocaleDateString()}

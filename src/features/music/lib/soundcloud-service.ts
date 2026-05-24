@@ -39,11 +39,6 @@ export async function fetchSoundCloudRssItems(): Promise<SoundCloudFeed> {
     const xml: string = await response.text();
     const feed: Parser.Output<SoundCloudRssItem> = await parser.parseString(xml);
 
-    console.log("SoundCloud RSS fetched:", {
-      title: feed.title,
-      itemCount: feed.items.length,
-    });
-
     return {
       items: (feed.items as SoundCloudRssItem[]) ?? [],
       channel: {
@@ -53,9 +48,7 @@ export async function fetchSoundCloudRssItems(): Promise<SoundCloudFeed> {
         itunes: (feed.itunes as SoundCloudRssChannel["itunes"]) ?? undefined,
       },
     };
-  } catch (error) {
-    console.error("Failed to fetch SoundCloud RSS:", error);
-
+  } catch {
     return {
       items: [],
       channel: {},

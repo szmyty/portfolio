@@ -11,7 +11,7 @@ export function PublishingArticleCard({
       href={article.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="overflow-hidden rounded-2xl border transition-all duration-200 hover:shadow-lg"
+      className="overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-200 hover:border-accent hover:shadow-lg hover:-translate-y-0.5"
     >
       {article.thumbnail && (
         <img
@@ -26,11 +26,11 @@ export function PublishingArticleCard({
           {article.title}
         </p>
 
-        <p className="line-clamp-3 text-sm text-muted-foreground">
+        <p className="line-clamp-3 text-sm text-text-muted">
           {article.description}
         </p>
 
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between text-xs text-text-muted">
           <span>{t("articleReadTime", { minutes: article.readTime })}</span>
           <span>{new Date(article.pubDate).toLocaleDateString()}</span>
         </div>
@@ -40,7 +40,7 @@ export function PublishingArticleCard({
             {article.categories.slice(0, 3).map((category) => (
               <span
                 key={category}
-                className="rounded-md bg-muted px-2 py-1 text-xs"
+                className="rounded-md bg-surface-raised px-2 py-1 text-xs text-text-secondary"
               >
                 {category}
               </span>
