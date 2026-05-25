@@ -73,6 +73,7 @@ export function Magazine() {
   }, [gl, logger]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     backTexture.colorSpace = SRGBColorSpace;
     backTexture.flipY = true;
     backTexture.minFilter = LinearFilter;
@@ -225,6 +226,7 @@ export function Magazine() {
             ? emissiveTarget.current + BACK_EMISSIVE_BOOST
           : emissiveTarget.current;
 
+      // eslint-disable-next-line react-hooks/immutability
       material.emissiveIntensity =
         current + (target - current) * Math.min(delta * 6, 1);
     }

@@ -23,7 +23,7 @@ function secondsToTime(seconds: number): string {
  * 2. enclosure.length (bytes → approximate duration)
  */
 function normalizeDuration(item: SoundCloudRssItem): string {
-  const itunes = (item as any).itunes;
+  const itunes = item.itunes;
 
   if (itunes?.duration) {
     // already "00:03:50" → normalize to "3:50"
@@ -56,7 +56,7 @@ function normalizeDuration(item: SoundCloudRssItem): string {
  * Extract artwork
  */
 function extractArtworkUrl(item: SoundCloudRssItem): string | null {
-  const itunes = (item as any).itunes;
+  const itunes = item.itunes;
 
   if (itunes?.image) {
     return itunes.image;
@@ -69,7 +69,7 @@ function extractArtworkUrl(item: SoundCloudRssItem): string | null {
  * Extract description
  */
 function extractDescription(item: SoundCloudRssItem): string {
-  const itunes = (item as any).itunes;
+  const itunes = item.itunes;
 
   return (
     item.content?.trim() ||
@@ -86,8 +86,6 @@ function extractDescription(item: SoundCloudRssItem): string {
 export function transformSoundCloudItem(
   item: SoundCloudRssItem,
 ): SoundCloudTrack {
-  const itunes = (item as any).itunes;
-
   return {
     title: item.title?.trim() || "Untitled Track",
     link: item.link?.trim() || "#",

@@ -77,6 +77,7 @@ function CameraRig({ kind }: { kind: SectionVisualKind }) {
     const distance =
       Math.max(verticalDistance, horizontalDistance) + target.padding;
 
+    // eslint-disable-next-line react-hooks/immutability
     perspectiveCamera.fov = target.fov;
     perspectiveCamera.position.set(target.offsetX, target.offsetY, distance);
     perspectiveCamera.near = 0.1;
@@ -160,7 +161,7 @@ export function SharedSectionVisualCanvas() {
     getSectionVisualSnapshot,
   );
   const [rect, setRect] = useState<RectState | null>(null);
-  const canvasKindRef = useRef<SectionVisualKind | null>(null);
+  const canvasKindRef = useRef<SectionVisualKind>("vinyl");
 
   useEffect(() => {
     const activeElement = snapshot.activeElement;
@@ -227,8 +228,7 @@ export function SharedSectionVisualCanvas() {
     });
   }, [logger, snapshot.activeId, snapshot.activeKind]);
 
-  const currentKind: SectionVisualKind =
-    snapshot.activeKind ?? canvasKindRef.current ?? "vinyl";
+  const currentKind: SectionVisualKind = snapshot.activeKind ?? snapshot.lastActiveKind;
   const shouldShowCanvas = !!(snapshot.activeKind && snapshot.activeElement && rect);
 
   const containerStyle = useMemo(() => {

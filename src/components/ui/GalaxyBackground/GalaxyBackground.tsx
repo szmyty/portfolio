@@ -11,11 +11,14 @@ function GalaxyEnvironment() {
   const { gl, scene } = useThree();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     texture.mapping = EquirectangularReflectionMapping;
 
+    // eslint-disable-next-line react-hooks/immutability
     scene.background = texture;
     scene.environment = texture;
 
+    // eslint-disable-next-line react-hooks/immutability
     gl.toneMappingExposure = 0.7;
 
     return () => {
