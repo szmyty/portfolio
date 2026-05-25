@@ -3,8 +3,8 @@
 import { SectionVisualTarget } from "../shared/SectionVisualTarget";
 
 /**
- * MagazineVisual — client component wrapper that lazy-loads the 3D magazine
- * canvas (WebGL requires the DOM so SSR must be disabled).
+ * MagazineVisual — client component wrapper for the persistent 3D magazine
+ * canvas.
  *
  * The container uses `position: relative` (required by react-three-fiber Canvas)
  * and an explicit height so the WebGL context gets the correct dimensions.

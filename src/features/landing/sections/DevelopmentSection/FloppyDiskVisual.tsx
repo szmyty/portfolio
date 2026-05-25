@@ -12,7 +12,7 @@ const FloppyDiskScene = dynamic(
 );
 
 /**
- * FloppyDiskVisual — lazy-loaded 3D visual for the Development section.
+ * FloppyDiskVisual — persistent 3D visual for the Development section.
  */
 export function FloppyDiskVisual() {
   return (
