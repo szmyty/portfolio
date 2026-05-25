@@ -114,6 +114,7 @@ export function FloppyDisk() {
   }, [logger, obj]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     labelTexture.colorSpace = SRGBColorSpace;
     logger.emit("label-texture-ready");
   }, [labelTexture, logger]);

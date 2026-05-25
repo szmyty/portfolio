@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { useTranslations } from "next-intl";
@@ -123,21 +123,19 @@ function GitHubDashboardContainerContent({
 export function GitHubDashboardContainer({
   initialScopes,
 }: GitHubDashboardContainerProps) {
-  const storeRef = useRef<GitHubDashboardStore | null>(null);
-
-  if (!storeRef.current) {
+  const [store] = useState<GitHubDashboardStore>(() => {
     logGitHubDebug("Initial scopes:", initialScopes);
-    storeRef.current = createGitHubDashboardStore({
+    return createGitHubDashboardStore({
       github: {
         scopes: initialScopes,
         selectedScopeId: null,
         status: "success",
       },
     });
-  }
+  });
 
   return (
-    <Provider store={storeRef.current}>
+    <Provider store={store}>
       <GitHubDashboardContainerContent initialScopes={initialScopes} />
     </Provider>
   );

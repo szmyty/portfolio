@@ -12,6 +12,7 @@ type SectionVisualSnapshot = {
   activeId: string | null;
   activeKind: SectionVisualKind | null;
   activeElement: HTMLDivElement | null;
+  lastActiveKind: SectionVisualKind;
 };
 
 const slots = new Map<string, SectionVisualSlot>();
@@ -20,6 +21,7 @@ let cachedSnapshot: SectionVisualSnapshot = {
   activeId: null,
   activeKind: null,
   activeElement: null,
+  lastActiveKind: "vinyl",
 };
 
 function emitChange() {
@@ -116,12 +118,14 @@ export function getSectionVisualSnapshot(): SectionVisualSnapshot {
     activeId: activeSlot?.id ?? null,
     activeKind: activeSlot?.kind ?? null,
     activeElement: activeSlot?.element ?? null,
+    lastActiveKind: activeSlot?.kind ?? cachedSnapshot.lastActiveKind,
   };
 
   if (
     cachedSnapshot.activeId === nextSnapshot.activeId &&
     cachedSnapshot.activeKind === nextSnapshot.activeKind &&
-    cachedSnapshot.activeElement === nextSnapshot.activeElement
+    cachedSnapshot.activeElement === nextSnapshot.activeElement &&
+    cachedSnapshot.lastActiveKind === nextSnapshot.lastActiveKind
   ) {
     return cachedSnapshot;
   }
