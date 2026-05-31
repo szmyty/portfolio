@@ -5,7 +5,7 @@ import { Footer } from "@portfolio/features/landing/Footer";
 import type { PageShellProps } from "./PageShell.types";
 
 /**
- * PageShell — shared layout for sub-pages (/music, /development, /publishing).
+ * PageShell — shared layout for sub-pages (/music, /publishing, /research, /development).
  *
  * Handles:
  * - background layering

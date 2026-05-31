@@ -1,4 +1,4 @@
-// Env config for client-safe variables (NEXT_PUBLIC_*)
+// Env config for shared-safe variables.
 
 // IMPORTANT:
 // - Access NEXT_PUBLIC_* variables directly so Next.js can inline them
@@ -7,9 +7,14 @@
 
 const nextPublicSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://szmyty.vercel.app";
+const orcidId = process.env.ORCID_ID?.trim() || "";
+const orcidRequireCredentials =
+  process.env.ORCID_REQUIRE_CREDENTIALS?.trim() === "true";
 
 export const env = {
   NEXT_PUBLIC_SITE_URL: nextPublicSiteUrl,
+  ORCID_ID: orcidId,
+  ORCID_REQUIRE_CREDENTIALS: orcidRequireCredentials,
 } as const;
 
 /** True only in `NODE_ENV=development` (local dev server). */
