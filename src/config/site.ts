@@ -27,3 +27,8 @@ export const siteConfig = {
   ] as string[],
   locale: "en_US",
 } as const;
+
+export const researchConfig = {
+  orcidId: env.ORCID_ID,
+  requireCredentials: env.ORCID_REQUIRE_CREDENTIALS,
+} as const;

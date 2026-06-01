@@ -17,6 +17,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ---
 
+## Environment Variables
+
+Optional configuration:
+
+```bash
+ORCID_ID=0009-0008-5291-9795
+```
+
+If `ORCID_ID` is missing, the `/research` page still renders with a non-blocking setup message.
+
+---
+
 ## Project Structure
 
 ```

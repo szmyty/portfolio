@@ -13,4 +13,4 @@
  */
 
 export { env, isDev, isProd } from "./env";
-export { siteConfig } from "./site";
+export { siteConfig, researchConfig } from "./site";

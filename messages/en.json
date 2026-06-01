@@ -28,6 +28,7 @@
     "home": "Home",
     "music": "Music",
     "publishing": "Publishing",
+    "research": "Research",
     "development": "Development",
     "repositoryLink": "View portfolio repository on GitHub"
   },
@@ -78,6 +79,11 @@
         "imageAlt": "Forever & Always"
       }
     }
+  },
+  "ResearchPage": {
+    "title": "Research",
+    "description": "Publications, papers, research artifacts, and semantic knowledge systems.",
+    "publications": "Publications"
   },
   "DevelopmentSection": {
     "title": "Development",

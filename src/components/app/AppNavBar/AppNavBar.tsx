@@ -14,6 +14,7 @@ export function AppNavBar() {
     { href: "/", label: t("home") },
     { href: "/music", label: t("music") },
     { href: "/publishing", label: t("publishing") },
+    { href: "/research", label: t("research") },
     { href: "/development", label: t("development") },
   ];
 
