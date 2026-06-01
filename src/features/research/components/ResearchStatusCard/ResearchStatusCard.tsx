@@ -2,20 +2,31 @@ import type { ResearchStatus } from "@portfolio/features/research/types";
 
 type ResearchStatusCardProps = {
   status: ResearchStatus;
+  statusMessage: string;
 };
 
 const STATUS_COPY: Record<ResearchStatus, string> = {
-  "not-configured": "Research synchronization is not yet configured.",
-  "no-publications": "Research publications will appear here as they are published and synchronized through ORCID.",
-  loading: "Publications loading.",
-  unavailable: "Unable to synchronize publications at this time.",
-  available: "Publications available.",
+  "not-configured": "ORCID not configured",
+  "credentials-unavailable": "ORCID client credentials unavailable",
+  "auth-failed": "Unable to authenticate with ORCID",
+  "sync-failed": "Unable to synchronize publications",
+  "no-publications": "No publications found",
+  available: "Publications synchronized",
 };
 
-export function ResearchStatusCard({ status }: ResearchStatusCardProps) {
+export function ResearchStatusCard({
+  status,
+  statusMessage,
+}: ResearchStatusCardProps) {
   return (
     <div className="rounded-xl border border-border/70 bg-surface-overlay px-4 py-3 text-sm text-text-secondary">
-      {STATUS_COPY[status]}
+      <p>{statusMessage || STATUS_COPY[status]}</p>
+      {status === "no-publications" ? (
+        <p className="mt-2">
+          Publications will automatically appear here once they are published and
+          synchronized through ORCID.
+        </p>
+      ) : null}
     </div>
   );
 }

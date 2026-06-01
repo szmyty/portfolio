@@ -1,4 +1,5 @@
 import type { ResearchPaper } from "@portfolio/features/research/types";
+import Link from "next/link";
 
 type ResearchPublicationCardProps = {
   paper: ResearchPaper;
@@ -32,26 +33,28 @@ export function ResearchPublicationCard({ paper }: ResearchPublicationCardProps)
         )}
 
         <div className="flex flex-wrap gap-3 text-sm text-text-secondary">
+          {paper.publicationSource && <span>Source: {paper.publicationSource}</span>}
+
           {paper.doi && (
-            <a
+            <Link
               href={`https://doi.org/${paper.doi}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-emerald-300 transition-colors hover:text-emerald-200"
             >
               DOI: {paper.doi}
-            </a>
+            </Link>
           )}
 
           {paper.pdfUrl && (
-            <a
+            <Link
               href={paper.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-emerald-300 transition-colors hover:text-emerald-200"
             >
-              Open PDF →
-            </a>
+              View PDF
+            </Link>
           )}
         </div>
       </div>
