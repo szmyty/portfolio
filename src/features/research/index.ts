@@ -1,4 +1,5 @@
 export { ResearchPublicationCard } from "./components/ResearchPublicationCard";
+export { ResearchIdentityCard } from "./components/ResearchIdentityCard";
 export { ResearchStatusCard } from "./components/ResearchStatusCard";
 
 export { fetchResearchState } from "./lib/orcid-service";
@@ -7,6 +8,7 @@ export { queueResearchThumbnail } from "./lib/research-thumbnail";
 
 export type {
   ResearchPaper,
+  ResearchConnectionStatus,
   ResearchProfile,
   ResearchSource,
   ResearchStatus,

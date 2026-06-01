@@ -13,6 +13,7 @@ export function normalizeResearchPaper(input: ResearchPaperInput): ResearchPaper
     abstract: input.abstract?.trim() || "",
     doi: input.doi?.trim() || "",
     publicationDate: input.publicationDate?.trim() || "",
+    publicationSource: input.publicationSource?.trim() || "",
     pdfUrl: input.pdfUrl?.trim() || "",
     thumbnailUrl: input.thumbnailUrl?.trim() || "",
     authors: normalizeAuthors(input.authors),
