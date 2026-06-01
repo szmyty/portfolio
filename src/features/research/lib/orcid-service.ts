@@ -199,12 +199,16 @@ async function fetchOrcidPublications(
         abstract: work?.["short-description"] || "",
         doi: extractDoi(work?.["external-ids"]?.["external-id"]) ||
           extractDoi(summary["external-ids"]?.["external-id"]),
+        externalUrl: summary["put-code"]
+          ? `https://orcid.org/${orcidId}/work/${summary["put-code"]}`
+          : "",
         publicationDate:
           formatPublicationDate(work?.["publication-date"]) ||
           formatPublicationDate(summary["publication-date"]),
         publicationSource: work?.["journal-title"]?.value || "ORCID",
         pdfUrl: extractPdfUrl(work),
         source: "orcid",
+        putCode: summary["put-code"] ?? null,
       });
     }),
   );

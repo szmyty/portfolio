@@ -46,6 +46,17 @@ export function ResearchPublicationCard({ paper }: ResearchPublicationCardProps)
             </Link>
           )}
 
+          {paper.externalUrl && (
+            <Link
+              href={paper.externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-300 transition-colors hover:text-emerald-200"
+            >
+              View on ORCID
+            </Link>
+          )}
+
           {paper.pdfUrl && (
             <Link
               href={paper.pdfUrl}
