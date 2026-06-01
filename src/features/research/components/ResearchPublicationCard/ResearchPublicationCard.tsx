@@ -18,6 +18,19 @@ export function ResearchPublicationCard({ paper }: ResearchPublicationCardProps)
       )}
 
       <div className="space-y-3 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {paper.publicationType ? (
+            <span className="rounded-full border border-brand-primary/50 bg-brand-primary/10 px-2.5 py-0.5 text-xs font-medium text-brand-primary">
+              {paper.publicationType}
+            </span>
+          ) : null}
+          {paper.sourceName ? (
+            <span className="rounded-full border border-border/70 bg-surface px-2.5 py-0.5 text-xs text-text-secondary">
+              {paper.sourceName}
+            </span>
+          ) : null}
+        </div>
+
         <h3 className="text-lg font-medium text-text-primary">{paper.title}</h3>
 
         {paper.publicationDate && (
@@ -33,16 +46,14 @@ export function ResearchPublicationCard({ paper }: ResearchPublicationCardProps)
         )}
 
         <div className="flex flex-wrap gap-3 text-sm text-text-secondary">
-          {paper.publicationSource && <span>Source: {paper.publicationSource}</span>}
-
           {paper.doi && (
             <Link
               href={`https://doi.org/${paper.doi}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-300 transition-colors hover:text-emerald-200"
+              className="inline-flex items-center rounded-full border border-emerald-400/50 bg-emerald-500/10 px-3 py-1 text-emerald-300 transition-colors hover:text-emerald-200"
             >
-              DOI: {paper.doi}
+              DOI {paper.doi}
             </Link>
           )}
 
@@ -51,9 +62,9 @@ export function ResearchPublicationCard({ paper }: ResearchPublicationCardProps)
               href={paper.externalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-300 transition-colors hover:text-emerald-200"
+              className="inline-flex items-center rounded-full border border-border/70 bg-surface px-3 py-1 text-text-primary transition-colors hover:border-brand-primary/50"
             >
-              View on ORCID
+              Publication Link
             </Link>
           )}
 

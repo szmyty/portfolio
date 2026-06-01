@@ -11,12 +11,13 @@ export function normalizeResearchPaper(input: ResearchPaperInput): ResearchPaper
   return {
     title: input.title?.trim() || "Untitled publication",
     abstract: input.abstract?.trim() || "",
-    doi: input.doi?.trim() || "",
-    externalUrl: input.externalUrl?.trim() || "",
+    doi: normalizeDoi(input.doi),
+    externalUrl: normalizeUrl(input.externalUrl),
     publicationDate: input.publicationDate?.trim() || "",
-    publicationSource: input.publicationSource?.trim() || "",
-    pdfUrl: input.pdfUrl?.trim() || "",
-    thumbnailUrl: input.thumbnailUrl?.trim() || "",
+    publicationType: input.publicationType?.trim() || "",
+    sourceName: input.sourceName?.trim() || "ORCID",
+    pdfUrl: normalizeUrl(input.pdfUrl),
+    thumbnailUrl: normalizeUrl(input.thumbnailUrl),
     authors: normalizeAuthors(input.authors),
     source: input.source || "unknown",
     putCode: input.putCode ?? null,
@@ -29,4 +30,23 @@ function normalizeAuthors(authors?: string[]): string[] {
   }
 
   return authors.map((author) => author.trim()).filter(Boolean);
+}
+
+function normalizeDoi(doi?: string): string {
+  const normalized = doi?.trim() || "";
+  return normalized.replace(/^https?:\/\/doi\.org\//i, "");
+}
+
+function normalizeUrl(url?: string): string {
+  const normalized = url?.trim() || "";
+
+  if (!normalized) {
+    return "";
+  }
+
+  try {
+    return new URL(normalized).toString();
+  } catch {
+    return "";
+  }
 }

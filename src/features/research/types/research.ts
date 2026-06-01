@@ -13,7 +13,8 @@ export type ResearchPaper = {
   doi: string;
   externalUrl: string;
   publicationDate: string;
-  publicationSource: string;
+  publicationType: string;
+  sourceName: string;
   pdfUrl: string;
   thumbnailUrl: string;
   authors: string[];
