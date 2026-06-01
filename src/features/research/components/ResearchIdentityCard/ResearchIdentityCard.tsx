@@ -60,7 +60,7 @@ export function ResearchIdentityCard({
       <div className="space-y-2 text-sm text-text-secondary">
         <p>{STATUS_LABELS[connectionStatus]}</p>
         {profile.displayName ? <p>Researcher: {profile.displayName}</p> : null}
-        <p>Publications synchronized: {profile.publicationCount}</p>
+        <p>Publication Count: {profile.publicationCount}</p>
         {profile.lastSynchronizedAt ? (
           <p>Last synchronization: {new Date(profile.lastSynchronizedAt).toLocaleString()}</p>
         ) : null}

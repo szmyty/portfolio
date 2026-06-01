@@ -29,6 +29,8 @@ type OrcidExternalId = {
 type OrcidWorkSummary = {
   "put-code"?: number;
   title?: { title?: { value?: string } };
+  type?: string;
+  source?: { "source-name"?: { value?: string } };
   "publication-date"?: {
     year?: { value?: string };
     month?: { value?: string };
@@ -45,6 +47,8 @@ type OrcidWorkDetail = {
   "publication-date"?: OrcidWorkSummary["publication-date"];
   "short-description"?: string;
   url?: { value?: string };
+  type?: string;
+  source?: { "source-name"?: { value?: string } };
   "external-ids"?: {
     "external-id"?: OrcidExternalId[];
   };
@@ -79,15 +83,14 @@ export async function fetchResearchState(): Promise<ResearchState> {
 
   try {
     const accessToken = await authenticateWithOrcid(clientId, clientSecret);
-    console.info("[research] ORCID authentication succeeded.");
+    console.info("[research] ORCID token acquired for /read-public scope.");
 
     const displayName = await fetchOrcidDisplayName(orcidId, accessToken);
     const publications = await fetchOrcidPublications(orcidId, accessToken);
     const synchronizedAt = new Date().toISOString();
 
-    console.info(
-      `[research] ORCID synchronization succeeded. publications=${publications.length}`,
-    );
+    console.info(`[research] ORCID publications synchronized: ${publications.length}`);
+    console.info("[research] ORCID synchronization succeeded.");
 
     return buildState({
       status: publications.length > 0 ? "available" : "no-publications",
@@ -199,13 +202,22 @@ async function fetchOrcidPublications(
         abstract: work?.["short-description"] || "",
         doi: extractDoi(work?.["external-ids"]?.["external-id"]) ||
           extractDoi(summary["external-ids"]?.["external-id"]),
-        externalUrl: summary["put-code"]
-          ? `https://orcid.org/${orcidId}/work/${summary["put-code"]}`
-          : "",
+        externalUrl:
+          extractExternalUrl(work?.["external-ids"]?.["external-id"]) ||
+          work?.url?.value ||
+          extractExternalUrl(summary["external-ids"]?.["external-id"]) ||
+          (summary["put-code"]
+            ? `https://orcid.org/${orcidId}/work/${summary["put-code"]}`
+            : ""),
         publicationDate:
           formatPublicationDate(work?.["publication-date"]) ||
           formatPublicationDate(summary["publication-date"]),
-        publicationSource: work?.["journal-title"]?.value || "ORCID",
+        publicationType: formatPublicationType(work?.type || summary.type),
+        sourceName:
+          work?.["journal-title"]?.value ||
+          work?.source?.["source-name"]?.value ||
+          summary.source?.["source-name"]?.value ||
+          "ORCID",
         pdfUrl: extractPdfUrl(work),
         source: "orcid",
         putCode: summary["put-code"] ?? null,
@@ -279,6 +291,14 @@ function extractDoi(externalIds: OrcidExternalId[] | undefined): string {
   return doi?.["external-id-value"] || "";
 }
 
+function extractExternalUrl(externalIds: OrcidExternalId[] | undefined): string {
+  if (!externalIds?.length) {
+    return "";
+  }
+
+  return externalIds.find((id) => id["external-id-url"]?.value)?.["external-id-url"]?.value || "";
+}
+
 function extractPdfUrl(work: OrcidWorkDetail | null): string {
   const explicitUrl = work?.url?.value?.trim() || "";
 
@@ -330,14 +350,42 @@ function formatPublicationDate(
   const day = publicationDate.day?.value?.padStart(2, "0");
 
   if (year && month && day) {
+    const date = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
     return `${year}-${month}-${day}`;
   }
 
   if (year && month) {
+    const date = new Date(`${year}-${month}-01T00:00:00Z`);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+      });
+    }
     return `${year}-${month}`;
   }
 
   return year;
+}
+
+function formatPublicationType(publicationType?: string): string {
+  if (!publicationType?.trim()) {
+    return "";
+  }
+
+  return publicationType
+    .trim()
+    .toLowerCase()
+    .split(/[-_\s]+/)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(" ");
 }
 
 function buildState({

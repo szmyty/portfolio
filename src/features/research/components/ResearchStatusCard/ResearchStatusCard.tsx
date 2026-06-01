@@ -1,32 +1,44 @@
-import type { ResearchStatus } from "@portfolio/features/research/types";
-
 type ResearchStatusCardProps = {
-  status: ResearchStatus;
+  publicationCount: number;
+  lastSynchronizedAt: string;
   statusMessage: string;
 };
 
-const STATUS_COPY: Record<ResearchStatus, string> = {
-  "not-configured": "ORCID not configured",
-  "credentials-unavailable": "ORCID client credentials unavailable",
-  "auth-failed": "Unable to authenticate with ORCID",
-  "sync-failed": "Unable to synchronize publications",
-  "no-publications": "No publications found",
-  available: "Publications synchronized",
-};
-
 export function ResearchStatusCard({
-  status,
+  publicationCount,
+  lastSynchronizedAt,
   statusMessage,
 }: ResearchStatusCardProps) {
   return (
-    <div className="rounded-xl border border-border/70 bg-surface-overlay px-4 py-3 text-sm text-text-secondary">
-      <p>{statusMessage || STATUS_COPY[status]}</p>
-      {status === "no-publications" ? (
-        <p className="mt-2">
-          Publications will automatically appear here once they are published and
-          synchronized through ORCID.
-        </p>
-      ) : null}
-    </div>
+    <section className="space-y-3 rounded-2xl border border-border/60 bg-surface-overlay p-5">
+      <p className="text-sm text-text-secondary">{statusMessage}</p>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-border/70 bg-surface px-4 py-3">
+          <p className="text-xs uppercase tracking-wide text-text-muted">Publications</p>
+          <p className="mt-1 text-2xl font-semibold text-text-primary">{publicationCount}</p>
+        </div>
+
+        <div className="rounded-xl border border-border/70 bg-surface px-4 py-3">
+          <p className="text-xs uppercase tracking-wide text-text-muted">Last Updated</p>
+          <p className="mt-1 text-sm text-text-primary">
+            {formatLastUpdated(lastSynchronizedAt)}
+          </p>
+        </div>
+      </div>
+    </section>
   );
+}
+
+function formatLastUpdated(timestamp: string): string {
+  if (!timestamp) {
+    return "Awaiting synchronization";
+  }
+
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) {
+    return timestamp;
+  }
+
+  return date.toLocaleString();
 }

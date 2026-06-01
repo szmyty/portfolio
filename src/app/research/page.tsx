@@ -2,6 +2,7 @@ import { PageShell } from "@portfolio/components/ui/PageShell";
 import { getTranslations } from "next-intl/server";
 import {
   fetchResearchState,
+  ResearchEmptyState,
   ResearchIdentityCard,
   ResearchPublicationCard,
   ResearchStatusCard,
@@ -28,16 +29,18 @@ export default async function ResearchPage() {
             profile={research.profile}
             connectionStatus={research.connectionStatus}
           />
+          <ResearchStatusCard
+            publicationCount={research.profile.publicationCount}
+            lastSynchronizedAt={research.profile.lastSynchronizedAt}
+            statusMessage={research.statusMessage}
+          />
 
           <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
             {t("publications")}
           </h2>
 
           {research.publications.length === 0 ? (
-            <ResearchStatusCard
-              status={research.status}
-              statusMessage={research.statusMessage}
-            />
+            <ResearchEmptyState />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {research.publications.map((paper) => (
