@@ -12,12 +12,14 @@ export function normalizeResearchPaper(input: ResearchPaperInput): ResearchPaper
     title: input.title?.trim() || "Untitled publication",
     abstract: input.abstract?.trim() || "",
     doi: input.doi?.trim() || "",
+    externalUrl: input.externalUrl?.trim() || "",
     publicationDate: input.publicationDate?.trim() || "",
     publicationSource: input.publicationSource?.trim() || "",
     pdfUrl: input.pdfUrl?.trim() || "",
     thumbnailUrl: input.thumbnailUrl?.trim() || "",
     authors: normalizeAuthors(input.authors),
     source: input.source || "unknown",
+    putCode: input.putCode ?? null,
   };
 }
 

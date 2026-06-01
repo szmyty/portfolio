@@ -11,12 +11,14 @@ export type ResearchPaper = {
   title: string;
   abstract: string;
   doi: string;
+  externalUrl: string;
   publicationDate: string;
   publicationSource: string;
   pdfUrl: string;
   thumbnailUrl: string;
   authors: string[];
   source: ResearchSource;
+  putCode: number | null;
 };
 
 export type ResearchProfile = {
