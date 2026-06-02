@@ -8,8 +8,8 @@ import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 /**
  * FloppyDiskScene — Canvas wrapper for the OBJ-backed floppy disk visual.
  *
- * This mirrors the Magazine/Vinyl scene pattern so the Development section can
- * host its own distinct object while we iterate on materials and label mapping.
+ * Uses a multi-light rig to keep metallic/plastic highlights legible in both
+ * light and dark themes.
  */
 export function FloppyDiskScene() {
   const logger = useLifecycleLogger("FloppyDiskScene");
@@ -37,21 +37,31 @@ export function FloppyDiskScene() {
         });
       }}
     >
-      <ambientLight intensity={isLight ? 0.95 : 0.6} />
-      <directionalLight
-        position={[4, 5, 4]}
-        intensity={isLight ? 1.35 : 1.2}
-        color={isLight ? "#ffffff" : "#ffd7f3"}
+      <ambientLight intensity={isLight ? 0.58 : 0.42} />
+      <hemisphereLight
+        intensity={isLight ? 0.5 : 0.45}
+        color={isLight ? "#f7fbff" : "#b8caf8"}
+        groundColor={isLight ? "#d7c7be" : "#1e2230"}
       />
       <directionalLight
-        position={[-3, -2, -4]}
-        intensity={isLight ? 0.45 : 0.38}
-        color={isLight ? "#f0d8ff" : "#9fe7ff"}
+        position={[3.2, 4.8, 5.2]}
+        intensity={isLight ? 1.24 : 1.05}
+        color={isLight ? "#ffffff" : "#ffdff0"}
       />
       <directionalLight
-        position={[0, 2, -5]}
-        intensity={isLight ? 0.42 : 0.48}
-        color={isLight ? "#ffd5ea" : "#ff7fd7"}
+        position={[-3.5, -1.2, -3.8]}
+        intensity={isLight ? 0.5 : 0.45}
+        color={isLight ? "#e4efff" : "#9ecbff"}
+      />
+      <directionalLight
+        position={[1.8, 1.8, -4.8]}
+        intensity={isLight ? 0.46 : 0.54}
+        color={isLight ? "#ffe1d0" : "#ffc3e7"}
+      />
+      <pointLight
+        position={[0, 0.28, 4]}
+        intensity={isLight ? 0.44 : 0.54}
+        color={isLight ? "#fefcff" : "#ffd9f4"}
       />
       <FloppyDisk />
     </Canvas>
