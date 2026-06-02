@@ -1,6 +1,7 @@
 "use client";
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { useRef, type RefObject } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Infinity } from "@portfolio/features/three/objects";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
@@ -11,6 +12,44 @@ function ResponsiveInfinity() {
   const verticalOffset = aspect < 0.8 ? -0.62 : aspect < 1.4 ? -0.78 : -0.88;
 
   return <Infinity position={[0, verticalOffset, 0]} effects={{ rotation: false }} />;
+}
+
+type SceneReadyProbeProps = {
+  initializationStartRef: RefObject<number | null>;
+  isLight: boolean;
+  logger: ReturnType<typeof useLifecycleLogger>;
+  onReady?: () => void;
+}
+
+function SceneReadyProbe({
+  initializationStartRef,
+  isLight,
+  logger,
+  onReady,
+}: SceneReadyProbeProps) {
+  const readyReportedRef = useRef(false);
+
+  useFrame(() => {
+    if (readyReportedRef.current) return;
+
+    readyReportedRef.current = true;
+
+    logger.emit("scene-ready", {
+      initializationMs:
+        initializationStartRef.current === null
+          ? undefined
+          : Math.round(performance.now() - initializationStartRef.current),
+      isLight,
+    });
+
+    onReady?.();
+  });
+
+  return null;
+}
+
+type SceneProps = {
+  onReady?: () => void;
 }
 
 /**
@@ -39,15 +78,19 @@ function ResponsiveInfinity() {
  *   - dark: high-contrast, deep shadow with vivid rim.
  *   - light: brighter ambient, softer key, warmer rim to suit the pale background.
  */
-export function Scene() {
+export function Scene({ onReady }: SceneProps) {
   const logger = useLifecycleLogger("HeroScene");
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
+  const initializationStartRef = useRef<number | null>(null);
 
   return (
     <Canvas
       camera={{ position: [0, 0, 4], fov: 50 }}
+      dpr={[1, 1.35]}
+      gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
       onCreated={({ gl }) => {
+        initializationStartRef.current = performance.now();
         logger.emit("canvas-created", {
           dpr: gl.getPixelRatio(),
           isLight,
@@ -89,6 +132,12 @@ export function Scene() {
         color={isLight ? "#ffffff" : "#dff9ff"}
       />
       <ResponsiveInfinity />
+      <SceneReadyProbe
+        initializationStartRef={initializationStartRef}
+        isLight={isLight}
+        logger={logger}
+        onReady={onReady}
+      />
     </Canvas>
   );
 }

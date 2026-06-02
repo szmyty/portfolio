@@ -10,6 +10,7 @@
   },
   "LandingEntry": {
     "comingSoon": "Main content coming soon.",
+    "loadingStatus": "Initializing experience...",
     "skipToContent": "Skip to content",
     "interactiveAriaLabel": "Interactive 3D identity — press Enter or Space to enter the site"
   },
