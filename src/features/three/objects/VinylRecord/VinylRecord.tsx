@@ -26,6 +26,8 @@ const IDLE_EMISSIVE = 0.02;
 const HOVER_EMISSIVE = 0.18;
 const ENGAGED_EMISSIVE = 0.35;
 const TARGET_SIZE = 3.4;
+const VINYL_MAX_SCALE = 1;
+const VINYL_MIN_SCALE = 0.72;
 const BASE_ROTATION_X = 0.18;
 const BASE_ROTATION_Y = 0.18;
 const LABEL_RADIUS = 0.33;
@@ -255,7 +257,7 @@ export function VinylRecord({
   /**
    * Frame loop
    */
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (!meshRef.current || !vinylObject) return;
 
     logger.emitOnce("first-frame", "first-frame", {
@@ -288,9 +290,15 @@ export function VinylRecord({
      */
     const isHovered = interaction.isHovered.current;
     const targetNorm = isEngaged ? 1.06 : isHovered ? 1.03 : 1.0;
+    const visibleSpan = Math.min(state.viewport.width, state.viewport.height * 0.92);
+    const responsiveBaseScale = Math.max(
+      VINYL_MIN_SCALE,
+      Math.min((visibleSpan * 0.8) / TARGET_SIZE, VINYL_MAX_SCALE),
+    );
+    const targetScale = responsiveBaseScale * targetNorm;
     const currentNorm = meshRef.current.scale.x;
     meshRef.current.scale.setScalar(
-      currentNorm + (targetNorm - currentNorm) * Math.min(delta * 8, 1),
+      currentNorm + (targetScale - currentNorm) * Math.min(delta * 8, 1),
     );
 
     /**
