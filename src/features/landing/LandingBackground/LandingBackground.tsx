@@ -13,6 +13,10 @@ const LandingVisualLayer = dynamic(
   { ssr: false },
 );
 
+type LandingBackgroundProps = {
+  onReady?: () => void;
+}
+
 /**
  * LandingBackground — layer 0 + layer 1 of the pointer-event stack.
  *
@@ -30,7 +34,7 @@ const LandingVisualLayer = dynamic(
  * adding depth separation between the cosmic background and the 3D object.
  * Parallax is disabled when the user prefers reduced motion.
  */
-export function LandingBackground() {
+export function LandingBackground({ onReady }: LandingBackgroundProps) {
   // 3D scene drifts upward at a different rate than the background stars,
   // creating a layered depth effect between canvas and starfield.
   const { y: canvasY } = useScrollParallax({
@@ -51,7 +55,7 @@ export function LandingBackground() {
            LandingVisualLayer's own absolute inset-0 positioning stays relative to
            this wrapper rather than the outer container, preserving its z-[1] stacking. */}
       <motion.div className="absolute inset-0" style={{ y: canvasY }}>
-        <LandingVisualLayer />
+        <LandingVisualLayer onReady={onReady} />
       </motion.div>
     </div>
   );

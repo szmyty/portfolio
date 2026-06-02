@@ -20,11 +20,15 @@ const Scene = dynamic(
  * This component is intentionally isolated from layout and gradient concerns
  * so that the visual/animation layer can evolve independently.
  */
-export function LandingVisualLayer() {
+type LandingVisualLayerProps = {
+  onReady?: () => void;
+}
+
+export function LandingVisualLayer({ onReady }: LandingVisualLayerProps) {
   return (
     /* Layer 1 — 3D canvas: pointer-events-auto so WebGL receives input. */
     <div className="absolute inset-0 z-[1] pointer-events-auto">
-      <Scene />
+      <Scene onReady={onReady} />
     </div>
   );
 }
