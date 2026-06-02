@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { PublishingArticleCardProps } from "./PublishingArticleCard.types";
 
@@ -14,11 +15,15 @@ export function PublishingArticleCard({
       className="overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-200 hover:border-accent hover:shadow-lg hover:-translate-y-0.5"
     >
       {article.thumbnail && (
-        <img
-          src={article.thumbnail}
-          alt={article.title}
-          className="h-48 w-full object-cover"
-        />
+        <div className="relative h-48 w-full">
+          <Image
+            src={article.thumbnail}
+            alt={article.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
       )}
 
       <div className="flex flex-col gap-2 p-4">

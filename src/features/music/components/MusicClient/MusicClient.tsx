@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import ReactPlayer from "react-player";
 import type {
   SoundCloudProfile,
@@ -35,11 +36,16 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
         >
           {/* Artwork */}
           {activeTrack.artwork && (
-            <img
-              src={activeTrack.artwork}
-              alt={activeTrack.title}
-              className="w-full aspect-square object-cover max-h-[400px]"
-            />
+            <div className="relative aspect-square max-h-[400px] overflow-hidden">
+              <Image
+                src={activeTrack.artwork}
+                alt={activeTrack.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 448px"
+                className="object-cover"
+                priority
+              />
+            </div>
           )}
 
           {/* Player UI */}
@@ -51,10 +57,12 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
               className="flex items-center gap-3 transition-opacity hover:opacity-80"
             >
               {profile.avatar && (
-                <img
+                <Image
                   src={profile.avatar}
                   alt={profile.name}
-                  className="h-10 w-10 rounded-full object-cover"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover"
                 />
               )}
 
@@ -100,11 +108,13 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
             >
               {/* Artwork */}
               {track.artwork && (
-                <div className="relative">
-                  <img
+                <div className="relative aspect-square w-full">
+                  <Image
                     src={track.artwork}
                     alt={track.title}
-                    className="w-full aspect-square object-cover"
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"
+                    className="object-cover"
                   />
 
                   {/* Play overlay */}

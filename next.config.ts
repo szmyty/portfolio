@@ -17,6 +17,18 @@ const nextConfig: NextConfig = {
     "@react-three/postprocessing",
     "postprocessing",
   ],
+  images: {
+    remotePatterns: [
+      // SoundCloud artwork CDN (various numeric subdomains: i1, i2, i3, i4…)
+      { protocol: "https", hostname: "i1.sndcdn.com" },
+      { protocol: "https", hostname: "i2.sndcdn.com" },
+      { protocol: "https", hostname: "i3.sndcdn.com" },
+      { protocol: "https", hostname: "i4.sndcdn.com" },
+      // Medium article thumbnail CDNs
+      { protocol: "https", hostname: "miro.medium.com" },
+      { protocol: "https", hostname: "cdn-images-1.medium.com" },
+    ],
+  },
   turbopack: {
     rules: {
       "*.glsl": {
