@@ -20,9 +20,9 @@ export function ResearchStatusCard({
         </div>
 
         <div className="rounded-xl border border-border/70 bg-surface px-4 py-3">
-          <p className="text-xs uppercase tracking-wide text-text-muted">Last Updated</p>
+          <p className="text-xs uppercase tracking-wide text-text-muted">Last synchronized</p>
           <p className="mt-1 text-sm text-text-primary">
-            {formatLastUpdated(lastSynchronizedAt)}
+            {formatLastSynchronizedAt(lastSynchronizedAt)}
           </p>
         </div>
       </div>
@@ -30,14 +30,14 @@ export function ResearchStatusCard({
   );
 }
 
-function formatLastUpdated(timestamp: string): string {
+function formatLastSynchronizedAt(timestamp: string): string {
   if (!timestamp) {
     return "Awaiting synchronization";
   }
 
   const date = new Date(timestamp);
-  if (Number.isNaN(date.getTime())) {
-    return timestamp;
+  if (Number.isNaN(date.getTime()) || date.getTime() > Date.now()) {
+    return "Awaiting synchronization";
   }
 
   return date.toLocaleString();

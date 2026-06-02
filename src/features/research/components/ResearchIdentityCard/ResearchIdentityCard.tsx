@@ -62,7 +62,7 @@ export function ResearchIdentityCard({
         {profile.displayName ? <p>Researcher: {profile.displayName}</p> : null}
         <p>Publication Count: {profile.publicationCount}</p>
         {profile.lastSynchronizedAt ? (
-          <p>Last synchronization: {new Date(profile.lastSynchronizedAt).toLocaleString()}</p>
+          <p>Last synchronized: {formatLastSynchronizedAt(profile.lastSynchronizedAt)}</p>
         ) : null}
       </div>
 
@@ -79,4 +79,13 @@ export function ResearchIdentityCard({
       ) : null}
     </div>
   );
+}
+
+function formatLastSynchronizedAt(timestamp: string): string {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime()) || date.getTime() > Date.now()) {
+    return "Awaiting synchronization";
+  }
+
+  return date.toLocaleString();
 }
