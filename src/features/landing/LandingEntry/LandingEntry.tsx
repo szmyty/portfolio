@@ -99,6 +99,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
   const [manuallyEntered, setManuallyEntered] = useState(false);
   const [experienceReady, setExperienceReady] = useState(false);
   const entryStartedAtRef = useRef<number | null>(null);
+  const experienceReadyRef = useRef(false);
   const entered = storedEntered || manuallyEntered;
 
   const warmHomepageExperience = useCallback(() => {
@@ -123,17 +124,15 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
   }, [markExperienceStart, warmHomepageExperience]);
 
   const handleExperienceReady = useCallback(() => {
-    setExperienceReady((current) => {
-      if (current) return current;
+    if (experienceReadyRef.current) return;
 
-      logger.emit("experience-ready", {
-        startupDurationMs:
-          entryStartedAtRef.current === null
-            ? undefined
-            : Math.round(performance.now() - entryStartedAtRef.current),
-      });
-
-      return true;
+    experienceReadyRef.current = true;
+    setExperienceReady(true);
+    logger.emit("experience-ready", {
+      startupDurationMs:
+        entryStartedAtRef.current === null
+          ? undefined
+          : Math.round(performance.now() - entryStartedAtRef.current),
     });
   }, [logger]);
 
@@ -161,7 +160,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
       return () => window.cancelIdleCallback(idleHandle);
     }
 
-    const timeoutHandle = window.setTimeout(() => {
+    const timeoutHandle = setTimeout(() => {
       void preloadHomepageExperience()
         .then(() => {
           logger.emit("experience-preloaded");
@@ -169,7 +168,7 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
         .catch(() => undefined);
     }, 150);
 
-    return () => window.clearTimeout(timeoutHandle);
+    return () => clearTimeout(timeoutHandle);
   }, [entered, logger, warmHomepageExperience]);
 
   // Delay focus until after the enter animation (0.55s) has completed
