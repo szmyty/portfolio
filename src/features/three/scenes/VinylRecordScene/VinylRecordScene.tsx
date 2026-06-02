@@ -28,7 +28,7 @@ export function VinylRecordScene() {
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 5], fov: 40 }}
+      camera={{ position: [0, 0, 5.2], fov: 45 }}
       style={{ width: "100%", height: "100%" }}
       gl={{ alpha: true }}
       onCreated={({ gl }) => {

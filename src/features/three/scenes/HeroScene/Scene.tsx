@@ -1,9 +1,17 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Infinity } from "@portfolio/features/three/objects";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
+
+function ResponsiveInfinity() {
+  const { viewport } = useThree();
+  const aspect = viewport.width / viewport.height;
+  const verticalOffset = aspect < 0.8 ? -0.62 : aspect < 1.4 ? -0.78 : -0.88;
+
+  return <Infinity position={[0, verticalOffset, 0]} effects={{ rotation: false }} />;
+}
 
 /**
  * Scene renders a Three.js canvas using React Three Fiber.
@@ -80,10 +88,7 @@ export function Scene() {
         intensity={isLight ? 0.18 : 0.24}
         color={isLight ? "#ffffff" : "#dff9ff"}
       />
-      <Infinity
-        position={[0, -0.95, 0]}
-        effects={{ rotation: false }}
-      />
+      <ResponsiveInfinity />
     </Canvas>
   );
 }

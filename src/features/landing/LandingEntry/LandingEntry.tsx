@@ -75,13 +75,15 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
         {!entered ? (
           /*
            * Layer 2 — UI overlay (z-10), pre-enter state.
-           * Container is pointer-events-none so events fall through to the
-           * 3D canvas below. Only the identity block and EntryTrigger restore
-           * pointer-events-auto to remain interactive.
+           * The full viewport acts as the activation target so touch users can
+           * enter from anywhere without precision tapping.
            */
           <motion.main
             key="landing"
-            className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-8 py-8 sm:py-16 pointer-events-none"
+            role="button"
+            tabIndex={0}
+            aria-label={t("interactiveAriaLabel")}
+            className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-8 py-8 sm:py-16 pointer-events-auto cursor-pointer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{
@@ -90,21 +92,16 @@ export function LandingEntry({ children, mainContent }: LandingEntryProps) {
               transition: { duration: 0.5, ease: "easeInOut" },
             }}
             transition={{ duration: 0.4, ease: "easeOut" }}
+            onClick={handleEnter}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleEnter();
+              }
+            }}
           >
-            {/* Interactive identity block — pointer-events-auto restores input */}
-            <div
-              role="button"
-              tabIndex={0}
-              aria-label={t("interactiveAriaLabel")}
-              className="pb-16 sm:pb-20 [@media(max-height:500px)]:pb-0 pointer-events-auto cursor-pointer"
-              onClick={handleEnter}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleEnter();
-                }
-              }}
-            >
+            {/* Identity block stays centered while the full viewport is interactive. */}
+            <div className="pb-16 sm:pb-20 [@media(max-height:500px)]:pb-0">
               {children}
             </div>
             <EntryTrigger onEnter={handleEnter} />
