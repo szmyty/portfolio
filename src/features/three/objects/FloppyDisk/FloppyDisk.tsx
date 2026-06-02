@@ -27,25 +27,55 @@ const ENGAGED_EMISSIVE = 0.35;
 const TARGET_SIZE = 4.25;
 const BASE_ROTATION_X = -0.28;
 const BASE_ROTATION_Y = 0.55;
-const BODY_OPACITY = 0.78;
-const BODY_CLEARCOAT = 0.2;
+const BODY_OPACITY = 0.88;
+const BODY_CLEARCOAT = 0.72;
 
-function createTranslucentFloppyMaterial(isLight: boolean) {
+function createShellMaterial(isLight: boolean) {
   return new MeshPhysicalMaterial({
-    color: isLight ? "#f4a9cf" : "#d86db0",
-    roughness: isLight ? 0.32 : 0.36,
-    metalness: 0.02,
+    color: isLight ? "#37404c" : "#282f3d",
+    roughness: isLight ? 0.52 : 0.46,
+    metalness: 0.16,
     transparent: true,
     opacity: BODY_OPACITY,
-    transmission: isLight ? 0.1 : 0.14,
-    thickness: 0.14,
-    ior: 1.1,
+    transmission: isLight ? 0.06 : 0.08,
+    thickness: 0.08,
+    ior: 1.34,
     clearcoat: BODY_CLEARCOAT,
-    clearcoatRoughness: 0.34,
-    attenuationColor: isLight ? "#ffcae4" : "#f08ac5",
-    attenuationDistance: 0.85,
-    emissive: isLight ? "#f2a1cb" : "#9f4b8a",
+    clearcoatRoughness: 0.22,
+    attenuationColor: isLight ? "#8c98ab" : "#66758f",
+    attenuationDistance: 1.4,
+    emissive: isLight ? "#74819a" : "#4d5f84",
     emissiveIntensity: IDLE_EMISSIVE + 0.015,
+    envMapIntensity: isLight ? 1.2 : 1.55,
+    reflectivity: 0.55,
+    side: DoubleSide,
+  });
+}
+
+function createShutterMaterial(isLight: boolean) {
+  return new MeshPhysicalMaterial({
+    color: isLight ? "#b9bfca" : "#8d96a5",
+    roughness: isLight ? 0.2 : 0.26,
+    metalness: 0.9,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.18,
+    emissive: isLight ? "#9aa2b4" : "#737f95",
+    emissiveIntensity: IDLE_EMISSIVE * 0.66,
+    envMapIntensity: isLight ? 1.45 : 1.85,
+    side: DoubleSide,
+  });
+}
+
+function createAccentMaterial(isLight: boolean) {
+  return new MeshPhysicalMaterial({
+    color: isLight ? "#2d3340" : "#1e2431",
+    roughness: isLight ? 0.4 : 0.34,
+    metalness: 0.35,
+    clearcoat: 0.45,
+    clearcoatRoughness: 0.25,
+    emissive: isLight ? "#59657f" : "#405277",
+    emissiveIntensity: IDLE_EMISSIVE * 0.9,
+    envMapIntensity: isLight ? 1.1 : 1.4,
     side: DoubleSide,
   });
 }
@@ -71,9 +101,8 @@ function createLabelImageMaterial(labelTexture: Texture) {
 /**
  * FloppyDisk
  *
- * First-pass OBJ-backed visual for the Development section.
- * The model is centered, uniformly scaled, and assigned a theme-aware material
- * so we can validate orientation and proportions before adding a label/avatar.
+ * OBJ-backed visual for the Development section with layered PBR materials
+ * tuned to read as plastic shell + metallic shutter details.
  */
 export function FloppyDisk() {
   const logger = useLifecycleLogger("FloppyDisk");
@@ -126,6 +155,7 @@ export function FloppyDisk() {
     const bakedMeshes: Array<{
       geometry: BufferGeometry;
       material: MeshPhysicalMaterial;
+      area2D: number;
     }> = [];
 
     objClone.traverse((child) => {
@@ -133,10 +163,15 @@ export function FloppyDisk() {
 
       const geometry = child.geometry.clone() as BufferGeometry;
       geometry.applyMatrix4(child.matrixWorld);
+      geometry.computeBoundingBox();
+      const bounds = geometry.boundingBox ?? new Box3();
+      const size = bounds.getSize(new Vector3());
+      const area2D = size.x * size.y;
 
       bakedMeshes.push({
         geometry,
-        material: createTranslucentFloppyMaterial(isLight),
+        material: createShellMaterial(isLight),
+        area2D,
       });
     });
 
@@ -161,6 +196,26 @@ export function FloppyDisk() {
     for (const mesh of bakedMeshes) {
       mesh.geometry.translate(-center.x, -center.y, -center.z);
       mesh.geometry.scale(scale, scale, scale);
+    }
+
+    const byAreaDescending = [...bakedMeshes].sort(
+      (left, right) => right.area2D - left.area2D,
+    );
+    const shellMesh = byAreaDescending[0];
+    const shutterMesh = byAreaDescending[1];
+    const accentMeshes = new Set(byAreaDescending.slice(2));
+
+    if (shellMesh) {
+      shellMesh.material.dispose();
+      shellMesh.material = createShellMaterial(isLight);
+    }
+    if (shutterMesh) {
+      shutterMesh.material.dispose();
+      shutterMesh.material = createShutterMaterial(isLight);
+    }
+    for (const accentMesh of accentMeshes) {
+      accentMesh.material.dispose();
+      accentMesh.material = createAccentMaterial(isLight);
     }
 
     const scaledBounds = new Box3();
