@@ -18,9 +18,9 @@ export function FloppyDiskVisual() {
   return (
     <SectionVisualTarget
       kind="floppy"
-      className="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[340px]"
+      className="w-full max-w-[248px] sm:max-w-[280px] md:max-w-[312px]"
       frameClassName="rounded-2xl bg-transparent border border-transparent"
-      height={320}
+      height={300}
     />
   );
 }
@@ -28,8 +28,8 @@ export function FloppyDiskVisual() {
 export function StandaloneFloppyDiskVisual() {
   return (
     <div
-      className="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[340px]"
-      style={{ position: "relative", height: "320px" }}
+      className="w-full max-w-[248px] sm:max-w-[280px] md:max-w-[312px]"
+      style={{ position: "relative", height: "300px" }}
     >
       <FloppyDiskScene />
     </div>

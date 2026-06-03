@@ -45,7 +45,7 @@ export function HeroSection() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-center mt-48 sm:mt-56 md:mt-64">
+        <div className="flex flex-wrap gap-4 justify-center mt-28 sm:mt-32 md:mt-36">
           <Link
             href="#development"
             className="button-primary inline-flex items-center justify-center min-w-44 px-6 py-3 rounded-xl font-semibold transition-colors duration-200"
