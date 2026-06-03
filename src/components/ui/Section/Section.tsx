@@ -24,7 +24,7 @@ export function Section({
       : "bg-background";
 
   const rootClassName = [
-    "relative px-4 sm:px-8 py-24 sm:py-32 scroll-mt-16 pointer-events-auto",
+    "relative px-4 sm:px-8 py-16 sm:py-20 scroll-mt-16 pointer-events-auto",
     backgroundClassName,
     className,
   ]
@@ -58,7 +58,7 @@ type SectionContentProps = {
 
 function SectionContent({ visual, className, children }: SectionContentProps) {
   const layoutClassName = visual
-    ? "max-w-5xl flex flex-col md:flex-row md:items-center gap-10 md:gap-16"
+    ? "max-w-5xl flex flex-col md:flex-row md:items-center gap-8 md:gap-12"
     : "max-w-3xl flex flex-col gap-6";
 
   const rootClassName = [
@@ -80,7 +80,7 @@ type SectionTextProps = {
 
 function SectionText({ title, children, hasVisual }: SectionTextProps) {
   const rootClassName = [
-    "flex flex-col gap-6",
+    "flex flex-col gap-5",
     hasVisual && "flex-1",
   ]
     .filter(Boolean)

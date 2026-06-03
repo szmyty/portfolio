@@ -18,7 +18,7 @@ export function FloppyDiskScene() {
 
   return (
     <Canvas
-      camera={{ position: [0, 0.1, 5], fov: 28 }}
+      camera={{ position: [0, 0.08, 5.6], fov: 32 }}
       style={{ width: "100%", height: "100%" }}
       dpr={[1, 1.25]}
       gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
