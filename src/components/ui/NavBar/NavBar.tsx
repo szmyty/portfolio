@@ -3,9 +3,7 @@ import type { NavBarProps } from "./NavBar.types";
 
 export function NavBar({ items, activeHref, rightSlot }: NavBarProps) {
   return (
-    <nav
-      className="w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-6 overflow-x-auto"
-    >
+    <nav className="flex w-full items-center gap-3 overflow-x-auto px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
       <NavBarItems items={items} activeHref={activeHref} />
       <NavBarActions>{rightSlot}</NavBarActions>
     </nav>
@@ -19,14 +17,12 @@ type NavBarItemsProps = {
 
 function NavBarItems({ items, activeHref }: NavBarItemsProps) {
   return (
-    <>
+    <div className="flex shrink-0 items-center gap-3 sm:gap-6">
       {items.map(({ href, label }) => {
         const isActive = activeHref === href;
         const linkClassName = [
           "text-sm font-medium transition-colors duration-200",
-          isActive
-            ? "text-accent"
-            : "text-text-secondary hover:text-accent",
+          isActive ? "text-accent" : "text-text-secondary hover:text-accent",
         ].join(" ");
 
         return (
@@ -40,7 +36,7 @@ function NavBarItems({ items, activeHref }: NavBarItemsProps) {
           </Link>
         );
       })}
-    </>
+    </div>
   );
 }
 

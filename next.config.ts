@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
       // Medium article thumbnail CDNs
       { protocol: "https", hostname: "miro.medium.com" },
       { protocol: "https", hostname: "cdn-images-1.medium.com" },
+      // Pinterest infographic image CDN
+      { protocol: "https", hostname: "i.pinimg.com" },
     ],
   },
   turbopack: {

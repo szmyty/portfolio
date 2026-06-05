@@ -7,12 +7,16 @@
 
 const nextPublicSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://szmyty.vercel.app";
+const pinterestEgoHygieneRssUrl =
+  process.env.PINTEREST_EGO_HYGIENE_RSS_URL?.trim() ||
+  "https://www.pinterest.com/playfunctionmusic/ego-hygiene.rss";
 const orcidId = process.env.ORCID_ID?.trim() || "";
 const orcidRequireCredentials =
   process.env.ORCID_REQUIRE_CREDENTIALS?.trim() === "true";
 
 export const env = {
   NEXT_PUBLIC_SITE_URL: nextPublicSiteUrl,
+  PINTEREST_EGO_HYGIENE_RSS_URL: pinterestEgoHygieneRssUrl,
   ORCID_ID: orcidId,
   ORCID_REQUIRE_CREDENTIALS: orcidRequireCredentials,
 } as const;

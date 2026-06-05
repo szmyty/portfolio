@@ -6,12 +6,15 @@
  *
  * Music feeds update infrequently; 1 hour is sufficient.
  * Publishing feeds update even less often; 6 hours is sufficient.
+ * Pinterest insights can be refreshed less often; 6 hours is sufficient.
  */
 export const FEED_CACHE_TTL = {
   /** SoundCloud RSS — 1 hour */
   MUSIC: 3600,
   /** Medium RSS — 6 hours */
   PUBLISHING: 21_600,
+  /** Pinterest RSS — 6 hours */
+  INSIGHTS: 21_600,
 } as const;
 
 /**
@@ -21,6 +24,7 @@ export const FEED_CACHE_TTL = {
 export const FEED_CACHE_TAGS = {
   SOUNDCLOUD: "soundcloud-feed",
   MEDIUM: "medium-feed",
+  PINTEREST: "pinterest-feed",
 } as const;
 
 type FeedMetricsParams = {
