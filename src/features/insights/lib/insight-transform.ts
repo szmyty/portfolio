@@ -17,6 +17,10 @@ const PINTEREST_IMAGE_SIZE_PATTERN = /\/(?:\d+x|originals)\//i;
 const PINTEREST_BOARD_URL =
   "https://www.pinterest.com/playfunctionmusic/ego-hygiene/";
 
+function isPinterestHostname(hostname: string): boolean {
+  return hostname === "pinterest.com" || hostname.endsWith(".pinterest.com");
+}
+
 function decodeHtmlEntities(value: string): string {
   return value.replace(/&(amp|apos|#39|quot|lt|gt|nbsp);/g, (entity) => {
     return HTML_ENTITIES[entity] ?? entity;
@@ -25,8 +29,8 @@ function decodeHtmlEntities(value: string): string {
 
 export function stripUnsafeHtml(html: string): string {
   return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script[\s\S]*?>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style[\s\S]*?>/gi, " ")
     .replace(/<!--([\s\S]*?)-->/g, " ");
 }
 
@@ -140,7 +144,7 @@ export function normalizePinterestUrl(url: string | undefined): string {
   try {
     const pinterestUrl = new URL(normalizedUrl);
 
-    if (pinterestUrl.hostname.endsWith("pinterest.com")) {
+    if (isPinterestHostname(pinterestUrl.hostname)) {
       pinterestUrl.protocol = "https:";
       pinterestUrl.search = "";
       pinterestUrl.hash = "";
