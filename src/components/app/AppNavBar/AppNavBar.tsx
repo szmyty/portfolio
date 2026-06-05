@@ -16,6 +16,7 @@ export function AppNavBar() {
     { href: "/publishing", label: t("publishing") },
     { href: "/research", label: t("research") },
     { href: "/development", label: t("development") },
+    { href: "/insights", label: t("insights") },
   ];
 
   const rightSlot = (
@@ -42,11 +43,5 @@ export function AppNavBar() {
     </div>
   );
 
-  return (
-    <NavBar
-      items={items}
-      activeHref={pathname}
-      rightSlot={rightSlot}
-    />
-  );
+  return <NavBar items={items} activeHref={pathname} rightSlot={rightSlot} />;
 }

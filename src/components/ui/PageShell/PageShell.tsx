@@ -5,7 +5,7 @@ import { Footer } from "@portfolio/features/landing/Footer";
 import type { PageShellProps } from "./PageShell.types";
 
 /**
- * PageShell — shared layout for sub-pages (/music, /publishing, /research, /development).
+ * PageShell — shared layout for sub-pages (/music, /publishing, /research, /development, /insights).
  *
  * Handles:
  * - background layering
@@ -74,9 +74,7 @@ function PageShellMain({ children }: PageShellMainProps) {
       tabIndex={-1}
       className="flex-1 outline-none bg-background"
     >
-      <div className="flex flex-col w-full py-16">
-        {children}
-      </div>
+      <div className="flex flex-col w-full py-16">{children}</div>
     </main>
   );
 }

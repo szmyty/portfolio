@@ -31,6 +31,7 @@
     "publishing": "Publishing",
     "research": "Research",
     "development": "Development",
+    "insights": "Insights",
     "repositoryLink": "View portfolio repository on GitHub"
   },
   "HeroSection": {
@@ -85,6 +86,19 @@
     "title": "Research",
     "description": "Publications, papers, research artifacts, and semantic knowledge systems.",
     "publications": "Publications"
+  },
+  "InsightsPage": {
+    "title": "Insights",
+    "description": "Visual knowledge artifacts exploring emotional awareness, nervous system regulation, personal growth, and reflective self-development.",
+    "viewInsight": "View Insight",
+    "viewBoard": "View Board",
+    "profileEyebrow": "Pinterest Board",
+    "dateFallback": "Recent",
+    "imageFallback": "Insight image unavailable",
+    "emptyTitle": "No insights yet",
+    "emptyDescription": "The Ego Hygiene board is currently quiet. Please check back soon for new visual reflections and infographic insights.",
+    "errorTitle": "Insights are temporarily unavailable",
+    "errorDescription": "The Pinterest feed could not be reached right now. Please try again shortly."
   },
   "DevelopmentSection": {
     "title": "Development",

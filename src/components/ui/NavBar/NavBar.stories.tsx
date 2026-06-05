@@ -17,7 +17,9 @@ const items = [
   { href: "/", label: "Home" },
   { href: "/music", label: "Music" },
   { href: "/publishing", label: "Publishing" },
+  { href: "/research", label: "Research" },
   { href: "/development", label: "Development" },
+  { href: "/insights", label: "Insights" },
 ];
 
 export const Default: Story = {
