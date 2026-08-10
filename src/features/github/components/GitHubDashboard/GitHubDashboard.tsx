@@ -4,12 +4,14 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useTranslations } from "next-intl";
 import { Section } from "@portfolio/components/ui/Section";
+import { GitHubConstellationScene } from "@portfolio/features/github/components/GitHubConstellationScene";
 import { GitHubLanguageChart } from "@portfolio/features/github/components/GitHubLanguageChart";
 import { GitHubProfileHeader } from "@portfolio/features/github/components/GitHubProfileHeader";
 import { GitHubRepoGrid } from "@portfolio/features/github/components/GitHubRepoGrid";
 import { GitHubScopeSelector } from "@portfolio/features/github/components/GitHubScopeSelector";
 import { GitHubStarsChart } from "@portfolio/features/github/components/GitHubStarsChart";
 import { GitHubStats } from "@portfolio/features/github/components/GitHubStats";
+import { GitHubTechTreemap } from "@portfolio/features/github/components/GitHubTechTreemap";
 import {
   logGitHubDebug,
   logGitHubLifecycle,
@@ -60,6 +62,14 @@ export function GitHubDashboard(_props: GitHubDashboardProps) {
               <GitHubStarsChart />
             </div>
           </div>
+          <div className="min-w-0 min-h-[320px]">
+            <GitHubTechTreemap />
+          </div>
+        </div>
+
+        {/* Constellation World — full-width 3D interactive exploration */}
+        <div className="min-h-[580px]">
+          <GitHubConstellationScene />
         </div>
 
         <GitHubRepoGrid />
