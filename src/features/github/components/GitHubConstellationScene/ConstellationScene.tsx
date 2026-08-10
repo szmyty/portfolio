@@ -72,6 +72,12 @@ const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 const ORG_NODE_RADIUS = 1.0;
 const CLUSTER_Z_OFFSET = 15;
 
+// Interaction limits
+const MAX_YAW   = Math.PI / 6;   // ±30 degrees horizontal
+const MAX_PITCH = Math.PI / 12;  // ±15 degrees vertical
+const MIN_ZOOM  = 1.0;           // cannot zoom out beyond starting distance
+const MAX_ZOOM  = 2.2;           // cannot zoom in past ~2×
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getOrgColor(orgId: string): string {
@@ -121,9 +127,12 @@ function getRepoNodeRadius(stars: number): number {
 type CameraRigProps = {
   targetPosition: Vec3;
   targetLookAt: Vec3;
+  yaw: number;
+  pitch: number;
+  zoom: number;
 };
 
-function CameraRig({ targetPosition, targetLookAt }: CameraRigProps) {
+function CameraRig({ targetPosition, targetLookAt, yaw, pitch, zoom }: CameraRigProps) {
   const { camera } = useThree();
   const currentPos = useRef(new THREE.Vector3(0, 0, 24));
   const currentLook = useRef(new THREE.Vector3(0, 0, 0));
@@ -138,8 +147,18 @@ function CameraRig({ targetPosition, targetLookAt }: CameraRigProps) {
   useFrame(() => {
     currentPos.current.lerp(destPos.current, 0.05);
     currentLook.current.lerp(destLook.current, 0.05);
-    camera.position.copy(currentPos.current);
-    camera.lookAt(currentLook.current);
+
+    // Orbit the camera around the look-at point applying user drag + zoom
+    const look = currentLook.current.clone();
+    const dir = currentPos.current.clone().sub(look);
+    const spherical = new THREE.Spherical().setFromVector3(dir);
+    spherical.theta += yaw;
+    spherical.phi    = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi + pitch));
+    spherical.radius = spherical.radius / zoom;
+
+    const finalPos = look.clone().add(new THREE.Vector3().setFromSpherical(spherical));
+    camera.position.copy(finalPos);
+    camera.lookAt(look);
   });
 
   return null;
@@ -317,6 +336,9 @@ type InnerSceneProps = {
   selectedRepo: GitHubRepository | null;
   cameraTarget: CameraTarget;
   repoPositions: Vec3[];
+  yaw: number;
+  pitch: number;
+  zoom: number;
   onOrgClick: (scopeId: string) => void;
   onRepoClick: (repo: GitHubRepository) => void;
   onRepoHoverIn: (repo: GitHubRepository) => void;
@@ -330,6 +352,9 @@ function InnerScene({
   selectedRepo,
   cameraTarget,
   repoPositions,
+  yaw,
+  pitch,
+  zoom,
   onOrgClick,
   onRepoClick,
   onRepoHoverIn,
@@ -348,7 +373,13 @@ function InnerScene({
 
       <Stars radius={90} depth={50} count={4000} factor={4} fade speed={0.2} />
 
-      <CameraRig targetPosition={cameraTarget.position} targetLookAt={cameraTarget.lookAt} />
+      <CameraRig
+        targetPosition={cameraTarget.position}
+        targetLookAt={cameraTarget.lookAt}
+        yaw={yaw}
+        pitch={pitch}
+        zoom={zoom}
+      />
 
       {/* Org nodes */}
       {scopes.map((scope) => (
@@ -492,6 +523,46 @@ export function ConstellationScene() {
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepository | null>(null);
   const [hoveredRepo, setHoveredRepo] = useState<GitHubRepository | null>(null);
 
+  // Interaction state — drag rotation + scroll zoom
+  const [yaw,   setYaw]   = useState(0);
+  const [pitch, setPitch] = useState(0);
+  const [zoom,  setZoom]  = useState(1);
+
+  const dragRef = useRef<{ active: boolean; lastX: number; lastY: number }>({
+    active: false, lastX: 0, lastY: 0,
+  });
+
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY };
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active) return;
+    const dx = e.clientX - dragRef.current.lastX;
+    const dy = e.clientY - dragRef.current.lastY;
+    dragRef.current.lastX = e.clientX;
+    dragRef.current.lastY = e.clientY;
+
+    setYaw((prev) =>
+      Math.max(-MAX_YAW, Math.min(MAX_YAW, prev - dx * 0.004))
+    );
+    setPitch((prev) =>
+      Math.max(-MAX_PITCH, Math.min(MAX_PITCH, prev + dy * 0.003))
+    );
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    dragRef.current.active = false;
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setZoom((prev) =>
+      Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev - e.deltaY * 0.001))
+    );
+  }, []);
+
   const cameraTarget = useMemo<CameraTarget>(() => {
     if (level === "cluster" && selectedScopeId) {
       return getClusterCamera(selectedScopeId);
@@ -511,6 +582,10 @@ export function ConstellationScene() {
     setLevel("cluster");
     setSelectedRepo(null);
     setHoveredRepo(null);
+    // Reset interaction when navigating into a cluster
+    setYaw(0);
+    setPitch(0);
+    setZoom(1);
   }, []);
 
   const handleRepoClick = useCallback((repo: GitHubRepository) => {
@@ -523,6 +598,9 @@ export function ConstellationScene() {
     setSelectedScopeId(null);
     setSelectedRepo(null);
     setHoveredRepo(null);
+    setYaw(0);
+    setPitch(0);
+    setZoom(1);
   }, []);
 
   const displayedRepo = selectedRepo ?? hoveredRepo;
@@ -541,16 +619,24 @@ export function ConstellationScene() {
         </div>
       </div>
 
-      {/* Canvas area */}
-      <div className="relative flex-1 min-h-[480px]">
+      {/* Canvas area — fills all remaining height, no empty space below */}
+      <div
+        className="relative flex-1"
+        style={{ cursor: dragRef.current.active ? "grabbing" : "grab" }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+        onWheel={handleWheel}
+      >
         {/* Breadcrumb nav */}
-        <div className="absolute top-3 left-4 z-10 flex items-center gap-1.5 text-sm font-medium">
+        <div className="absolute top-3 left-4 z-10 flex items-center gap-1.5 text-sm font-medium pointer-events-none">
           <button
             onClick={handleZoomOut}
             className={
               level === "galaxy"
-                ? "text-text-primary"
-                : "text-text-secondary hover:text-text-primary transition-colors"
+                ? "text-text-primary pointer-events-auto"
+                : "text-text-secondary hover:text-text-primary transition-colors pointer-events-auto"
             }
           >
             Galaxy
@@ -584,13 +670,18 @@ export function ConstellationScene() {
             Click an organization to explore its repositories
           </p>
         )}
-        {level === "cluster" && (
+        {level === "cluster" && !displayedRepo && (
           <p className="absolute bottom-4 left-4 z-10 text-xs text-text-muted pointer-events-none">
             Click a repository for details
           </p>
         )}
 
-        {/* Repo info overlay */}
+        {/* Drag hint */}
+        <p className="absolute bottom-4 right-4 z-10 text-xs text-text-muted pointer-events-none select-none">
+          Drag to rotate · Scroll to zoom
+        </p>
+
+        {/* Repo info overlay — floats over the canvas */}
         {displayedRepo && (
           <RepoInfoCard
             repo={displayedRepo}
@@ -606,6 +697,7 @@ export function ConstellationScene() {
           dpr={[1, 1.5]}
           gl={{ antialias: false, powerPreference: "low-power" }}
           className="h-full w-full"
+          style={{ display: "block" }}
         >
           <InnerScene
             scopes={scopes}
@@ -614,6 +706,9 @@ export function ConstellationScene() {
             selectedRepo={selectedRepo}
             cameraTarget={cameraTarget}
             repoPositions={repoPositions}
+            yaw={yaw}
+            pitch={pitch}
+            zoom={zoom}
             onOrgClick={handleOrgClick}
             onRepoClick={handleRepoClick}
             onRepoHoverIn={setHoveredRepo}
