@@ -68,7 +68,7 @@ export function GitHubDashboard(_props: GitHubDashboardProps) {
         </div>
 
         {/* Constellation World — full-width 3D interactive exploration */}
-        <div className="min-h-[580px]">
+        <div className="min-h-[70vh]">
           <GitHubConstellationScene />
         </div>
 
