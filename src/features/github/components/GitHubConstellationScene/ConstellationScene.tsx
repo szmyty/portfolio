@@ -10,6 +10,59 @@ import { selectSortedScopes } from "@portfolio/features/github/store/github.sele
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubRepository, GitHubScope } from "@portfolio/features/github/types";
 
+// ─── Floating Particles (ambient depth cue) ──────────────────────────────────
+
+const PARTICLE_COUNT = 120;
+
+function FloatingParticles() {
+  const meshRef = useRef<THREE.Points>(null);
+
+  const { positions, phases } = useMemo(() => {
+    const pos = new Float32Array(PARTICLE_COUNT * 3);
+    const ph = new Float32Array(PARTICLE_COUNT);
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      pos[i * 3]     = (Math.random() - 0.5) * 40;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      ph[i] = Math.random() * Math.PI * 2;
+    }
+    return { positions: pos, phases: ph };
+  }, []);
+
+  const basePositions = useMemo(() => new Float32Array(positions), [positions]);
+
+  useFrame(({ clock }) => {
+    if (!meshRef.current) return;
+    const geo = meshRef.current.geometry;
+    const attr = geo.attributes.position as THREE.BufferAttribute;
+    const t = clock.getElapsedTime();
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      attr.setY(i, basePositions[i * 3 + 1] + Math.sin(t * 0.4 + phases[i]) * 0.35);
+      attr.setX(i, basePositions[i * 3]     + Math.cos(t * 0.3 + phases[i]) * 0.2);
+    }
+    attr.needsUpdate = true;
+  });
+
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
+    return geo;
+  }, [positions]);
+
+  return (
+    <points ref={meshRef} geometry={geometry}>
+      <pointsMaterial
+        color="#a0b8ff"
+        size={0.06}
+        sizeAttenuation
+        transparent
+        opacity={0.45}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type ConstellationLevel = "galaxy" | "cluster";
@@ -372,6 +425,7 @@ function InnerScene({
       <pointLight position={[0, 10, -5]} intensity={0.3} color="#c084fc" />
 
       <Stars radius={90} depth={50} count={4000} factor={4} fade speed={0.2} />
+      <FloatingParticles />
 
       <CameraRig
         targetPosition={cameraTarget.position}
@@ -528,13 +582,15 @@ export function ConstellationScene() {
   const [pitch, setPitch] = useState(0);
   const [zoom,  setZoom]  = useState(1);
 
-  const dragRef = useRef<{ active: boolean; lastX: number; lastY: number }>({
-    active: false, lastX: 0, lastY: 0,
+  const dragRef = useRef<{ active: boolean; lastX: number; lastY: number; wasDrag: boolean }>({
+    active: false, lastX: 0, lastY: 0, wasDrag: false,
   });
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY };
-    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY, wasDrag: false };
+    // Do NOT call setPointerCapture — that steals events from the Canvas/Three.js
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -543,6 +599,11 @@ export function ConstellationScene() {
     const dy = e.clientY - dragRef.current.lastY;
     dragRef.current.lastX = e.clientX;
     dragRef.current.lastY = e.clientY;
+
+    // Mark as drag after 4 px of movement
+    if (Math.abs(dx) + Math.abs(dy) > 1) {
+      dragRef.current.wasDrag = true;
+    }
 
     setYaw((prev) =>
       Math.max(-MAX_YAW, Math.min(MAX_YAW, prev - dx * 0.004))
@@ -554,13 +615,22 @@ export function ConstellationScene() {
 
   const handlePointerUp = useCallback(() => {
     dragRef.current.active = false;
+    // reset wasDrag after a brief delay so click handlers can read it
+    setTimeout(() => { dragRef.current.wasDrag = false; }, 50);
   }, []);
 
-  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setZoom((prev) =>
-      Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev - e.deltaY * 0.001))
-    );
+  // Passive-safe wheel handler — attach imperatively so we can call preventDefault
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setZoom((prev) =>
+        Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev - e.deltaY * 0.001))
+      );
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
   const cameraTarget = useMemo<CameraTarget>(() => {
@@ -578,6 +648,7 @@ export function ConstellationScene() {
   }, [scopes, selectedScopeId]);
 
   const handleOrgClick = useCallback((scopeId: string) => {
+    if (dragRef.current.wasDrag) return;
     setSelectedScopeId(scopeId);
     setLevel("cluster");
     setSelectedRepo(null);
@@ -589,6 +660,7 @@ export function ConstellationScene() {
   }, []);
 
   const handleRepoClick = useCallback((repo: GitHubRepository) => {
+    if (dragRef.current.wasDrag) return;
     setSelectedRepo((prev) => (prev?.id === repo.id ? null : repo));
     setHoveredRepo(null);
   }, []);
@@ -603,12 +675,18 @@ export function ConstellationScene() {
     setZoom(1);
   }, []);
 
+  const handleResetCamera = useCallback(() => {
+    setYaw(0);
+    setPitch(0);
+    setZoom(1);
+  }, []);
+
   const displayedRepo = selectedRepo ?? hoveredRepo;
 
   return (
-    <div className="flex h-full min-w-0 flex-col rounded-3xl border border-border bg-surface shadow-sm overflow-hidden">
+    <div className="flex min-w-0 flex-col rounded-3xl border border-border bg-surface shadow-sm overflow-hidden" style={{ height: "600px" }}>
       {/* Card header */}
-      <div className="flex items-start justify-between gap-4 px-5 py-6 sm:px-6 sm:py-7">
+      <div className="flex items-start justify-between gap-4 px-5 py-6 sm:px-6 sm:py-7 flex-shrink-0">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-text-primary">
             Constellation World
@@ -621,13 +699,13 @@ export function ConstellationScene() {
 
       {/* Canvas area — fills all remaining height, no empty space below */}
       <div
+        ref={containerRef}
         className="relative flex-1"
         style={{ cursor: dragRef.current.active ? "grabbing" : "grab" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onWheel={handleWheel}
       >
         {/* Breadcrumb nav */}
         <div className="absolute top-3 left-4 z-10 flex items-center gap-1.5 text-sm font-medium pointer-events-none">
@@ -654,15 +732,27 @@ export function ConstellationScene() {
           )}
         </div>
 
-        {/* Zoom out button */}
-        {level === "cluster" && (
+        {/* Top-right controls */}
+        <div className="absolute top-3 right-4 z-10 flex items-center gap-2">
+          {/* Reset camera */}
           <button
-            onClick={handleZoomOut}
-            className="absolute top-3 right-4 z-10 rounded-full border border-border bg-background/70 backdrop-blur-sm px-3 py-1 text-xs text-text-secondary hover:text-text-primary transition-colors"
+            onClick={handleResetCamera}
+            title="Reset camera"
+            className="rounded-full border border-border bg-background/70 backdrop-blur-sm px-3 py-1 text-xs text-text-secondary hover:text-text-primary transition-colors"
           >
-            ← Zoom Out
+            ⟳ Reset
           </button>
-        )}
+
+          {/* Zoom out (cluster only) */}
+          {level === "cluster" && (
+            <button
+              onClick={handleZoomOut}
+              className="rounded-full border border-border bg-background/70 backdrop-blur-sm px-3 py-1 text-xs text-text-secondary hover:text-text-primary transition-colors"
+            >
+              ← Back
+            </button>
+          )}
+        </div>
 
         {/* Hint text */}
         {level === "galaxy" && (
