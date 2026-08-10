@@ -4,6 +4,7 @@ import type { GitHubState } from "./github.slice";
 
 export type GitHubSelectorState = GitHubState | { github: GitHubState };
 type ChartDatum = { name: string; value: number };
+type TreemapDatum = { name: string; size: number; fill: string };
 
 function selectGitHubState(state: GitHubSelectorState): GitHubState {
   return "github" in state ? state.github : state;
@@ -96,4 +97,39 @@ export const selectStarsChartData = createSelector(
         name: repository.name,
         value: repository.stargazers_count,
       })),
+);
+
+const TREEMAP_COLORS = [
+  "#7c9cff",
+  "#5ec2b7",
+  "#c084fc",
+  "#f59e0b",
+  "#f97373",
+  "#38bdf8",
+  "#a3e635",
+  "#fb7185",
+  "#818cf8",
+  "#34d399",
+] as const;
+
+export const selectGlobalLanguageTreemapData = createSelector(
+  [selectScopes],
+  (scopes): TreemapDatum[] => {
+    const distribution: Record<string, number> = {};
+
+    for (const scope of scopes) {
+      for (const repository of scope.repositories) {
+        if (!repository.language) continue;
+        distribution[repository.language] = (distribution[repository.language] ?? 0) + 1;
+      }
+    }
+
+    return Object.entries(distribution)
+      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+      .map(([name, size], index) => ({
+        name,
+        size,
+        fill: TREEMAP_COLORS[index % TREEMAP_COLORS.length] as string,
+      }));
+  },
 );
