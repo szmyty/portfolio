@@ -14,19 +14,31 @@ import type { GitHubRepository, GitHubScope } from "@portfolio/features/github/t
 
 const PARTICLE_COUNT = 120;
 
+// Initialise random particle data once at module load time so that
+// Math.random() is never called during a React render (react-hooks/purity).
+const _particlePositions = (() => {
+  const pos = new Float32Array(PARTICLE_COUNT * 3);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    pos[i * 3]     = (Math.random() - 0.5) * 40;
+    pos[i * 3 + 1] = (Math.random() - 0.5) * 30;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+  }
+  return pos;
+})();
+
+const _particlePhases = (() => {
+  const ph = new Float32Array(PARTICLE_COUNT);
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    ph[i] = Math.random() * Math.PI * 2;
+  }
+  return ph;
+})();
+
 function FloatingParticles() {
   const meshRef = useRef<THREE.Points>(null);
 
   const { positions, phases } = useMemo(() => {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    const ph = new Float32Array(PARTICLE_COUNT);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      pos[i * 3]     = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 30;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      ph[i] = Math.random() * Math.PI * 2;
-    }
-    return { positions: pos, phases: ph };
+    return { positions: _particlePositions, phases: _particlePhases };
   }, []);
 
   const basePositions = useMemo(() => new Float32Array(positions), [positions]);
@@ -581,6 +593,7 @@ export function ConstellationScene() {
   const [yaw,   setYaw]   = useState(0);
   const [pitch, setPitch] = useState(0);
   const [zoom,  setZoom]  = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
 
   const dragRef = useRef<{ active: boolean; lastX: number; lastY: number; wasDrag: boolean }>({
     active: false, lastX: 0, lastY: 0, wasDrag: false,
@@ -590,6 +603,7 @@ export function ConstellationScene() {
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY, wasDrag: false };
+    setIsDragging(true);
     // Do NOT call setPointerCapture — that steals events from the Canvas/Three.js
   }, []);
 
@@ -615,6 +629,7 @@ export function ConstellationScene() {
 
   const handlePointerUp = useCallback(() => {
     dragRef.current.active = false;
+    setIsDragging(false);
     // reset wasDrag after a brief delay so click handlers can read it
     setTimeout(() => { dragRef.current.wasDrag = false; }, 50);
   }, []);
@@ -701,7 +716,7 @@ export function ConstellationScene() {
       <div
         ref={containerRef}
         className="relative flex-1"
-        style={{ cursor: dragRef.current.active ? "grabbing" : "grab" }}
+        style={{ cursor: isDragging ? "grabbing" : "grab" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
