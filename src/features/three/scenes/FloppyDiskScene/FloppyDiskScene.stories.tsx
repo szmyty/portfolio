@@ -54,3 +54,25 @@ export const Large: Story = {
     ),
   ],
 };
+
+/** Mobile production slot from the supplied narrow-screen composition. */
+export const MobilePortrait: Story = {
+  decorators: [
+    (Story: () => ReactElement) => (
+      <div style={{ width: "248px", height: "300px" }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+/** Short landscape slot guards the horizontal-FOV side of the fit contract. */
+export const MobileLandscape: Story = {
+  decorators: [
+    (Story: () => ReactElement) => (
+      <div style={{ width: "412px", height: "240px" }}>
+        <Story />
+      </div>
+    ),
+  ],
+};

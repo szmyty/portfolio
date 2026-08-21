@@ -1,9 +1,54 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { useCallback, useEffect, useState } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import { Box3, Vector3 } from "three";
+import type { PerspectiveCamera } from "three";
 import { FloppyDisk } from "@portfolio/features/three/objects";
+import {
+  FLOPPY_CAMERA_FOV,
+  FLOPPY_CAMERA_PADDING_RATIO,
+  getPerspectiveCameraFitDistanceToSphere,
+  getRotationSafeRadius,
+} from "@portfolio/features/three/lib";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
+
+type CameraRigProps = {
+  bounds: Box3 | null;
+};
+
+function CameraRig({ bounds }: CameraRigProps) {
+  const { camera, size } = useThree();
+
+  useEffect(() => {
+    if (!bounds) return;
+
+    const measuredSize = bounds.getSize(new Vector3());
+    const rotationSafeRadius = getRotationSafeRadius({
+      width: measuredSize.x,
+      height: measuredSize.y,
+      depth: measuredSize.z,
+    });
+    const distance = getPerspectiveCameraFitDistanceToSphere({
+      radius: rotationSafeRadius,
+      aspect: size.width / Math.max(size.height, 1),
+      verticalFovDegrees: FLOPPY_CAMERA_FOV,
+      paddingRatio: FLOPPY_CAMERA_PADDING_RATIO,
+    });
+    const perspectiveCamera = camera as PerspectiveCamera;
+
+    // eslint-disable-next-line react-hooks/immutability
+    perspectiveCamera.fov = FLOPPY_CAMERA_FOV;
+    perspectiveCamera.position.set(0, 0.08, distance);
+    perspectiveCamera.near = Math.max(0.1, distance / 100);
+    perspectiveCamera.far = Math.max(100, distance * 4);
+    perspectiveCamera.lookAt(0, 0.08, 0);
+    perspectiveCamera.updateProjectionMatrix();
+  }, [bounds, camera, size.height, size.width]);
+
+  return null;
+}
 
 /**
  * FloppyDiskScene — Canvas wrapper for the OBJ-backed floppy disk visual.
@@ -15,10 +60,16 @@ export function FloppyDiskScene() {
   const logger = useLifecycleLogger("FloppyDiskScene");
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
+  const [modelBounds, setModelBounds] = useState<Box3 | null>(null);
+  const handleBoundsChange = useCallback((nextBounds: Box3) => {
+    setModelBounds((currentBounds) =>
+      currentBounds?.equals(nextBounds) ? currentBounds : nextBounds.clone(),
+    );
+  }, []);
 
   return (
     <Canvas
-      camera={{ position: [0, 0.08, 5.6], fov: 32 }}
+      camera={{ position: [0, 0.08, 12], fov: FLOPPY_CAMERA_FOV }}
       style={{ width: "100%", height: "100%" }}
       dpr={[1, 1.25]}
       gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
@@ -37,6 +88,7 @@ export function FloppyDiskScene() {
         });
       }}
     >
+      <CameraRig bounds={modelBounds} />
       <ambientLight intensity={isLight ? 0.58 : 0.42} />
       <hemisphereLight
         intensity={isLight ? 0.5 : 0.45}
@@ -63,7 +115,7 @@ export function FloppyDiskScene() {
         intensity={isLight ? 0.44 : 0.54}
         color={isLight ? "#fefcff" : "#ffd9f4"}
       />
-      <FloppyDisk />
+      <FloppyDisk onBoundsChange={handleBoundsChange} />
     </Canvas>
   );
 }

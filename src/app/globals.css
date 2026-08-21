@@ -208,6 +208,45 @@ body {
     120px 120px;
 }
 
+/*
+ * The DOM reserves a real media slot between hero copy and actions. The SVG
+ * keeps the infinity identity present for reduced-motion, no-WebGL, and
+ * no-JavaScript visits; the interactive canvas takes over only after its first
+ * successful frame.
+ */
+.hero-infinity-slot {
+  display: flex;
+  width: 100%;
+  height: clamp(9.5rem, 23dvh, 13rem);
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.hero-infinity-fallback {
+  width: min(100%, 33rem);
+  height: 100%;
+  opacity: 0.92;
+  transition: opacity 180ms ease;
+}
+
+.home-shell:has([data-visual-mode="interactive"]) .hero-infinity-fallback {
+  opacity: 0;
+}
+
+@media (max-height: 44rem) and (orientation: landscape) {
+  .hero-infinity-slot {
+    height: 6rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-infinity-fallback {
+    transition: none;
+  }
+}
+
 /* Typography hierarchy */
 h1,
 h2,

@@ -9,7 +9,7 @@ import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 function ResponsiveInfinity() {
   const { viewport } = useThree();
   const aspect = viewport.width / viewport.height;
-  const verticalOffset = aspect < 0.8 ? -0.62 : aspect < 1.4 ? -0.78 : -0.88;
+  const verticalOffset = aspect < 0.55 ? 0 : aspect < 0.8 ? -0.18 : -0.38;
 
   return <Infinity position={[0, verticalOffset, 0]} effects={{ rotation: false }} />;
 }
@@ -88,7 +88,7 @@ export function Scene({ onReady }: SceneProps) {
     <Canvas
       camera={{ position: [0, 0, 4], fov: 50 }}
       dpr={[1, 1.35]}
-      gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
+      gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
       onCreated={({ gl }) => {
         initializationStartRef.current = performance.now();
         logger.emit("canvas-created", {

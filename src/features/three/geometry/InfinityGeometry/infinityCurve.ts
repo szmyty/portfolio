@@ -1,39 +1,35 @@
 "use client";
 
 import { Vector3 } from "three";
+import { getInfinityCoordinates } from "./infinityComposition.mjs";
 
-export const INFINITY_CURVE_WIDTH = 2.2;
-export const INFINITY_CURVE_HEIGHT = 1.2;
-export const INFINITY_CROSSOVER_DEPTH = 0.7;
-export const INFINITY_CROSSOVER_FOCUS = 2.8;
-export const INFINITY_TUBE_RADIUS = 0.23;
-export const INFINITY_TUBULAR_SEGMENTS = 256;
-export const INFINITY_RADIAL_SEGMENTS = 40;
+export {
+  getInfinityVisualScale,
+  INFINITY_CROSSOVER_DEPTH,
+  INFINITY_CROSSOVER_FOCUS,
+  INFINITY_CURVE_HEIGHT,
+  INFINITY_CURVE_WIDTH,
+  INFINITY_HALO_RADIUS,
+  INFINITY_LANDSCAPE_FIT,
+  INFINITY_MAX_SCALE,
+  INFINITY_PORTRAIT_FIT,
+  INFINITY_RADIAL_SEGMENTS,
+  INFINITY_SEAM_OFFSET,
+  INFINITY_TUBE_RADIUS,
+  INFINITY_TUBULAR_SEGMENTS,
+  INFINITY_VISUAL_WIDTH,
+} from "./infinityComposition.mjs";
 
 /**
  * Samples the 3D infinity centerline used by the main mesh.
  *
- * The base silhouette is a Gerono lemniscate in XY, with a localized Z lift
- * near the waist so the crossover reads as an over/under pass.
+ * The base silhouette is a Gerono lemniscate in XY, with a broad, shallow Z
+ * lift near the waist so the crossover reads as an over/under pass without a
+ * sharp surface fold. The parameter seam lives at the outer-right extremum,
+ * away from the visually sensitive crossover.
  */
 export function getInfinityPoint(t: number, target = new Vector3()) {
-  const angle = t * Math.PI * 2;
-  const sin = Math.sin(angle);
-  const cos = Math.cos(angle);
-
-  const x = sin * INFINITY_CURVE_WIDTH;
-  const y = sin * cos * INFINITY_CURVE_HEIGHT;
-
-  const distanceFromCenter = Math.hypot(
-    x / INFINITY_CURVE_WIDTH,
-    y / INFINITY_CURVE_HEIGHT,
-  );
-
-  const crossoverEnvelope = Math.exp(
-    -INFINITY_CROSSOVER_FOCUS * distanceFromCenter * distanceFromCenter,
-  );
-
-  const z = cos * INFINITY_CROSSOVER_DEPTH * crossoverEnvelope;
+  const [x, y, z] = getInfinityCoordinates(t);
 
   return target.set(x, y, z);
 }
