@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import { siteConfig } from "@portfolio/config";
 import { useScrollParallax } from "@portfolio/lib/hooks/useScrollParallax";
 
 /**
@@ -45,20 +46,21 @@ export function HeroSection() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-center mt-28 sm:mt-32 md:mt-36">
+        <div className="flex flex-wrap gap-4 justify-center mt-10 sm:mt-12">
           <Link
             href="#development"
             className="button-primary inline-flex items-center justify-center min-w-44 px-6 py-3 rounded-xl font-semibold transition-colors duration-200"
           >
             {t("viewWork")}
           </Link>
-          <Link
-            href="#music"
+          <a
+            href={`mailto:${siteConfig.author.email}`}
             className="button-secondary inline-flex items-center justify-center min-w-44 px-6 py-3 rounded-xl font-medium transition-colors duration-200"
           >
-            {t("exploreMusic")}
-          </Link>
+            {t("contactResume")}
+          </a>
         </div>
+        <p className="mt-4 text-sm text-text-muted">{t("resumeNote")}</p>
       </motion.div>
     </section>
   );

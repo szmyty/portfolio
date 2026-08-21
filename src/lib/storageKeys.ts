@@ -9,9 +9,6 @@
  * hardcodes the string literal. Keep that value in sync with THEME_STORAGE_KEY.
  */
 
-/** Tracks whether the user has passed the landing entry gate. */
-export const LANDING_ENTERED_KEY = "landing-entered";
-
 /**
  * Persists the user-selected theme preference ("light" | "dark" | "system")
  * in localStorage so it survives full browser restarts.

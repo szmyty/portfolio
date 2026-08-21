@@ -1,1 +1,0 @@
-export { LandingEntry } from "./LandingEntry";

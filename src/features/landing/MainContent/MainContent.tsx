@@ -12,8 +12,8 @@ import {
  *
  * Pointer-event layering within this component follows the system defined by
  * the --z-* tokens in globals.css:
- *   • The parent motion.div in LandingEntry sets pointer-events: none on the
- *     layer-2 container, allowing 3D canvas events to pass through unblocked.
+ *   • The homepage shell sets pointer-events: none on the layer-2 container,
+ *     allowing an optional 3D canvas to receive input without gating content.
  *   • The sticky header (layer 3 / --z-chrome) restores pointer-events-auto
  *     so navigation is always reachable regardless of scroll position.
  *   • The <main> element preserves pointer-events: none so the canvas behind
