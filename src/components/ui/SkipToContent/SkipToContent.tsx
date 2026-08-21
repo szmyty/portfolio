@@ -1,3 +1,5 @@
+"use client";
+
 import type { SkipToContentProps } from "./SkipToContent.types";
 
 /**

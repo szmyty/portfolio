@@ -21,6 +21,7 @@ function rejectText(source, fragment, label) {
 }
 
 const page = read("src/app/page.tsx");
+const layout = read("src/app/layout.tsx");
 const background = read(
   "src/features/landing/LandingBackground/LandingBackground.tsx",
 );
@@ -52,7 +53,7 @@ requireText(
   "homepage-static-background",
   "server-rendered static background",
 );
-requireText(page, 'href="#main-content"', "homepage skip link");
+requireText(layout, "<SkipToContent", "global skip link");
 requireText(page, "min-h-dvh", "homepage responsive shell");
 requireText(page, "overflow-x-hidden", "homepage responsive shell");
 

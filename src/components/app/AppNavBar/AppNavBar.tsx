@@ -43,5 +43,12 @@ export function AppNavBar() {
     </div>
   );
 
-  return <NavBar items={items} activeHref={pathname} rightSlot={rightSlot} />;
+  return (
+    <NavBar
+      items={items}
+      activeHref={pathname}
+      ariaLabel={t("ariaLabel")}
+      rightSlot={rightSlot}
+    />
+  );
 }

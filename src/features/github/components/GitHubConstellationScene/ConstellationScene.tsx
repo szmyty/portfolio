@@ -6,6 +6,7 @@ import { Html, Stars } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useSelector } from "react-redux";
 import * as THREE from "three";
+import { formatDisplayDate } from "@portfolio/lib/format-date";
 import { selectSortedScopes } from "@portfolio/features/github/store/github.selectors";
 import type { GitHubState } from "@portfolio/features/github/store/github.slice";
 import type { GitHubRepository, GitHubScope } from "@portfolio/features/github/types";
@@ -503,11 +504,7 @@ type RepoInfoCardProps = {
 
 function RepoInfoCard({ repo, onClose }: RepoInfoCardProps) {
   const color = getLanguageColor(repo.language);
-  const updatedDate = new Date(repo.updated_at).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  const updatedDate = formatDisplayDate(repo.updated_at);
 
   return (
     <div

@@ -59,16 +59,16 @@ src/
 
 ### Conventions
 
-| Directory       | What belongs here |
-|-----------------|----------------------------------------------------------------|
-| `app/`          | Next.js pages, layouts, `metadata`, `viewport`, error/sitemap/robots files |
-| `components/`   | Stateless or lightly-stateful reusable UI pieces; no business logic |
-| `config/`       | Environment variable validation and app-wide static config |
-| `content/`      | Content types (interfaces) and static data arrays; no UI logic |
-| `features/`     | Co-located components, hooks, and logic for a single product feature; animation sub-directories isolate visual logic from layout |
-| `lib/`          | Pure utility functions and shared constants used across multiple modules |
-| `animations/`   | Raw animation data files (Lottie JSON) consumed by animation components |
-| `i18n/`         | next-intl configuration and locale message loading |
+| Directory     | What belongs here                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `app/`        | Next.js pages, layouts, `metadata`, `viewport`, error/sitemap/robots files                                                       |
+| `components/` | Stateless or lightly-stateful reusable UI pieces; no business logic                                                              |
+| `config/`     | Environment variable validation and app-wide static config                                                                       |
+| `content/`    | Content types (interfaces) and static data arrays; no UI logic                                                                   |
+| `features/`   | Co-located components, hooks, and logic for a single product feature; animation sub-directories isolate visual logic from layout |
+| `lib/`        | Pure utility functions and shared constants used across multiple modules                                                         |
+| `animations/` | Raw animation data files (Lottie JSON) consumed by animation components                                                          |
+| `i18n/`       | next-intl configuration and locale message loading                                                                               |
 
 **Rules of thumb:**
 
@@ -81,13 +81,18 @@ src/
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start the development server |
-| `pnpm build` | Build for production |
-| `pnpm lint` | Run ESLint |
+| Command           | Description                                                     |
+| ----------------- | --------------------------------------------------------------- |
+| `pnpm dev`        | Start the development server                                    |
+| `pnpm build`      | Build for production                                            |
+| `pnpm lint`       | Run ESLint                                                      |
 | `pnpm test:shell` | Verify the recruiter-safe homepage and visual fallback contract |
-| `pnpm format` | Format source files with Prettier |
+| `pnpm format`     | Format source files with Prettier                               |
+
+Launch validation is documented in
+[`docs/application-readiness.md`](docs/application-readiness.md). Its static
+checks remain network-free; deployed routes and external destinations are
+verified only by the manually dispatched release workflow.
 
 ---
 

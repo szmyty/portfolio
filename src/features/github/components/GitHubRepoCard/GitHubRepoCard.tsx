@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { formatDisplayDate } from "@portfolio/lib/format-date";
 import type { GitHubRepoCardProps } from "./GitHubRepoCard.types";
 
 export function GitHubRepoCard({ repository }: GitHubRepoCardProps) {
@@ -42,7 +43,9 @@ export function GitHubRepoCard({ repository }: GitHubRepoCardProps) {
         <span className="rounded-full bg-surface-overlay px-3 py-1 text-text-secondary">
           {repository.language ?? t("repoCard.unspecifiedLanguage")}
         </span>
-        <span className="text-text-muted">{new Date(repository.updated_at).toLocaleDateString()}</span>
+        <span className="text-text-muted">
+          {formatDisplayDate(repository.updated_at)}
+        </span>
       </div>
     </article>
   );

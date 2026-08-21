@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { formatDisplayDate } from "@portfolio/lib/format-date";
 import type { PublishingArticleCardProps } from "./PublishingArticleCard.types";
 
 export function PublishingArticleCard({
@@ -37,7 +38,7 @@ export function PublishingArticleCard({
 
         <div className="flex justify-between text-xs text-text-muted">
           <span>{t("articleReadTime", { minutes: article.readTime })}</span>
-          <span>{new Date(article.pubDate).toLocaleDateString()}</span>
+          <span>{formatDisplayDate(article.pubDate)}</span>
         </div>
 
         {article.categories.length > 0 && (

@@ -21,13 +21,12 @@ export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
   return (
     <div
       className="flex flex-wrap items-center gap-2.5"
-      role="tablist"
+      role="group"
       aria-label={t("scopeSelectorLabel")}
     >
       <button
         type="button"
-        role="tab"
-        aria-selected={selectedScopeId === null}
+        aria-pressed={selectedScopeId === null}
         onClick={() => dispatch(setSelectedScope(null))}
         className={[
           "inline-flex cursor-pointer items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-200",
@@ -45,8 +44,7 @@ export function GitHubScopeSelector(_props: GitHubScopeSelectorProps) {
           <button
             key={scope.id}
             type="button"
-            role="tab"
-            aria-selected={isActive}
+            aria-pressed={isActive}
             onClick={() => dispatch(setSelectedScope(scope.id))}
             className={[
               "inline-flex cursor-pointer items-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-200",

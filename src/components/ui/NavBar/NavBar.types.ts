@@ -8,5 +8,6 @@ export type NavItem = {
 export type NavBarProps = {
   items: NavItem[];
   activeHref?: string;
+  ariaLabel: string;
   rightSlot?: ReactNode;
 };

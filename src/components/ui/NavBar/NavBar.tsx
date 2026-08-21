@@ -1,9 +1,17 @@
 import Link from "next/link";
 import type { NavBarProps } from "./NavBar.types";
 
-export function NavBar({ items, activeHref, rightSlot }: NavBarProps) {
+export function NavBar({
+  items,
+  activeHref,
+  ariaLabel,
+  rightSlot,
+}: NavBarProps) {
   return (
-    <nav className="flex w-full items-center gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
+    <nav
+      aria-label={ariaLabel}
+      className="flex w-full items-center gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4"
+    >
       <div className="min-w-0 flex-1 overflow-x-auto">
         <NavBarItems items={items} activeHref={activeHref} />
       </div>

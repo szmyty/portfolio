@@ -8,6 +8,7 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { EmptyState } from "@portfolio/components/ui/EmptyState";
 import { ErrorState } from "@portfolio/components/ui/ErrorState";
 import { LoadingState } from "@portfolio/components/ui/LoadingState";
+import { RemoteDataStatus } from "@portfolio/components/ui/RemoteDataStatus";
 import { Section } from "@portfolio/components/ui/Section";
 import { GitHubDashboard } from "@portfolio/features/github/components/GitHubDashboard";
 import {
@@ -117,7 +118,35 @@ function GitHubDashboardContainerContent({
     );
   }
 
-  return <GitHubDashboard />;
+  const usesLastKnownGood = repositories.some(
+    (repository) => repository.data_source === "last-known-good",
+  );
+
+  return (
+    <>
+      {usesLastKnownGood && (
+        <RemoteDataStatus
+          contract={{
+            status: "available",
+            freshness: "stale",
+            source: "last-known-good",
+          }}
+          messages={{
+            loading: t("loadingLabel"),
+            emptyTitle: t("emptyTitle"),
+            emptyDescription: t("emptyDescription"),
+            staleTitle: t("staleTitle"),
+            staleDescription: t("staleDescription"),
+            lastKnownGoodDescription: t("lastKnownGoodDescription"),
+            errorTitle: t("errorTitle"),
+            errorDescription: t("errorDescription"),
+          }}
+          className="mx-4 mt-8 sm:mx-8"
+        />
+      )}
+      <GitHubDashboard />
+    </>
+  );
 }
 
 export function GitHubDashboardContainer({

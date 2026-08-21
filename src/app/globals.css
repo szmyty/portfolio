@@ -155,7 +155,7 @@ html {
   --button-secondary-border: #cf9bc3;
   --text-primary: #2b1630;
   --text-secondary: #6a506f;
-  --text-muted: #9f89a5;
+  --text-muted: #7f6583;
   --border: #e7d6ea;
   --border-strong: #cf9bc3;
   color-scheme: light;
@@ -263,7 +263,8 @@ a:hover {
 .button-primary {
   background: var(--button-primary-bg);
   color: var(--button-primary-fg);
-  box-shadow: 0 18px 45px -20px color-mix(in srgb, var(--button-primary-bg) 85%, transparent);
+  box-shadow: 0 18px 45px -20px
+    color-mix(in srgb, var(--button-primary-bg) 85%, transparent);
 }
 
 .button-primary:hover {
