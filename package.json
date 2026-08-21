@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:shell": "node scripts/verify-homepage-shell.mjs",
+    "test:responsive-shell": "node scripts/verify-responsive-shell.mjs",
+    "test:work": "node scripts/verify-selected-work.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "analyze": "ANALYZE=true next build",

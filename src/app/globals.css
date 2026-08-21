@@ -133,6 +133,7 @@ html {
   color-scheme: dark;
   overflow-x: hidden;
   position: relative;
+  scroll-padding-top: calc(env(safe-area-inset-top) + 5rem);
 }
 
 /* Light theme — applied via [data-theme="light"] on <html> */
@@ -174,6 +175,31 @@ body {
   font-size: var(--font-size-base);
   line-height: var(--leading-normal);
   overflow-x: hidden;
+}
+
+/*
+ * Site chrome respects notches, rounded corners, and home indicators without
+ * introducing page-level horizontal overflow at narrow widths.
+ */
+.site-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+.site-nav {
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-left: max(1rem, env(safe-area-inset-left));
+}
+
+.site-mobile-menu {
+  max-height: calc(100dvh - env(safe-area-inset-top) - 4.25rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.site-footer {
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
 }
 
 /*
