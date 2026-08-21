@@ -36,6 +36,9 @@ jobs:
       - name: Verify homepage shell contract
         run: pnpm run test:shell
 
+      - name: Verify responsive shell contract
+        run: pnpm run test:responsive-shell
+
       - name: Lint
         run: pnpm run lint
 
