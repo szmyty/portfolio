@@ -31,9 +31,10 @@ const visualSupport = read("src/features/landing/visualSupport.ts");
 const sectionVisual = read(
   "src/features/landing/sections/shared/SectionVisualTarget.tsx",
 );
-const hero = read(
-  "src/features/landing/sections/HeroSection/HeroSection.tsx",
+const sharedSectionCanvas = read(
+  "src/features/landing/sections/shared/SharedSectionVisualCanvas.tsx",
 );
+const hero = read("src/features/landing/sections/HeroSection/HeroSection.tsx");
 const siteConfig = read("src/config/site.ts");
 const messages = JSON.parse(read("messages/en.json"));
 
@@ -67,9 +68,29 @@ requireText(
   "dynamic import fallback",
 );
 requireText(visualSupport, "VISUAL_READY_TIMEOUT_MS = 2500", "visual timeout");
-requireText(sectionVisual, "supportsWebGL", "section WebGL boundary");
-requireText(sectionVisual, "SceneBoundary", "section visual error fallback");
+requireText(sectionVisual, "useVisualInView", "section viewport boundary");
+requireText(
+  sectionVisual,
+  "registerSectionVisualSlot",
+  "shared section Canvas registration",
+);
 requireText(sectionVisual, '"static"', "section static visual fallback");
+requireText(sharedSectionCanvas, "supportsWebGL", "section WebGL boundary");
+requireText(
+  sharedSectionCanvas,
+  "webglcontextlost",
+  "section visual error fallback",
+);
+requireText(
+  sharedSectionCanvas,
+  "SectionCanvasBoundary",
+  "section render error fallback",
+);
+requireText(
+  sharedSectionCanvas,
+  "shouldMountCanvas",
+  "section Canvas lifecycle",
+);
 
 requireText(hero, "mailto:", "homepage professional contact");
 requireText(hero, "sm:", "homepage mobile-first hero");

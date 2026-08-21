@@ -17,17 +17,29 @@ export function useVisualInView(rootMargin = "240px 0px") {
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+    let intersectsViewport = false;
+
+    const commitVisibility = () => {
+      setIsVisible(
+        intersectsViewport && document.visibilityState === "visible",
+      );
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        intersectsViewport = entry.isIntersecting;
+        commitVisibility();
       },
       { rootMargin },
     );
 
     observer.observe(node);
+    document.addEventListener("visibilitychange", commitVisibility);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", commitVisibility);
+    };
   }, [rootMargin]);
 
   return { ref, isVisible };

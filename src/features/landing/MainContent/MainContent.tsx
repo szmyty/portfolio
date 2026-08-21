@@ -6,6 +6,7 @@ import {
   MusicSection,
   PublishingSection,
 } from "@portfolio/features/landing/sections";
+import { SharedSectionVisualCanvas } from "@portfolio/features/landing/sections/shared";
 
 /**
  * MainContent — post-entry UI overlay (layer 2, z-10).
@@ -44,6 +45,7 @@ export function MainContent() {
         <PublishingSection />
         <DevelopmentSection />
       </main>
+      <SharedSectionVisualCanvas />
       <Footer />
     </div>
   );
