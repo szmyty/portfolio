@@ -29,7 +29,7 @@ export function MainContent() {
            iOS). On standard browser visits the inset is 0 so no extra padding
            is applied. */}
       <header
-        className="fixed inset-x-0 top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto pt-[env(safe-area-inset-top)]"
+        className="site-header fixed inset-x-0 top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pointer-events-auto"
       >
         <AppNavBar />
       </header>
