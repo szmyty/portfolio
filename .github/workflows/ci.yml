@@ -39,6 +39,9 @@ jobs:
       - name: Verify responsive shell contract
         run: pnpm run test:responsive-shell
 
+      - name: Verify selected work contract
+        run: pnpm run test:work
+
       - name: Lint
         run: pnpm run lint
 
