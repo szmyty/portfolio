@@ -9,6 +9,7 @@ import {
   supportsWebGL,
   VISUAL_READY_TIMEOUT_MS,
 } from "@portfolio/features/landing/visualSupport";
+import { useVisualInView } from "@portfolio/features/landing/sections/shared/useVisualInView";
 
 const LandingVisualLayer = dynamic(
   () =>
@@ -73,8 +74,10 @@ export function LandingBackground({ onReady }: LandingBackgroundProps) {
   const shouldReduceMotion = useReducedMotion();
   const [visualMode, setVisualMode] = useState<VisualMode>("static");
   const timeoutRef = useRef<number | null>(null);
+  const { ref: viewportRef, isVisible } = useVisualInView("120px 0px");
   const resolvedVisualMode =
     shouldReduceMotion === true ? "static" : visualMode;
+  const displayVisualMode = isVisible ? resolvedVisualMode : "static";
 
   // 3D scene drifts upward at a different rate than the background stars,
   // creating a layered depth effect between canvas and starfield.
@@ -103,7 +106,7 @@ export function LandingBackground({ onReady }: LandingBackgroundProps) {
   }, [clearReadyTimeout, onReady]);
 
   useEffect(() => {
-    if (shouldReduceMotion !== false || !supportsWebGL()) {
+    if (!isVisible || shouldReduceMotion !== false || !supportsWebGL()) {
       return;
     }
 
@@ -119,15 +122,16 @@ export function LandingBackground({ onReady }: LandingBackgroundProps) {
       window.cancelAnimationFrame(frame);
       clearReadyTimeout();
     };
-  }, [clearReadyTimeout, shouldReduceMotion, useStaticFallback]);
+  }, [clearReadyTimeout, isVisible, shouldReduceMotion, useStaticFallback]);
 
   return (
     <div
+      ref={viewportRef}
       aria-hidden="true"
-      data-visual-mode={resolvedVisualMode}
+      data-visual-mode={displayVisualMode}
       className="absolute inset-x-0 top-0 h-screen h-dvh z-0 overflow-hidden"
     >
-      {resolvedVisualMode !== "static" ? (
+      {isVisible && resolvedVisualMode !== "static" ? (
         <VisualErrorBoundary onFallback={useStaticFallback}>
           <motion.div
             className={

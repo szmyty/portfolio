@@ -208,6 +208,43 @@ body {
     120px 120px;
 }
 
+/*
+ * Static sub-page atmosphere. This replaces the former full-screen EXR/WebGL
+ * background, removing a 30 MB required transfer and one permanent GPU
+ * context while retaining depth in both themes.
+ */
+.galaxy-static-atmosphere {
+  background-image:
+    radial-gradient(
+      ellipse 78% 62% at 76% 22%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 54% 48% at 18% 72%,
+      color-mix(in srgb, #6aa7ff 9%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      color-mix(in srgb, var(--foreground) 42%, transparent) 0.8px,
+      transparent 1px
+    ),
+    radial-gradient(
+      color-mix(in srgb, var(--foreground) 24%, transparent) 0.8px,
+      transparent 1px
+    );
+  background-position:
+    center,
+    center,
+    22px 34px,
+    76px 92px;
+  background-size:
+    auto,
+    auto,
+    112px 112px,
+    184px 184px;
+}
+
 /* Typography hierarchy */
 h1,
 h2,
@@ -263,7 +300,8 @@ a:hover {
 .button-primary {
   background: var(--button-primary-bg);
   color: var(--button-primary-fg);
-  box-shadow: 0 18px 45px -20px color-mix(in srgb, var(--button-primary-bg) 85%, transparent);
+  box-shadow: 0 18px 45px -20px
+    color-mix(in srgb, var(--button-primary-bg) 85%, transparent);
 }
 
 .button-primary:hover {

@@ -14,7 +14,6 @@ type MusicClientProps = {
 };
 
 export function MusicClient({ tracks, profile }: MusicClientProps) {
-
   const [activeTrack, setActiveTrack] = useState<SoundCloudTrack | null>(
     tracks[0] ?? null,
   );
@@ -80,6 +79,7 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
                 <ReactPlayer
                   src={activeTrack.audioUrl}
                   controls
+                  preload="none"
                   width="100%"
                   height="50px"
                 />
@@ -133,7 +133,12 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
 
               {/* Info */}
               <div className="p-3 flex flex-col gap-1">
-                <p className={["font-medium text-sm leading-tight", isActive ? "text-accent" : "text-text-primary"].join(" ")}>
+                <p
+                  className={[
+                    "font-medium text-sm leading-tight",
+                    isActive ? "text-accent" : "text-text-primary",
+                  ].join(" ")}
+                >
                   {track.title}
                 </p>
 
@@ -143,9 +148,7 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
 
                 <div className="flex justify-between text-xs text-text-muted pt-1">
                   <span>{track.duration}</span>
-                  <span>
-                    {new Date(track.pubDate).toLocaleDateString()}
-                  </span>
+                  <span>{new Date(track.pubDate).toLocaleDateString()}</span>
                 </div>
               </div>
             </button>
