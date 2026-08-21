@@ -2,17 +2,7 @@
   "Author": {
     "name": "Alan Szmyt",
     "handle": "szmyty",
-    "tagline": "Software engineer focused on building thoughtful, reliable systems."
-  },
-  "EntryTrigger": {
-    "ariaLabel": "Enter the site",
-    "prompt": "Click anywhere, or press Enter / Space"
-  },
-  "LandingEntry": {
-    "comingSoon": "Main content coming soon.",
-    "loadingStatus": "Initializing experience...",
-    "skipToContent": "Skip to content",
-    "interactiveAriaLabel": "Interactive 3D identity — press Enter or Space to enter the site"
+    "tagline": "Software engineer building reliable developer platforms, local-first systems, and AI-assisted workflows."
   },
   "NotFound": {
     "code": "404",
@@ -36,9 +26,10 @@
   },
   "HeroSection": {
     "ariaLabel": "Hero",
-    "description": "Software engineer, musician, and creator — exploring the intersections of technology, sound, and the written word.",
+    "description": "Software engineer building reliable developer platforms, local-first systems, and AI-assisted workflows.",
     "viewWork": "View Work",
-    "exploreMusic": "Explore Music"
+    "contactResume": "Contact / Resume",
+    "resumeNote": "A current resume is available by request while the permanent public edition is being finalized."
   },
   "Common": {
     "loading": "Loading…"

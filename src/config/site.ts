@@ -7,7 +7,7 @@ export const siteConfig = {
     template: "%s | Alan Szmyt",
   },
   description:
-    "Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.",
+    "Software engineer building reliable developer platforms, local-first systems, and AI-assisted workflows.",
   url: env.NEXT_PUBLIC_SITE_URL,
   author: {
     name: "Alan Szmyt",
@@ -21,9 +21,11 @@ export const siteConfig = {
   keywords: [
     "Alan Szmyt",
     "software engineer",
+    "developer platforms",
+    "developer experience",
+    "local-first software",
+    "AI-assisted workflows",
     "portfolio",
-    "full-stack",
-    "web development",
   ] as string[],
   locale: "en_US",
 } as const;

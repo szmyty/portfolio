@@ -1,6 +1,7 @@
 # Alan Szmyt — Portfolio
 
-Personal portfolio of Alan Szmyt — software engineer focused on building thoughtful, reliable systems.
+Personal portfolio of Alan Szmyt — software engineer building reliable developer
+platforms, local-first systems, and AI-assisted workflows.
 
 ---
 
@@ -48,7 +49,7 @@ src/
 │   ├── creative.ts   #   Creative work entries
 │   └── index.ts      #   Public barrel export (@portfolio/content)
 ├── features/         # Self-contained feature modules, one folder per feature
-│   └── landing/      #   Landing page entry sequence
+│   └── landing/      #   Semantic homepage and progressive visual enhancement
 │       └── animation/ #     Animation hooks and visual layer components (isolated from layout)
 ├── i18n/             # Internationalization setup (next-intl)
 ├── lib/              # Shared utilities and design token constants
@@ -85,6 +86,7 @@ src/
 | `pnpm dev` | Start the development server |
 | `pnpm build` | Build for production |
 | `pnpm lint` | Run ESLint |
+| `pnpm test:shell` | Verify the recruiter-safe homepage and visual fallback contract |
 | `pnpm format` | Format source files with Prettier |
 
 ---

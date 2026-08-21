@@ -176,6 +176,38 @@ body {
   overflow-x: hidden;
 }
 
+/*
+ * Durable homepage atmosphere. This ships in the server-rendered document and
+ * remains visible when JavaScript, dynamic imports, or WebGL are unavailable.
+ */
+.homepage-static-background {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: var(--z-background);
+  width: 100%;
+  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(
+      ellipse 70% 60% at 50% 40%,
+      color-mix(in srgb, var(--accent) 10%, transparent) 0%,
+      transparent 75%
+    ),
+    radial-gradient(
+      color-mix(in srgb, var(--foreground) 55%, transparent) 1px,
+      transparent 1px
+    );
+  background-position:
+    center,
+    24px 36px;
+  background-size:
+    auto,
+    120px 120px;
+}
+
 /* Typography hierarchy */
 h1,
 h2,

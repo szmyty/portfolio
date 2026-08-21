@@ -1,9 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import { CosmicBackground } from "@portfolio/components/ui/CosmicBackground";
+import { Component, useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useScrollParallax } from "@portfolio/lib/hooks/useScrollParallax";
+import {
+  supportsWebGL,
+  VISUAL_READY_TIMEOUT_MS,
+} from "@portfolio/features/landing/visualSupport";
 
 const LandingVisualLayer = dynamic(
   () =>
@@ -15,6 +20,36 @@ const LandingVisualLayer = dynamic(
 
 type LandingBackgroundProps = {
   onReady?: () => void;
+};
+
+type VisualMode = "static" | "loading" | "interactive";
+
+type VisualErrorBoundaryProps = {
+  children: ReactNode;
+  onFallback: () => void;
+};
+
+type VisualErrorBoundaryState = {
+  failed: boolean;
+};
+
+class VisualErrorBoundary extends Component<
+  VisualErrorBoundaryProps,
+  VisualErrorBoundaryState
+> {
+  state: VisualErrorBoundaryState = { failed: false };
+
+  static getDerivedStateFromError(): VisualErrorBoundaryState {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onFallback();
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
 }
 
 /**
@@ -35,6 +70,12 @@ type LandingBackgroundProps = {
  * Parallax is disabled when the user prefers reduced motion.
  */
 export function LandingBackground({ onReady }: LandingBackgroundProps) {
+  const shouldReduceMotion = useReducedMotion();
+  const [visualMode, setVisualMode] = useState<VisualMode>("static");
+  const timeoutRef = useRef<number | null>(null);
+  const resolvedVisualMode =
+    shouldReduceMotion === true ? "static" : visualMode;
+
   // 3D scene drifts upward at a different rate than the background stars,
   // creating a layered depth effect between canvas and starfield.
   const { y: canvasY } = useScrollParallax({
@@ -43,20 +84,66 @@ export function LandingBackground({ onReady }: LandingBackgroundProps) {
     outputRange: [0, -45],
   });
 
+  const clearReadyTimeout = useCallback(() => {
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  const useStaticFallback = useCallback(() => {
+    clearReadyTimeout();
+    setVisualMode("static");
+  }, [clearReadyTimeout]);
+
+  const handleReady = useCallback(() => {
+    clearReadyTimeout();
+    setVisualMode("interactive");
+    onReady?.();
+  }, [clearReadyTimeout, onReady]);
+
+  useEffect(() => {
+    if (shouldReduceMotion !== false || !supportsWebGL()) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      setVisualMode("loading");
+      timeoutRef.current = window.setTimeout(
+        useStaticFallback,
+        VISUAL_READY_TIMEOUT_MS,
+      );
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      clearReadyTimeout();
+    };
+  }, [clearReadyTimeout, shouldReduceMotion, useStaticFallback]);
+
   return (
     <div
       aria-hidden="true"
+      data-visual-mode={resolvedVisualMode}
       className="absolute inset-x-0 top-0 h-screen h-dvh z-0 overflow-hidden"
     >
-      {/* Layer 0 — background: non-interactive cosmic atmosphere */}
-      <CosmicBackground mode="hero" />
-      {/* Layer 1 — 3D canvas: interactive WebGL scene with scroll parallax.
-           The motion.div occupies the full container (absolute inset-0) so that
-           LandingVisualLayer's own absolute inset-0 positioning stays relative to
-           this wrapper rather than the outer container, preserving its z-[1] stacking. */}
-      <motion.div className="absolute inset-0" style={{ y: canvasY }}>
-        <LandingVisualLayer onReady={onReady} />
-      </motion.div>
+      {resolvedVisualMode !== "static" ? (
+        <VisualErrorBoundary onFallback={useStaticFallback}>
+          <motion.div
+            className={
+              resolvedVisualMode === "interactive"
+                ? "absolute inset-0 pointer-events-auto"
+                : "absolute inset-0 pointer-events-none"
+            }
+            style={{ y: canvasY }}
+            initial={false}
+            animate={{ opacity: resolvedVisualMode === "interactive" ? 1 : 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <LandingVisualLayer onReady={handleReady} />
+          </motion.div>
+        </VisualErrorBoundary>
+      ) : null}
     </div>
   );
 }
