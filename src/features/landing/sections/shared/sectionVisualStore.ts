@@ -46,11 +46,19 @@ function getViewportMetrics() {
   };
 }
 
-function getVisibleRatio(rect: DOMRect, viewportWidth: number, viewportHeight: number) {
-  const visibleWidth =
-    Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
-  const visibleHeight =
-    Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+function getVisibleRatio(
+  rect: DOMRect,
+  viewportWidth: number,
+  viewportHeight: number,
+) {
+  const visibleWidth = Math.max(
+    0,
+    Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0),
+  );
+  const visibleHeight = Math.max(
+    0,
+    Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0),
+  );
   const visibleArea = visibleWidth * visibleHeight;
   const totalArea = Math.max(rect.width * rect.height, 1);
 
@@ -58,7 +66,9 @@ function getVisibleRatio(rect: DOMRect, viewportWidth: number, viewportHeight: n
 }
 
 function getActiveSlot(): SectionVisualSlot | null {
-  const availableSlots = Array.from(slots.values()).filter((slot) => slot.element);
+  const availableSlots = Array.from(slots.values()).filter(
+    (slot) => slot.element,
+  );
 
   if (availableSlots.length === 0) {
     return null;
@@ -139,8 +149,6 @@ export function registerSectionVisualSlot(
   kind: SectionVisualKind,
   element: HTMLDivElement | null,
 ) {
-  const existing = slots.get(id);
-
   slots.set(id, {
     id,
     kind,

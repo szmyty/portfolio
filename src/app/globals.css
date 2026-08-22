@@ -133,6 +133,7 @@ html {
   color-scheme: dark;
   overflow-x: hidden;
   position: relative;
+  scroll-padding-top: calc(env(safe-area-inset-top) + 5rem);
 }
 
 /* Light theme — applied via [data-theme="light"] on <html> */
@@ -177,6 +178,31 @@ body {
 }
 
 /*
+ * Site chrome respects notches, rounded corners, and home indicators without
+ * introducing page-level horizontal overflow at narrow widths.
+ */
+.site-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+.site-nav {
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-left: max(1rem, env(safe-area-inset-left));
+}
+
+.site-mobile-menu {
+  max-height: calc(100dvh - env(safe-area-inset-top) - 4.25rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.site-footer {
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
+}
+
+/*
  * Durable homepage atmosphere. This ships in the server-rendered document and
  * remains visible when JavaScript, dynamic imports, or WebGL are unavailable.
  */
@@ -206,6 +232,82 @@ body {
   background-size:
     auto,
     120px 120px;
+}
+
+/*
+ * The DOM reserves a real media slot between hero copy and actions. The SVG
+ * keeps the infinity identity present for reduced-motion, no-WebGL, and
+ * no-JavaScript visits; the interactive canvas takes over only after its first
+ * successful frame.
+ */
+.hero-infinity-slot {
+  display: flex;
+  width: 100%;
+  height: clamp(9.5rem, 23dvh, 13rem);
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.hero-infinity-fallback {
+  width: min(100%, 33rem);
+  height: 100%;
+  opacity: 0.92;
+  transition: opacity 180ms ease;
+}
+
+.home-shell:has([data-visual-mode="interactive"]) .hero-infinity-fallback {
+  opacity: 0;
+}
+
+@media (max-height: 44rem) and (orientation: landscape) {
+  .hero-infinity-slot {
+    height: 6rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-infinity-fallback {
+    transition: none;
+  }
+}
+
+/*
+ * Static sub-page atmosphere. This replaces the former full-screen EXR/WebGL
+ * background, removing a 30 MB required transfer and one permanent GPU
+ * context while retaining depth in both themes.
+ */
+.galaxy-static-atmosphere {
+  background-image:
+    radial-gradient(
+      ellipse 78% 62% at 76% 22%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 54% 48% at 18% 72%,
+      color-mix(in srgb, #6aa7ff 9%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      color-mix(in srgb, var(--foreground) 42%, transparent) 0.8px,
+      transparent 1px
+    ),
+    radial-gradient(
+      color-mix(in srgb, var(--foreground) 24%, transparent) 0.8px,
+      transparent 1px
+    );
+  background-position:
+    center,
+    center,
+    22px 34px,
+    76px 92px;
+  background-size:
+    auto,
+    auto,
+    112px 112px,
+    184px 184px;
 }
 
 /* Typography hierarchy */

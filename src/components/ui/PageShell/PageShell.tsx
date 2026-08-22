@@ -48,7 +48,7 @@ type PageShellLayoutProps = {
 function PageShellLayout({ children }: PageShellLayoutProps) {
   return (
     <div className="relative z-10 flex min-h-screen min-h-dvh flex-col">
-      <header className="sticky inset-x-0 top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border pt-[env(safe-area-inset-top)]">
+      <header className="site-header sticky inset-x-0 top-0 z-20 bg-background/80 backdrop-blur-sm border-b border-border">
         <AppNavBar />
       </header>
 

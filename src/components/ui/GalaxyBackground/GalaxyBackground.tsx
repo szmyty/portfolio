@@ -1,49 +1,19 @@
-"use client";
-
-import { useEffect } from "react";
-import { Canvas, useLoader, useThree } from "@react-three/fiber";
-import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js";
-import { EquirectangularReflectionMapping } from "three";
-import type { GalaxyBackgroundProps } from "./GalaxyBackground.types";
-
-function GalaxyEnvironment() {
-  const texture = useLoader(EXRLoader, "/environments/galaxy.exr");
-  const { gl, scene } = useThree();
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/immutability
-    texture.mapping = EquirectangularReflectionMapping;
-
-    // eslint-disable-next-line react-hooks/immutability
-    scene.background = texture;
-    scene.environment = texture;
-
-    // eslint-disable-next-line react-hooks/immutability
-    gl.toneMappingExposure = 0.7;
-
-    return () => {
-      scene.background = null;
-      scene.environment = null;
-    };
-  }, [gl, scene, texture]);
-
-  return null;
-}
-
-export function GalaxyBackground(_props: GalaxyBackgroundProps) {
+/**
+ * A dependency-free atmosphere for sub-pages.
+ *
+ * The previous implementation opened a permanent WebGL context and downloaded
+ * a 30 MB EXR on every sub-page. Layered CSS gradients preserve the visual
+ * identity while keeping content complete when JavaScript or WebGL is absent.
+ */
+export function GalaxyBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      data-visual-mode="static"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-background"
     >
-      <Canvas
-        camera={{ position: [0, 0, 1], fov: 50 }}
-        dpr={[1, 1.25]}
-        gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
-      >
-        <GalaxyEnvironment />
-      </Canvas>
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="galaxy-static-atmosphere absolute inset-0" />
+      <div className="absolute inset-0 bg-background/45" />
     </div>
   );
 }

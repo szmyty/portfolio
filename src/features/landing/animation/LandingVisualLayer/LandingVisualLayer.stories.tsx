@@ -66,3 +66,47 @@ export const Contained: Story = {
     ),
   ],
 };
+
+/** Portrait baseline used to approve the complete luminous footprint. */
+export const MobilePortrait: Story = {
+  parameters: {
+    layout: "centered",
+  },
+  decorators: [
+    (Story: () => ReactElement) => (
+      <div
+        style={{
+          position: "relative",
+          width: "390px",
+          height: "844px",
+          background: "#0a0a0f",
+          overflow: "hidden",
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+/** Short landscape baseline exercises the compact hero composition. */
+export const MobileLandscape: Story = {
+  parameters: {
+    layout: "centered",
+  },
+  decorators: [
+    (Story: () => ReactElement) => (
+      <div
+        style={{
+          position: "relative",
+          width: "740px",
+          height: "360px",
+          background: "#0a0a0f",
+          overflow: "hidden",
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+};

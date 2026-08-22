@@ -1,27 +1,87 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import dynamic from "next/dynamic";
+import {
+  Component,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import type { ReactNode } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
+import { useReducedMotion } from "framer-motion";
 import type { PerspectiveCamera } from "three";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
-import {
-  FloppyDisk,
-  Magazine,
-  VinylRecord,
-} from "@portfolio/features/three";
+import { supportsWebGL } from "@portfolio/features/landing/visualSupport";
 import {
   getSectionVisualSnapshot,
+  notifySectionVisualLayoutChange,
   subscribeSectionVisualStore,
   type SectionVisualKind,
 } from "./sectionVisualStore";
 
 type RectState = {
+  slotId: string;
   left: number;
   top: number;
   width: number;
   height: number;
 };
+
+type SectionCanvasBoundaryProps = {
+  children: ReactNode;
+  onFallback: () => void;
+};
+
+type SectionCanvasBoundaryState = {
+  failed: boolean;
+};
+
+class SectionCanvasBoundary extends Component<
+  SectionCanvasBoundaryProps,
+  SectionCanvasBoundaryState
+> {
+  state: SectionCanvasBoundaryState = { failed: false };
+
+  static getDerivedStateFromError(): SectionCanvasBoundaryState {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onFallback();
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+const VinylRecord = dynamic(
+  () =>
+    import("@portfolio/features/three/objects/VinylRecord").then(
+      (module) => module.VinylRecord,
+    ),
+  { ssr: false },
+);
+
+const Magazine = dynamic(
+  () =>
+    import("@portfolio/features/three/objects/Magazine").then(
+      (module) => module.Magazine,
+    ),
+  { ssr: false },
+);
+
+const FloppyDisk = dynamic(
+  () =>
+    import("@portfolio/features/three/objects/FloppyDisk").then(
+      (module) => module.FloppyDisk,
+    ),
+  { ssr: false },
+);
 
 const CAMERA_CONFIG: Record<
   SectionVisualKind,
@@ -93,84 +153,120 @@ function SectionVisualRig({ kind }: { kind: SectionVisualKind }) {
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === "light";
 
-  return (
-    <>
-      <group visible={kind === "vinyl"}>
-        <ambientLight intensity={isLight ? 0.52 : 0.72} />
-        <directionalLight
-          position={[3, 5, 4]}
-          intensity={isLight ? 1.3 : 1.9}
-          color={isLight ? "#ffffff" : "#ffe5f7"}
-        />
-        <directionalLight
-          position={[-3, -2, -3]}
-          intensity={isLight ? 0.42 : 0.62}
-          color={isLight ? "#e7dcff" : "#c7f2ff"}
-        />
-        <directionalLight
-          position={[4, 3, -5]}
-          intensity={isLight ? 0.55 : 0.8}
-          color={isLight ? "#e0d8f0" : "#c8c0dc"}
-        />
-        <pointLight
-          position={[0, 0.25, 3.75]}
-          intensity={isLight ? 0.55 : 0.9}
-          color={isLight ? "#fff6fb" : "#ffd4fb"}
-        />
-        <VinylRecord />
-      </group>
-      <group visible={kind === "magazine"}>
-        <ambientLight intensity={isLight ? 0.7 : 0.9} />
-        <directionalLight position={[3, 5, 4]} intensity={isLight ? 1.0 : 1.4} />
-        <directionalLight position={[-3, -2, -3]} intensity={isLight ? 0.4 : 0.5} />
-        <directionalLight
-          position={[4, 3, -5]}
-          intensity={isLight ? 0.5 : 0.6}
-          color={isLight ? "#f0e8d8" : "#ddd0bc"}
-        />
-        <Magazine />
-      </group>
-      <group visible={kind === "floppy"}>
-      <ambientLight intensity={isLight ? 0.95 : 0.6} />
-      <directionalLight
-        position={[4, 5, 4]}
-        intensity={isLight ? 1.35 : 1.2}
-        color={isLight ? "#ffffff" : "#ffd7f3"}
-      />
-      <directionalLight
-        position={[-3, -2, -4]}
-        intensity={isLight ? 0.45 : 0.38}
-        color={isLight ? "#f0d8ff" : "#9fe7ff"}
-      />
-      <directionalLight
-        position={[0, 2, -5]}
-        intensity={isLight ? 0.42 : 0.48}
-        color={isLight ? "#ffd5ea" : "#ff7fd7"}
-      />
-      <FloppyDisk />
-      </group>
-    </>
-  );
+  switch (kind) {
+    case "vinyl":
+      return (
+        <>
+          <ambientLight intensity={isLight ? 0.52 : 0.72} />
+          <directionalLight
+            position={[3, 5, 4]}
+            intensity={isLight ? 1.3 : 1.9}
+            color={isLight ? "#ffffff" : "#ffe5f7"}
+          />
+          <directionalLight
+            position={[-3, -2, -3]}
+            intensity={isLight ? 0.42 : 0.62}
+            color={isLight ? "#e7dcff" : "#c7f2ff"}
+          />
+          <directionalLight
+            position={[4, 3, -5]}
+            intensity={isLight ? 0.55 : 0.8}
+            color={isLight ? "#e0d8f0" : "#c8c0dc"}
+          />
+          <pointLight
+            position={[0, 0.25, 3.75]}
+            intensity={isLight ? 0.55 : 0.9}
+            color={isLight ? "#fff6fb" : "#ffd4fb"}
+          />
+          <VinylRecord />
+        </>
+      );
+    case "magazine":
+      return (
+        <>
+          <ambientLight intensity={isLight ? 0.7 : 0.9} />
+          <directionalLight
+            position={[3, 5, 4]}
+            intensity={isLight ? 1.0 : 1.4}
+          />
+          <directionalLight
+            position={[-3, -2, -3]}
+            intensity={isLight ? 0.4 : 0.5}
+          />
+          <directionalLight
+            position={[4, 3, -5]}
+            intensity={isLight ? 0.5 : 0.6}
+            color={isLight ? "#f0e8d8" : "#ddd0bc"}
+          />
+          <Magazine />
+        </>
+      );
+    case "floppy":
+      return (
+        <>
+          <ambientLight intensity={isLight ? 0.95 : 0.6} />
+          <directionalLight
+            position={[4, 5, 4]}
+            intensity={isLight ? 1.35 : 1.2}
+            color={isLight ? "#ffffff" : "#ffd7f3"}
+          />
+          <directionalLight
+            position={[-3, -2, -4]}
+            intensity={isLight ? 0.45 : 0.38}
+            color={isLight ? "#f0d8ff" : "#9fe7ff"}
+          />
+          <directionalLight
+            position={[0, 2, -5]}
+            intensity={isLight ? 0.42 : 0.48}
+            color={isLight ? "#ffd5ea" : "#ff7fd7"}
+          />
+          <FloppyDisk />
+        </>
+      );
+    default:
+      return null;
+  }
 }
 
 export function SharedSectionVisualCanvas() {
   const logger = useLifecycleLogger("SharedSectionVisualCanvas");
+  const shouldReduceMotion = useReducedMotion();
   const snapshot = useSyncExternalStore(
     subscribeSectionVisualStore,
     getSectionVisualSnapshot,
     getSectionVisualSnapshot,
   );
   const [rect, setRect] = useState<RectState | null>(null);
+  const [webglSupported, setWebglSupported] = useState(false);
+  const [failedSlotId, setFailedSlotId] = useState<string | null>(null);
   const canvasKindRef = useRef<SectionVisualKind>("vinyl");
+  const activeSlotIdRef = useRef<string | null>(null);
+  const removeContextListenersRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (shouldReduceMotion !== false) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      setWebglSupported(supportsWebGL());
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [shouldReduceMotion]);
+
+  useEffect(() => {
+    return () => removeContextListenersRef.current?.();
+  }, []);
 
   useEffect(() => {
     const activeElement = snapshot.activeElement;
-    if (!activeElement) return;
+    const activeSlotId = snapshot.activeId;
+    if (!activeElement || !activeSlotId) return;
 
     const updateRect = () => {
       const bounds: DOMRect = activeElement.getBoundingClientRect();
       setRect((previousRect) => {
         const nextRect: RectState = {
+          slotId: activeSlotId,
           left: bounds.left,
           top: bounds.top,
           width: bounds.width,
@@ -179,6 +275,7 @@ export function SharedSectionVisualCanvas() {
 
         if (
           previousRect &&
+          previousRect.slotId === nextRect.slotId &&
           previousRect.left === nextRect.left &&
           previousRect.top === nextRect.top &&
           previousRect.width === nextRect.width &&
@@ -197,6 +294,7 @@ export function SharedSectionVisualCanvas() {
       frameId = window.requestAnimationFrame(() => {
         frameId = null;
         updateRect();
+        notifySectionVisualLayoutChange();
       });
     };
 
@@ -216,20 +314,32 @@ export function SharedSectionVisualCanvas() {
       window.removeEventListener("scroll", scheduleUpdate);
       window.removeEventListener("resize", scheduleUpdate);
     };
-  }, [snapshot.activeElement]);
+  }, [snapshot.activeElement, snapshot.activeId]);
 
   useEffect(() => {
     if (!snapshot.activeKind) return;
 
     canvasKindRef.current = snapshot.activeKind;
+    activeSlotIdRef.current = snapshot.activeId;
     logger.emit("active-visual-changed", {
       id: snapshot.activeId,
       kind: snapshot.activeKind,
     });
   }, [logger, snapshot.activeId, snapshot.activeKind]);
 
-  const currentKind: SectionVisualKind = snapshot.activeKind ?? snapshot.lastActiveKind;
-  const shouldShowCanvas = !!(snapshot.activeKind && snapshot.activeElement && rect);
+  const currentKind: SectionVisualKind =
+    snapshot.activeKind ?? snapshot.lastActiveKind;
+  const shouldShowCanvas = !!(
+    snapshot.activeKind &&
+    snapshot.activeElement &&
+    snapshot.activeId &&
+    rect?.slotId === snapshot.activeId
+  );
+  const shouldMountCanvas =
+    shouldShowCanvas &&
+    webglSupported &&
+    shouldReduceMotion === false &&
+    failedSlotId !== snapshot.activeId;
 
   const containerStyle = useMemo(() => {
     if (!rect) {
@@ -259,38 +369,77 @@ export function SharedSectionVisualCanvas() {
     };
   }, [rect, shouldShowCanvas]);
 
+  if (!shouldMountCanvas) return null;
+
   return (
-    <div aria-hidden="true" style={containerStyle}>
-      <div className="h-full w-full pointer-events-auto">
-        <Canvas
-          camera={{ position: [0, 0, 5], fov: 40 }}
-          style={{ width: "100%", height: "100%" }}
-          dpr={[1, 1.25]}
-          gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
-          onCreated={({ gl }) => {
-            canvasKindRef.current = currentKind;
-            logger.emit("canvas-created", {
-              dpr: gl.getPixelRatio(),
-              kind: currentKind,
-            });
-
-            gl.domElement.addEventListener("webglcontextlost", () => {
-              logger.emit("webgl-context-lost", {
-                kind: canvasKindRef.current,
+    <SectionCanvasBoundary
+      key={snapshot.activeId}
+      onFallback={() => setFailedSlotId(activeSlotIdRef.current)}
+    >
+      <div
+        aria-hidden="true"
+        data-canvas-budget="shared-section-visual"
+        data-visual-kind={currentKind}
+        style={containerStyle}
+      >
+        <div className="h-full w-full pointer-events-auto">
+          <Canvas
+            camera={{ position: [0, 0, 5], fov: 40 }}
+            style={{ width: "100%", height: "100%" }}
+            dpr={[1, 1.25]}
+            gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
+            onCreated={({ gl }) => {
+              canvasKindRef.current = currentKind;
+              logger.emit("canvas-created", {
+                dpr: gl.getPixelRatio(),
+                kind: currentKind,
               });
-            });
 
-            gl.domElement.addEventListener("webglcontextrestored", () => {
-              logger.emit("webgl-context-restored", {
-                kind: canvasKindRef.current,
-              });
-            });
-          }}
-        >
-          <CameraRig kind={currentKind} />
-          <SectionVisualRig kind={currentKind} />
-        </Canvas>
+              removeContextListenersRef.current?.();
+
+              const handleContextLost = (event: Event) => {
+                event.preventDefault();
+                logger.emit("webgl-context-lost", {
+                  kind: canvasKindRef.current,
+                });
+                setFailedSlotId(activeSlotIdRef.current);
+              };
+
+              const handleContextRestored = () => {
+                logger.emit("webgl-context-restored", {
+                  kind: canvasKindRef.current,
+                });
+                setFailedSlotId((current) =>
+                  current === activeSlotIdRef.current ? null : current,
+                );
+              };
+
+              gl.domElement.addEventListener(
+                "webglcontextlost",
+                handleContextLost,
+              );
+              gl.domElement.addEventListener(
+                "webglcontextrestored",
+                handleContextRestored,
+              );
+
+              removeContextListenersRef.current = () => {
+                gl.domElement.removeEventListener(
+                  "webglcontextlost",
+                  handleContextLost,
+                );
+                gl.domElement.removeEventListener(
+                  "webglcontextrestored",
+                  handleContextRestored,
+                );
+              };
+            }}
+          >
+            <CameraRig kind={currentKind} />
+            <SectionVisualRig kind={currentKind} />
+          </Canvas>
+        </div>
       </div>
-    </div>
+    </SectionCanvasBoundary>
   );
 }

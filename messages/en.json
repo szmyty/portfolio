@@ -16,12 +16,16 @@
   },
   "NavBar": {
     "ariaLabel": "Main navigation",
+    "brand": "Alan Szmyt",
+    "menu": "Menu",
+    "closeMenu": "Close",
     "home": "Home",
     "music": "Music",
     "publishing": "Publishing",
     "research": "Research",
     "development": "Development",
     "insights": "Insights",
+    "repository": "GitHub repository",
     "repositoryLink": "View portfolio repository on GitHub"
   },
   "HeroSection": {

@@ -5,9 +5,18 @@ export type NavItem = {
   label: ReactNode;
 };
 
+export type NavBarMobileConfig = {
+  brandHref: string;
+  brandLabel: ReactNode;
+  menuLabel: string;
+  closeLabel: string;
+  actions?: ReactNode;
+};
+
 export type NavBarProps = {
   items: NavItem[];
   activeHref?: string;
   ariaLabel: string;
   rightSlot?: ReactNode;
+  mobile: NavBarMobileConfig;
 };

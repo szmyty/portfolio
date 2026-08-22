@@ -22,11 +22,19 @@ const items = [
   { href: "/insights", label: "Insights" },
 ];
 
+const mobile = {
+  brandHref: "/",
+  brandLabel: "Alan Szmyt",
+  menuLabel: "Menu",
+  closeLabel: "Close",
+};
+
 export const Default: Story = {
   args: {
     items,
     activeHref: "/",
     ariaLabel: "Primary navigation",
+    mobile,
   },
 };
 
@@ -35,6 +43,7 @@ export const ActiveRoute: Story = {
     items,
     activeHref: "/music",
     ariaLabel: "Primary navigation",
+    mobile,
   },
 };
 
@@ -44,5 +53,9 @@ export const WithActions: Story = {
     activeHref: "/",
     ariaLabel: "Primary navigation",
     rightSlot: <button>Toggle</button>,
+    mobile: {
+      ...mobile,
+      actions: <button>Toggle</button>,
+    },
   },
 };

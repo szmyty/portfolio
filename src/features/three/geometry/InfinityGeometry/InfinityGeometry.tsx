@@ -12,9 +12,10 @@ import {
 /**
  * Custom parametric curve for a 3D lemniscate.
  *
- * The base shape uses the Gerono lemniscate in the XY plane. A localized Z
- * offset is then applied near the center so the two passes separate into a
- * readable over/under crossover instead of collapsing into one flat blob.
+ * The base shape uses the Gerono lemniscate in the XY plane. A broad, shallow
+ * Z offset separates the two passes into a readable over/under crossover. The
+ * curve parameter starts at an outer extremum so TubeGeometry's closed-loop
+ * frame seam does not sit on the most visible part of the composition.
  */
 class InfinityCurve extends THREE.Curve<THREE.Vector3> {
   constructor(private readonly scale = 1) {
