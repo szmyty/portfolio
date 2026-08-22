@@ -1,0 +1,57 @@
+{
+  "contract": {
+    "status": ["loading", "available", "empty", "error"],
+    "freshness": ["fresh", "stale", null],
+    "source": ["live", "last-known-good", "none"]
+  },
+  "scenarios": [
+    {
+      "id": "loading",
+      "status": "loading",
+      "freshness": null,
+      "source": "none",
+      "hasData": false,
+      "story": "Loading"
+    },
+    {
+      "id": "empty",
+      "status": "empty",
+      "freshness": "fresh",
+      "source": "live",
+      "hasData": false,
+      "story": "Empty"
+    },
+    {
+      "id": "available",
+      "status": "available",
+      "freshness": "fresh",
+      "source": "live",
+      "hasData": true,
+      "story": null
+    },
+    {
+      "id": "stale",
+      "status": "available",
+      "freshness": "stale",
+      "source": "live",
+      "hasData": true,
+      "story": "Stale"
+    },
+    {
+      "id": "last-known-good",
+      "status": "available",
+      "freshness": "stale",
+      "source": "last-known-good",
+      "hasData": true,
+      "story": "LastKnownGood"
+    },
+    {
+      "id": "error",
+      "status": "error",
+      "freshness": null,
+      "source": "none",
+      "hasData": false,
+      "story": "Error"
+    }
+  ]
+}

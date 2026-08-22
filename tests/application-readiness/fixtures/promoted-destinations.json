@@ -1,0 +1,78 @@
+{
+  "staticDestinations": [
+    {
+      "id": "github-profile",
+      "url": "https://github.com/szmyty",
+      "verification": "live",
+      "expectedHost": "github.com",
+      "sourceFile": "src/features/landing/Footer/Footer.tsx",
+      "sourceToken": "https://github.com/szmyty"
+    },
+    {
+      "id": "portfolio-source",
+      "url": "https://github.com/szmyty/portfolio",
+      "verification": "live",
+      "expectedHost": "github.com",
+      "sourceFile": "src/config/site.ts",
+      "sourceToken": "https://github.com/szmyty/portfolio"
+    },
+    {
+      "id": "profile-readme",
+      "url": "https://github.com/szmyty/szmyty",
+      "verification": "live",
+      "expectedHost": "github.com",
+      "sourceFile": "src/features/github/components/GitHubProfileHeader/GitHubProfileHeader.tsx",
+      "sourceToken": "https://github.com/szmyty/szmyty"
+    },
+    {
+      "id": "linkedin",
+      "url": "https://linkedin.com/in/alanszmyt",
+      "verification": "syntax",
+      "expectedHost": "linkedin.com",
+      "sourceFile": "src/config/site.ts",
+      "sourceToken": "https://linkedin.com/in/alanszmyt"
+    },
+    {
+      "id": "email",
+      "url": "mailto:szmyty@gmail.com",
+      "verification": "syntax",
+      "sourceFile": "src/config/site.ts",
+      "sourceToken": "szmyty@gmail.com"
+    },
+    {
+      "id": "pinterest-board",
+      "url": "https://www.pinterest.com/playfunctionmusic/ego-hygiene/",
+      "verification": "live",
+      "expectedHost": "www.pinterest.com",
+      "sourceFile": "src/features/insights/lib/pinterest-service.ts",
+      "sourceToken": "https://www.pinterest.com/playfunctionmusic/ego-hygiene/"
+    }
+  ],
+  "dynamicDestinations": [
+    {
+      "id": "github-repository",
+      "sourceFile": "src/features/github/components/GitHubRepoCard/GitHubRepoCard.tsx",
+      "sourceToken": "https://github.com/${repository.full_name}"
+    },
+    {
+      "id": "medium-article",
+      "sourceFile": "src/features/publishing/components/PublishingArticleCard/PublishingArticleCard.tsx",
+      "sourceToken": "href={article.link}"
+    },
+    {
+      "id": "soundcloud-profile",
+      "sourceFile": "src/features/music/components/MusicClient/MusicClient.tsx",
+      "sourceToken": "href={profile.url}"
+    },
+    {
+      "id": "pinterest-insight",
+      "sourceFile": "src/features/insights/components/InsightCard.tsx",
+      "sourceToken": "href={pin.url}"
+    },
+    {
+      "id": "orcid-publication",
+      "sourceFile": "src/features/research/components/ResearchPublicationCard/ResearchPublicationCard.tsx",
+      "sourceToken": "href={paper.externalUrl}"
+    }
+  ]
+}

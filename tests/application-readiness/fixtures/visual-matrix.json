@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "small-mobile-dark",
+      "viewport": { "width": 320, "height": 700 },
+      "colorScheme": "dark",
+      "reducedMotion": "no-preference"
+    },
+    {
+      "name": "mobile-light",
+      "viewport": { "width": 390, "height": 844 },
+      "colorScheme": "light",
+      "reducedMotion": "no-preference"
+    },
+    {
+      "name": "mobile-reduced-motion",
+      "viewport": { "width": 430, "height": 932 },
+      "colorScheme": "dark",
+      "reducedMotion": "reduce"
+    },
+    {
+      "name": "desktop-dark",
+      "viewport": { "width": 1440, "height": 1000 },
+      "colorScheme": "dark",
+      "reducedMotion": "no-preference"
+    }
+  ],
+  "assertions": [
+    "no-horizontal-overflow",
+    "single-nonempty-h1",
+    "canonical",
+    "keyboard-skip",
+    "hydration-console-clean",
+    "full-page-capture"
+  ]
+}

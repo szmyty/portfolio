@@ -6,6 +6,8 @@ export type GitHubRepository = {
   stargazers_count: number;
   language: string | null;
   updated_at: string;
+  data_source?: "live" | "last-known-good";
+  snapshot_captured_at?: string | null;
 };
 
 export type GitHubScope = {

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import ReactPlayer from "react-player";
+import { formatDisplayDate } from "@portfolio/lib/format-date";
 import type {
   SoundCloudProfile,
   SoundCloudTrack,
@@ -148,7 +149,9 @@ export function MusicClient({ tracks, profile }: MusicClientProps) {
 
                 <div className="flex justify-between text-xs text-text-muted pt-1">
                   <span>{track.duration}</span>
-                  <span>{new Date(track.pubDate).toLocaleDateString()}</span>
+                  <span>
+                    {formatDisplayDate(track.pubDate)}
+                  </span>
                 </div>
               </div>
             </button>

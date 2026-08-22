@@ -1,0 +1,110 @@
+---
+name: "Application Readiness"
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Deployed release-candidate origin"
+        required: true
+        default: "https://szmyty.vercel.app"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "application-readiness-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    name: Static trust contracts
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify application-readiness contracts
+        run: node scripts/verify-application-readiness.mjs
+
+      - name: Verify promoted-destination fixtures
+        run: node scripts/check-promoted-destinations.mjs
+
+      - name: Verify homepage shell
+        run: pnpm run test:shell
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
+      - name: Build with simulated GitHub rate limit
+        run: node scripts/verify-github-fallback-build.mjs
+
+  release:
+    name: Deployed release gate
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify static contracts
+        run: |
+          node scripts/verify-application-readiness.mjs
+          node scripts/check-promoted-destinations.mjs
+
+      - name: Verify live promoted destinations
+        run: node scripts/check-promoted-destinations.mjs --live
+
+      - name: Install release browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run mobile, visual, accessibility, and hydration smoke tests
+        env:
+          RELEASE_BASE_URL: "${{ inputs.base_url }}"
+        run: pnpm exec playwright test --config tests/application-readiness/playwright.config.mjs
+
+      - name: Upload release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "application-readiness-${{ github.run_id }}"
+          path: |
+            playwright-report/application-readiness
+            test-results/application-readiness
+          if-no-files-found: warn
+          retention-days: 14

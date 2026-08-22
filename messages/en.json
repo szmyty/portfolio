@@ -111,6 +111,9 @@
     "errorDescription": "The GitHub dashboard could not be prepared. Please try again in a moment.",
     "emptyTitle": "No repositories available",
     "emptyDescription": "There are no repositories to display for the selected GitHub scope yet.",
+    "staleTitle": "GitHub data may be out of date",
+    "staleDescription": "The latest GitHub response is older than the freshness target.",
+    "lastKnownGoodDescription": "The live GitHub API is unavailable, so a dated last-known-good snapshot is shown.",
     "stats": {
       "repositories": "Repositories",
       "stars": "Stars",

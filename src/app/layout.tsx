@@ -4,6 +4,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { siteConfig, isDev, env } from "@portfolio/config";
 import { DebugPanel } from "@portfolio/components/debug/DebugPanel";
+import { SkipToContent } from "@portfolio/components/ui/SkipToContent";
 import { IntlProvider } from "@portfolio/i18n/IntlProvider";
 import { ThemeProvider } from "@portfolio/lib/theme";
 import nextPkg from "next/package.json";
@@ -33,9 +34,7 @@ export const metadata: Metadata = {
       { url: "/icons/app/favicon.ico" },
     ],
     shortcut: ["/icons/app/favicon.ico"],
-    apple: [
-      { url: "/icons/app/icon-192x192.png", sizes: "192x192" },
-    ],
+    apple: [{ url: "/icons/app/icon-192x192.png", sizes: "192x192" }],
   },
   keywords: siteConfig.keywords,
   authors: [{ name: siteConfig.author.name, url: siteUrl }],
@@ -169,6 +168,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden">
+        <SkipToContent label="Skip to main content" />
         <ThemeProvider>
           <IntlProvider locale={locale} messages={messages}>
             {children}

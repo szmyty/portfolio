@@ -33,6 +33,7 @@ export const Default: Story = {
   args: {
     items,
     activeHref: "/",
+    ariaLabel: "Primary navigation",
     mobile,
   },
 };
@@ -41,6 +42,7 @@ export const ActiveRoute: Story = {
   args: {
     items,
     activeHref: "/music",
+    ariaLabel: "Primary navigation",
     mobile,
   },
 };
@@ -49,6 +51,7 @@ export const WithActions: Story = {
   args: {
     items,
     activeHref: "/",
+    ariaLabel: "Primary navigation",
     rightSlot: <button>Toggle</button>,
     mobile: {
       ...mobile,

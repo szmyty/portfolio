@@ -1,0 +1,50 @@
+{
+  "cases": [
+    {
+      "id": "ok",
+      "expectedHost": "example.com",
+      "input": {
+        "status": 200,
+        "finalUrl": "https://example.com/work",
+        "body": "Portfolio"
+      },
+      "expected": "ok"
+    },
+    {
+      "id": "redirected",
+      "expectedHost": "www.example.com",
+      "input": {
+        "status": 200,
+        "finalUrl": "https://www.example.com/work",
+        "body": "Portfolio"
+      },
+      "expected": "ok"
+    },
+    {
+      "id": "not-found",
+      "expectedHost": "example.com",
+      "input": {
+        "status": 404,
+        "finalUrl": "https://example.com/work",
+        "body": "Not found"
+      },
+      "expected": "broken"
+    },
+    {
+      "id": "setup-screen",
+      "expectedHost": "example.com",
+      "input": {
+        "status": 200,
+        "finalUrl": "https://example.com/setup",
+        "body": "Complete setup to continue"
+      },
+      "expected": "broken"
+    },
+    {
+      "id": "timeout",
+      "expectedHost": "example.com",
+      "input": { "error": "timeout" },
+      "expected": "broken"
+    }
+  ]
+}

@@ -11,7 +11,11 @@ export default async function NotFound() {
       <LandingBackground />
 
       {/* Overlay content centered on the screen */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-8">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="absolute inset-0 z-10 flex items-center justify-center px-4 outline-none sm:px-8"
+      >
         <div className="flex flex-col items-center gap-4 sm:gap-6 text-center w-full max-w-sm sm:max-w-md">
           <p className="text-6xl sm:text-7xl font-bold tracking-tight text-accent">
             {t("code")}
@@ -29,7 +33,7 @@ export default async function NotFound() {
             {t("homeLink")}
           </Link>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

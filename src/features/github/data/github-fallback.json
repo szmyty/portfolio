@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-08-21T17:22:32Z",
+  "source": "GitHub REST API",
+  "scopes": {
+    "szmyty": [],
+    "egohygiene": [
+      {
+        "id": 1247115338,
+        "name": "reflector",
+        "full_name": "egohygiene/reflector",
+        "description": "🪞 Reflective synchronization architectures for recursive AI-assisted software engineering.",
+        "stargazers_count": 0,
+        "language": "Python",
+        "updated_at": "2026-08-20T01:41:25Z"
+      },
+      {
+        "id": 1187580231,
+        "name": "renderflow",
+        "full_name": "egohygiene/renderflow",
+        "description": "✨ Spec-driven document rendering engine",
+        "stargazers_count": 0,
+        "language": "Rust",
+        "updated_at": "2026-08-20T01:36:51Z"
+      },
+      {
+        "id": 1321918958,
+        "name": "relay",
+        "full_name": "egohygiene/relay",
+        "description": "🔄 Reusable GitHub Actions workflows, automation, and CI orchestration for Ego Hygiene repositories",
+        "stargazers_count": 0,
+        "language": "Python",
+        "updated_at": "2026-08-20T21:24:31Z"
+      },
+      {
+        "id": 1324450169,
+        "name": "optiflow",
+        "full_name": "egohygiene/optiflow",
+        "description": "🧭 Local-first, safety-focused media inventory, exact deduplication, and optimization planning.",
+        "stargazers_count": 0,
+        "language": "Rust",
+        "updated_at": "2026-08-21T02:24:24Z"
+      }
+    ],
+    "incomprisllc": []
+  }
+}

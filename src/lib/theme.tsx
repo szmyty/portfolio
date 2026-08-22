@@ -5,7 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useState,
+  useSyncExternalStore,
 } from "react";
 import type { ReactNode } from "react";
 import { THEME_STORAGE_KEY } from "@portfolio/lib/storageKeys";
@@ -19,7 +19,7 @@ type ThemeContextValue = {
   /** Actual resolved theme after applying system preference. */
   resolvedTheme: ResolvedTheme;
   setTheme: (theme: ThemeMode) => void;
-}
+};
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: "dark",
@@ -40,7 +40,17 @@ function resolveTheme(mode: ThemeMode): ResolvedTheme {
 
 function readStoredTheme(): ThemeMode {
   if (typeof window === "undefined") return "dark";
-  return (localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode) ?? "dark";
+
+  try {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return storedTheme === "light" ||
+      storedTheme === "dark" ||
+      storedTheme === "system"
+      ? storedTheme
+      : "dark";
+  } catch {
+    return "dark";
+  }
 }
 
 /** Apply the resolved theme to the <html> element. */
@@ -55,35 +65,63 @@ function applyTheme(resolved: ResolvedTheme) {
 
 type ThemeProviderProps = {
   children: ReactNode;
+};
+
+const THEME_CHANGE_EVENT = "portfolio-theme-change";
+
+function subscribeToTheme(callback: () => void): () => void {
+  const handleChange = () => callback();
+  window.addEventListener("storage", handleChange);
+  window.addEventListener(THEME_CHANGE_EVENT, handleChange);
+
+  return () => {
+    window.removeEventListener("storage", handleChange);
+    window.removeEventListener(THEME_CHANGE_EVENT, handleChange);
+  };
+}
+
+function subscribeToSystemTheme(callback: () => void): () => void {
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
+  mediaQuery.addEventListener("change", callback);
+
+  return () => mediaQuery.removeEventListener("change", callback);
+}
+
+function getServerTheme(): ThemeMode {
+  return "dark";
+}
+
+function getServerSystemTheme(): ResolvedTheme {
+  return "dark";
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Lazy initializers read localStorage once on the client — no SSR mismatch
-  // because the anti-flicker script already applied the correct attribute.
-  const [theme, setThemeState] = useState<ThemeMode>(readStoredTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
-    resolveTheme(readStoredTheme()),
+  // useSyncExternalStore keeps the server snapshot stable through the first
+  // client render, then synchronizes the persisted preference after hydration.
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    readStoredTheme,
+    getServerTheme,
   );
+  const systemTheme = useSyncExternalStore(
+    subscribeToSystemTheme,
+    getSystemTheme,
+    getServerSystemTheme,
+  );
+  const resolvedTheme = theme === "system" ? systemTheme : resolveTheme(theme);
 
   // Sync DOM attribute whenever the resolved theme changes
   useEffect(() => {
     applyTheme(resolvedTheme);
   }, [resolvedTheme]);
 
-  // Track system preference changes when mode is "system"
-  useEffect(() => {
-    if (theme !== "system") return;
-    const mq = window.matchMedia("(prefers-color-scheme: light)");
-    const handler = () => setResolvedTheme(mq.matches ? "light" : "dark");
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, [theme]);
-
   const setTheme = useCallback((newMode: ThemeMode) => {
-    localStorage.setItem(THEME_STORAGE_KEY, newMode);
-    const resolved = resolveTheme(newMode);
-    setThemeState(newMode);
-    setResolvedTheme(resolved);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, newMode);
+    } catch {
+      // Storage can be unavailable in privacy-restricted browsing contexts.
+    }
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }, []);
 
   return (

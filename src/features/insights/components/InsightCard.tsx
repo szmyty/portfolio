@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { formatDisplayDate } from "@portfolio/lib/format-date";
 import type { InsightPin } from "@portfolio/features/insights/types";
 
 type InsightCardProps = {
@@ -58,7 +59,7 @@ export function InsightCard({ pin }: InsightCardProps) {
         <div className="mt-auto flex items-center justify-between gap-3 text-sm text-text-muted">
           <span>
             {pin.publishedAt
-              ? new Date(pin.publishedAt).toLocaleDateString()
+              ? formatDisplayDate(pin.publishedAt)
               : t("dateFallback")}
           </span>
           <span className="font-medium text-accent">{t("viewInsight")}</span>

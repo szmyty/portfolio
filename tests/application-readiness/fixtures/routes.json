@@ -1,0 +1,65 @@
+{
+  "siteOrigin": "https://szmyty.vercel.app",
+  "routes": [
+    {
+      "path": "/",
+      "title": "Alan Szmyt | Portfolio",
+      "canonical": "/",
+      "pageFile": "src/app/page.tsx",
+      "metadataFile": "src/app/layout.tsx",
+      "headingFile": "src/features/landing/sections/HeroSection/HeroSection.tsx",
+      "headingCheck": "static",
+      "indexable": true
+    },
+    {
+      "path": "/development",
+      "title": "Development | Alan Szmyt",
+      "canonical": "/development",
+      "pageFile": "src/app/development/page.tsx",
+      "metadataFile": "src/app/development/layout.tsx",
+      "headingFile": null,
+      "headingCheck": "release",
+      "indexable": true
+    },
+    {
+      "path": "/music",
+      "title": "Music | Alan Szmyt",
+      "canonical": "/music",
+      "pageFile": "src/app/music/page.tsx",
+      "metadataFile": "src/app/music/layout.tsx",
+      "headingFile": "src/app/music/page.tsx",
+      "headingCheck": "static",
+      "indexable": true
+    },
+    {
+      "path": "/publishing",
+      "title": "Publishing | Alan Szmyt",
+      "canonical": "/publishing",
+      "pageFile": "src/app/publishing/page.tsx",
+      "metadataFile": "src/app/publishing/layout.tsx",
+      "headingFile": "src/features/publishing/components/PublishingPageContent/PublishingPageContent.tsx",
+      "headingCheck": "static",
+      "indexable": true
+    },
+    {
+      "path": "/research",
+      "title": "Research | Alan Szmyt",
+      "canonical": "/research",
+      "pageFile": "src/app/research/page.tsx",
+      "metadataFile": "src/app/research/layout.tsx",
+      "headingFile": "src/app/research/page.tsx",
+      "headingCheck": "static",
+      "indexable": true
+    },
+    {
+      "path": "/insights",
+      "title": "Insights | Alan Szmyt",
+      "canonical": "/insights",
+      "pageFile": "src/app/insights/page.tsx",
+      "metadataFile": "src/app/insights/layout.tsx",
+      "headingFile": "src/features/insights/components/InsightsPageContent.tsx",
+      "headingCheck": "static",
+      "indexable": true
+    }
+  ]
+}
