@@ -1,0 +1,90 @@
+[
+  {
+    "id": "reflector",
+    "title": "Reflector",
+    "lane": "Research software · AI governance",
+    "summary": "A governed, auditable research system for keeping recursive AI-assisted engineering aligned with human intent from source through publication.",
+    "problem": "Recursive AI workflows can move faster than people can inspect them, allowing code, research claims, metadata, and release artifacts to drift apart.",
+    "constraints": "The work is public and draft-stage, so every claim must stay inspectable, publication builds must be repeatable, and the DOI-backed artifact must not be presented as peer-reviewed research.",
+    "decisions": "Model human governance, synchronization checkpoints, explicit specifications, and deterministic publication as first-class system contracts instead of relying on prompt discipline alone.",
+    "implementation": "A Python CLI, manuscript source, machine-readable publication metadata, specification contracts, audit archives, deterministic paper builds, and GitHub Pages publication workflows live in one layered repository.",
+    "validation": "Task-driven doctor, test, and example checks sit beside CI for the paper build, Pages publication, metadata, and REUSE compliance.",
+    "outcome": "A public, DOI-backed independent research artifact and reference implementation that can be inspected from its source and governance model through its published output.",
+    "role": "System architecture, implementation, research workflow design, and public repository stewardship.",
+    "aiAssistance": "AI-assisted implementation and drafting operate inside specifications, audit checkpoints, deterministic checks, and human review and release decisions.",
+    "repositoryUrl": "https://github.com/egohygiene/reflector",
+    "relatedLinks": [
+      {
+        "label": "Research surface",
+        "href": "/research"
+      },
+      {
+        "label": "DOI archive",
+        "href": "https://doi.org/10.5281/zenodo.20477044"
+      }
+    ]
+  },
+  {
+    "id": "renderflow",
+    "title": "Renderflow",
+    "lane": "Developer tools · Document systems",
+    "summary": "A Rust, specification-driven rendering engine that plans repeatable transformations from source documents to publication-ready outputs.",
+    "problem": "Multi-format publishing often becomes a collection of fragile shell commands, duplicated intermediate work, and renderer-specific flags that are difficult to audit or reproduce.",
+    "constraints": "One configuration must support multiple outputs, preserve a dry-run path, remain useful as both a CLI and an SDK, and keep external rendering tools behind clear boundaries.",
+    "decisions": "Represent formats and transformations as a directed acyclic graph, select paths through explicit optimization modes, share intermediates, and execute independent conversion waves in parallel.",
+    "implementation": "A Rust workspace separates the graph engine and SDK, CLI adapter, and plugin boundary, with YAML specifications, pluggable transforms, content-hash caching, and Pandoc, Tectonic, and FFmpeg integrations.",
+    "validation": "The public repository exposes CI, tests, generated documentation, dry-run and doctor commands, release automation, and cross-platform artifact checks.",
+    "outcome": "An inspectable rendering engine and reusable library with explicit build plans, multi-target output, and a documented release surface—without making adoption or production-scale claims.",
+    "role": "System architecture, Rust implementation, developer-experience design, and release workflow stewardship.",
+    "aiAssistance": "Optional AI transforms are isolated from the core planner; implementation assistance remains bounded by specifications, code review, tests, and owner-controlled releases.",
+    "repositoryUrl": "https://github.com/egohygiene/renderflow",
+    "relatedLinks": [
+      {
+        "label": "Documentation",
+        "href": "https://egohygiene.github.io/renderflow/"
+      }
+    ]
+  },
+  {
+    "id": "relay",
+    "title": "Relay",
+    "lane": "Platform engineering · CI contracts",
+    "summary": "A versioned catalog of reusable GitHub Actions and workflows that turns proven repository automation into reviewable platform contracts.",
+    "problem": "Copying CI implementation between repositories creates drift, obscures ownership, and makes security or release improvements difficult to propagate safely.",
+    "constraints": "Consumer repositories must retain permissions and deployment ownership, production callers need immutable pins, and private collection data must never leak into public Pages artifacts.",
+    "decisions": "Publish small versioned contracts, recommend full-commit SHA pins, preserve one Pages owner per repository, and make public-safe provenance an explicit publication gate.",
+    "implementation": "Composite actions, reusable workflows, a machine-readable action catalog, a framework-free repository-intelligence builder, and a guarded release manifest define the reusable surface.",
+    "validation": "Local validation covers action metadata, JSON contracts, Python unit tests and compilation; CI additionally checks Bash syntax, workflow structure, and release invariants.",
+    "outcome": "A reusable automation layer with explicit provider, policy, consumer, and deployment boundaries—presented as a public engineering system without unsupported adoption metrics.",
+    "role": "Platform architecture, workflow implementation, contract design, and release governance.",
+    "aiAssistance": "AI-assisted implementation is kept inside bounded pull requests; permission, provenance, security, contract, and release decisions remain human-owned.",
+    "repositoryUrl": "https://github.com/egohygiene/relay",
+    "relatedLinks": [
+      {
+        "label": "Ego Hygiene lab",
+        "href": "https://github.com/egohygiene"
+      }
+    ]
+  },
+  {
+    "id": "optiflow",
+    "title": "Optiflow",
+    "lane": "Local-first systems · Safety engineering",
+    "summary": "A deliberately read-only Rust CLI for inventorying media, proving exact duplicates, and producing immutable review plans before any future mutation exists.",
+    "problem": "Large personal media collections accumulate duplicates, but destructive cleanup is unsafe when identity, filesystem state, and reclaimable storage have not been proven first.",
+    "constraints": "The tool must stay local-first, behave conservatively on removable storage, expose stable machine contracts, and guarantee that version 0.1.0 cannot delete, move, replace, or quarantine files.",
+    "decisions": "Separate observation from action, narrow candidates by byte length before complete hashing, preserve immutable evidence artifacts, and require future apply-time revalidation and byte comparison.",
+    "implementation": "A Rust CLI combines conservative scanning, optional ffprobe inspection, local SQLite state, BLAKE3 hashing, schema-versioned JSON envelopes, and deterministic duplicate-planning commands.",
+    "validation": "Formatting, Clippy, tests, contract checks, and an end-to-end smoke test use synthetic paths—including spaces and Unicode—and verify both duplicate inputs remain unchanged.",
+    "outcome": "Inspectable inventory, exact-duplicate evidence, reclaimable-storage estimates, and review plans are available without introducing a file-mutation path.",
+    "role": "Safety model, system architecture, Rust implementation, CLI contracts, and validation design.",
+    "aiAssistance": "AI-assisted implementation is constrained by the read-only product boundary, versioned schemas, explicit safety invariants, tests, and human release decisions.",
+    "repositoryUrl": "https://github.com/egohygiene/optiflow",
+    "relatedLinks": [
+      {
+        "label": "Safety model",
+        "href": "https://github.com/egohygiene/optiflow/blob/main/docs/safety-model.md"
+      }
+    ]
+  }
+]

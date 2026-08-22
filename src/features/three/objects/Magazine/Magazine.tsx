@@ -88,8 +88,8 @@ export function Magazine() {
     video.loop = true;
     video.muted = true;
     video.playsInline = true;
-    video.autoplay = true;
-    video.preload = "auto";
+    video.autoplay = false;
+    video.preload = "metadata";
 
     const texture = new VideoTexture(video);
     texture.colorSpace = SRGBColorSpace;
@@ -224,7 +224,7 @@ export function Magazine() {
           ? emissiveTarget.current + FRONT_EMISSIVE_BOOST
           : material.map === backTexture
             ? emissiveTarget.current + BACK_EMISSIVE_BOOST
-          : emissiveTarget.current;
+            : emissiveTarget.current;
 
       // eslint-disable-next-line react-hooks/immutability
       material.emissiveIntensity =

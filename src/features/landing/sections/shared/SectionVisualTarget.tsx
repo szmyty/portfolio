@@ -1,10 +1,12 @@
 "use client";
 
-import { Component, useEffect, useState } from "react";
-import type { ReactNode } from "react";
-import { FloppyDiskScene, MagazineScene, VinylRecordScene } from "@portfolio/features/three/scenes";
-import { supportsWebGL } from "@portfolio/features/landing/visualSupport";
-import type { SectionVisualKind } from "./sectionVisualStore";
+import { useEffect, useId } from "react";
+import {
+  registerSectionVisualSlot,
+  unregisterSectionVisualSlot,
+  type SectionVisualKind,
+} from "./sectionVisualStore";
+import { useVisualInView } from "./useVisualInView";
 
 type SectionVisualTargetProps = {
   kind: SectionVisualKind;
@@ -12,26 +14,6 @@ type SectionVisualTargetProps = {
   height: number;
   frameClassName?: string;
 };
-
-type SceneBoundaryProps = {
-  children: ReactNode;
-};
-
-type SceneBoundaryState = {
-  failed: boolean;
-};
-
-class SceneBoundary extends Component<SceneBoundaryProps, SceneBoundaryState> {
-  state: SceneBoundaryState = { failed: false };
-
-  static getDerivedStateFromError(): SceneBoundaryState {
-    return { failed: true };
-  }
-
-  render() {
-    return this.state.failed ? null : this.props.children;
-  }
-}
 
 const FALLBACK_MARKS: Record<SectionVisualKind, string> = {
   floppy: "◇",
@@ -45,35 +27,22 @@ export function SectionVisualTarget({
   height,
   frameClassName = "rounded-2xl border border-border bg-surface-overlay",
 }: SectionVisualTargetProps) {
-  const [webglEnabled, setWebglEnabled] = useState(false);
+  const reactId = useId();
+  const slotId = `section-visual-${kind}-${reactId}`;
+  const { ref, isVisible } = useVisualInView();
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      if (supportsWebGL()) {
-        setWebglEnabled(true);
-      }
-    });
+    registerSectionVisualSlot(slotId, kind, isVisible ? ref.current : null);
 
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  const scene = (() => {
-    switch (kind) {
-      case "vinyl":
-        return <VinylRecordScene />;
-      case "magazine":
-        return <MagazineScene />;
-      case "floppy":
-        return <FloppyDiskScene />;
-      default:
-        return null;
-    }
-  })();
+    return () => unregisterSectionVisualSlot(slotId);
+  }, [isVisible, kind, ref, slotId]);
 
   return (
     <div
+      ref={ref}
       className={className}
-      data-visual-mode={webglEnabled ? "interactive" : "static"}
+      data-visual-kind={kind}
+      data-visual-mode={isVisible ? "candidate" : "static"}
       style={{ position: "relative", height }}
     >
       <div
@@ -84,12 +53,9 @@ export function SectionVisualTarget({
           {FALLBACK_MARKS[kind]}
         </span>
       </div>
-      {webglEnabled ? (
-        <SceneBoundary>
-          <div className="absolute inset-0">{scene}</div>
-        </SceneBoundary>
-      ) : null}
-      <div className={`absolute inset-0 pointer-events-none ${frameClassName}`} />
+      <div
+        className={`absolute inset-0 pointer-events-none ${frameClassName}`}
+      />
     </div>
   );
 }

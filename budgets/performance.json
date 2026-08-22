@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "maxTrackedPublicBytes": 30000000,
+  "maxSinglePublicAssetBytes": 10000000,
+  "maxHomepageCanvasContexts": 2,
+  "maxSectionCanvasContexts": 1,
+  "homepageCanvasOwners": [
+    "src/features/three/scenes/HeroScene/Scene.tsx",
+    "src/features/landing/sections/shared/SharedSectionVisualCanvas.tsx"
+  ],
+  "forbiddenPublicExtensions": [".exr"]
+}
