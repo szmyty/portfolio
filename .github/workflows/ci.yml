@@ -36,6 +36,9 @@ jobs:
       - name: Verify homepage shell contract
         run: pnpm run test:shell
 
+      - name: Verify 3D composition contracts
+        run: pnpm run test:three-composition
+
       - name: Verify responsive shell contract
         run: pnpm run test:responsive-shell
 

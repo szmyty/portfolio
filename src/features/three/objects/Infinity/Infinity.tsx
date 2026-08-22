@@ -5,6 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import type { Mesh, MeshStandardMaterial } from "three";
 
 import { InfinityGeometry } from "../../geometry/InfinityGeometry";
+import { getInfinityVisualScale } from "../../geometry/InfinityGeometry/infinityCurve";
 import { InfinityEnergyMaterial } from "../../materials";
 import { BloomEffect, ParticleTrail } from "../../effects";
 
@@ -21,14 +22,6 @@ import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
 const IDLE_EMISSIVE = 0.15;
 const HOVER_EMISSIVE = 0.6;
 const ENGAGED_EMISSIVE = 1.0;
-
-/**
- * Geometry constants for viewport-aware scaling.
- * The lemniscate (InfinityGeometry) spans ~4.9 world units wide at scale=1,
- * derived from its horizontalScale (2.2) plus tube radius (0.25) on each side.
- */
-const INFINITY_NATURAL_WIDTH = 4.9;
-const INFINITY_MAX_SCALE = 0.7;
 
 /**
  * Infinity
@@ -135,16 +128,12 @@ export function Infinity({
     /**
      * Viewport-aware base scale.
      *
-     * The lemniscate geometry spans ~4.9 world units wide at scale=1.
-     * We fit the object within 85% of the visible viewport width so it
-     * renders correctly on portrait mobile without clipping, while capping
-     * the scale at 0.7 on larger viewports to preserve the intended size.
+     * The fit includes the tube and particle halo rather than measuring only
+     * the curve. Portrait screens reserve 28% of their width as breathing
+     * room; wider screens use a slightly quieter 64% footprint.
      */
     const { viewport } = state;
-    const baseScale = Math.min(
-      (viewport.width * 0.85) / INFINITY_NATURAL_WIDTH,
-      INFINITY_MAX_SCALE,
-    );
+    const baseScale = getInfinityVisualScale(viewport.width, viewport.height);
 
     /**
      * Scale interaction: idle → hovered → engaged.

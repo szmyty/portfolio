@@ -20,11 +20,11 @@ import { useInfinityInteraction } from "../../hooks/useInfinityInteraction";
 import { useFloppyDiskMotion } from "../../hooks/useFloppyDiskMotion";
 import { useTheme } from "@portfolio/lib/theme";
 import { useLifecycleLogger } from "@portfolio/lib/debug/useLifecycleLogger";
+import { FLOPPY_TARGET_SIZE } from "@portfolio/features/three/lib";
 
 const IDLE_EMISSIVE = 0.04;
 const HOVER_EMISSIVE = 0.18;
 const ENGAGED_EMISSIVE = 0.35;
-const TARGET_SIZE = 4.25;
 const BASE_ROTATION_X = -0.28;
 const BASE_ROTATION_Y = 0.55;
 const BODY_OPACITY = 0.88;
@@ -104,7 +104,11 @@ function createLabelImageMaterial(labelTexture: Texture) {
  * OBJ-backed visual for the Development section with layered PBR materials
  * tuned to read as plastic shell + metallic shutter details.
  */
-export function FloppyDisk() {
+type FloppyDiskProps = {
+  onBoundsChange?: (bounds: Box3) => void;
+};
+
+export function FloppyDisk({ onBoundsChange }: FloppyDiskProps) {
   const logger = useLifecycleLogger("FloppyDisk");
   const rootRef = useRef<Group>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -191,7 +195,7 @@ export function FloppyDisk() {
     const size = bounds.getSize(new Vector3());
     const center = bounds.getCenter(new Vector3());
     const maxDimension = Math.max(size.x, size.y, size.z) || 1;
-    const scale = TARGET_SIZE / maxDimension;
+    const scale = FLOPPY_TARGET_SIZE / maxDimension;
 
     for (const mesh of bakedMeshes) {
       mesh.geometry.translate(-center.x, -center.y, -center.z);
@@ -252,8 +256,25 @@ export function FloppyDisk() {
       },
     });
 
+    const contentBounds = scaledBounds.clone();
+    contentBounds.expandByPoint(
+      new Vector3(
+        -labelWidth / 2,
+        labelCenterY - labelHeight / 2,
+        frontZ + 0.003,
+      ),
+    );
+    contentBounds.expandByPoint(
+      new Vector3(
+        labelWidth / 2,
+        labelCenterY + labelHeight / 2,
+        frontZ + 0.003,
+      ),
+    );
+
     return {
       bodyMeshes: bakedMeshes,
+      bounds: contentBounds,
       label: {
         plateMaterial: labelPlateMaterial,
         imageMaterial: labelImageMaterial,
@@ -266,6 +287,12 @@ export function FloppyDisk() {
       },
     };
   }, [isLight, labelTexture, logger, obj]);
+
+  useEffect(() => {
+    if (floppyObject) {
+      onBoundsChange?.(floppyObject.bounds.clone());
+    }
+  }, [floppyObject, onBoundsChange]);
 
   useEffect(() => {
     if (!floppyObject) {

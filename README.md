@@ -87,6 +87,7 @@ src/
 | `pnpm build` | Build for production |
 | `pnpm lint` | Run ESLint |
 | `pnpm test:shell` | Verify the recruiter-safe homepage and visual fallback contract |
+| `pnpm test:three-composition` | Verify the infinity composition and measured floppy camera fit |
 | `pnpm test:responsive-shell` | Verify the mobile navigation and safe-area contract |
 | `pnpm format` | Format source files with Prettier |
 

@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:shell": "node scripts/verify-homepage-shell.mjs",
+    "test:three-composition": "node scripts/verify-three-composition.mjs",
     "test:responsive-shell": "node scripts/verify-responsive-shell.mjs",
     "test:work": "node scripts/verify-selected-work.mjs",
     "format": "prettier --write .",
