@@ -107,3 +107,25 @@ visual elements were applied.
 - Web asset: `public/images/descript/manifest.webp`, 375,530 bytes, SHA-256 `2b57385bd203bb99274b43c4255e204e4d30835d6d13b3b41fbfdf7de78954e4`.
 - Dimensions: 1254 × 1254 pixels, preserved from the source.
 - Conversion: Sharp 0.35.5, WebP quality 90, effort 6. This is a lossy web optimization, not a lossless archival replacement.
+
+## Implementation checkpoint — October 25, 2026
+
+Prepared in [portfolio PR296](https://github.com/szmyty/portfolio/pull/296), branch
+`feat/descript-manifest-showcase`. Owner review and merge remain pending.
+
+Production build, TypeScript, scoped ESLint, the existing homepage/3D/responsive/
+selected-work contracts, static application-readiness checks, promoted-destination
+fixtures and performance budgets passed locally. Full lint completed with ten
+pre-existing warnings outside this feature. The Vercel branch deployment completed
+successfully. Hosted Actions jobs did not start; they are not reported as passing.
+
+Browser visual QA remains unverified: the managed local preview runner supplied
+Vite-only flags to the Next.js command; the Vercel branch preview redirected this
+browser to sign-in. No working application code or security settings were changed
+to compensate. Native playback, seeking, real-media switching, and the final
+mobile visual check still require the actual configured videos and signed-in
+preview or production access.
+
+The route's built HTML was checked for the `/descript` canonical URL, `noindex`,
+Manifest artwork/social metadata, and absence of broken video elements while
+URLs are unset. All pre-existing repository files remain intact.
