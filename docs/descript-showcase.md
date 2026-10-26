@@ -6,8 +6,8 @@ three versions, and explains the creative workflow. It is separate from the
 portfolio's global navigation and is marked `noindex`; this is a discoverability
 choice, not access control. Anyone with the page or media URL can open it.
 
-The owner reviews and merges the PR. Preparing this page does not submit an
-application. The actual videos and their post-compression sizes have not been
+Alan approved the design and authorized the lowercase title correction and PR
+merge on October 25, 2026. Preparing this page does not submit an application. The actual videos and their post-compression sizes have not been
 verified by the page implementation.
 
 ## Connect the videos
@@ -111,7 +111,8 @@ visual elements were applied.
 ## Implementation checkpoint — October 25, 2026
 
 Prepared in [portfolio PR296](https://github.com/szmyty/portfolio/pull/296), branch
-`feat/descript-manifest-showcase`. Owner review and merge remain pending.
+`feat/descript-manifest-showcase`. Alan approved the design and authorized the
+lowercase title correction and merge on October 25; video hosting remains pending.
 
 Production build, TypeScript, scoped ESLint, the existing homepage/3D/responsive/
 selected-work contracts, static application-readiness checks, promoted-destination
@@ -129,3 +130,12 @@ preview or production access.
 The route's built HTML was checked for the `/descript` canonical URL, `noindex`,
 Manifest artwork/social metadata, and absence of broken video elements while
 URLs are unset. All pre-existing repository files remain intact.
+
+## Upload handoff
+
+Keep the existing MP4 filenames. In the Vercel portfolio project, open Storage,
+create a Blob store with public access (or use an existing connected public Blob
+store), and upload the reviewed web copies in the store browser. Copy each file's
+ordinary public URL. The filename-to-slot mapping above is authoritative; upload
+alone does not connect the player. Add the three returned URLs to the config and
+redeploy, then verify playback before submitting the application.

@@ -125,7 +125,7 @@ function Screening({
           playsInline
           preload="none"
           crossOrigin={captions ? "anonymous" : undefined}
-          aria-label={`Manifest — ${version.title}`}
+          aria-label={`manifest — ${version.title}`}
           aria-describedby="version-description"
           onPlay={() => {
             setStarted(true);
@@ -162,7 +162,7 @@ function Screening({
               type="button"
               onClick={play}
               className={styles.playButton}
-              aria-label={`Play Manifest — ${version.title}`}
+              aria-label={`Play manifest — ${version.title}`}
             >
               <span>
                 <Play
@@ -239,7 +239,7 @@ export function FilmViewer({ media }: { media: DescriptMedia }) {
       <div className={styles.screenFrame}>
         <div className={styles.screenTop}>
           <span>
-            <i /> MANIFEST / SCREENING ROOM
+            <i /> manifest / SCREENING ROOM
           </span>
           <span>
             {selected.title}

@@ -13,10 +13,10 @@ import { FilmViewer } from "@portfolio/features/descript";
 import styles from "@portfolio/features/descript/descript.module.css";
 
 const description =
-  "Manifest: an original song and cinematic film by Alan Szmyt, exploring how imagination becomes something real through a human-directed AI creative workflow.";
+  "manifest: an original song and cinematic film by Alan Szmyt, exploring how imagination becomes something real through a human-directed AI creative workflow.";
 
 export const metadata: Metadata = {
-  title: "Manifest — A creative note for Descript",
+  title: "manifest — A creative note for Descript",
   description,
   alternates: { canonical: "/descript" },
   robots: {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     googleBot: { index: false, follow: true },
   },
   openGraph: {
-    title: "Manifest — A creative note for Descript | Alan Szmyt",
+    title: "manifest — A creative note for Descript | Alan Szmyt",
     description,
     url: "/descript",
     type: "website",
@@ -34,13 +34,13 @@ export const metadata: Metadata = {
         url: "/images/descript/manifest.webp",
         width: 1254,
         height: 1254,
-        alt: "Manifest artwork: Void imagining a luminous cosmic world",
+        alt: "manifest artwork: Void imagining a luminous cosmic world",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Manifest. | Alan Szmyt",
+    title: "manifest. | Alan Szmyt",
     description,
     images: ["/images/descript/manifest.webp"],
   },
@@ -109,7 +109,7 @@ export default function DescriptPage() {
                 .PLAY()
               </p>
               <h1 id="film-title" className={styles.title}>
-                Manifest<span>.</span>
+                manifest<span>.</span>
               </h1>
             </div>
             <div className={styles.heroAside}>
@@ -147,7 +147,7 @@ export default function DescriptPage() {
           </div>
           <div className={styles.ideaCopy}>
             <p>
-              Manifest is an original song and cinematic film about turning
+              manifest is an original song and cinematic film about turning
               dreams into something tangible. It follows Void, a character whose
               black-hole mind becomes a place for possibilities to take shape.
             </p>
