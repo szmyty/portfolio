@@ -15,15 +15,15 @@ export interface DescriptMedia {
 export const descriptMedia: DescriptMedia = {
   poster: "/images/descript/manifest.webp",
   final: {
-    src: null,
+    src: "https://qexewt9x6rtawul4.public.blob.vercel-storage.com/manifest_descript_subbed_v1.mp4",
     captions: null,
   },
   edited: {
-    src: null,
+    src: "https://qexewt9x6rtawul4.public.blob.vercel-storage.com/manifest_descript_v1.mp4",
     captions: null,
   },
   original: {
-    src: null,
+    src: "https://qexewt9x6rtawul4.public.blob.vercel-storage.com/manifest.mp4",
     captions: null,
   },
   descriptShareUrl: null,

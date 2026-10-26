@@ -91,10 +91,9 @@ already passed. The implementation's PR records the checks actually performed.
 ## Continue this work
 
 The route is intentionally absent from the global menu and search indexing.
-Media URLs remain unset until the owner has reviewed and uploaded the videos.
-Next: connect the three exports in `src/config/descript.ts`, verify playback and
-the captioned default on the deployed page, then let Alan complete the employer's
-application. No application submission or employer contact is automated here.
+Alan has supplied the three public playback URLs, which are configured in
+`src/config/descript.ts`. Next: verify playback and the captioned default on the
+deployed page, then let Alan complete the employer's application. No application submission or employer contact is automated here.
 
 ## Artwork provenance
 
@@ -139,3 +138,20 @@ store), and upload the reviewed web copies in the store browser. Copy each file'
 ordinary public URL. The filename-to-slot mapping above is authoritative; upload
 alone does not connect the player. Add the three returned URLs to the config and
 redeploy, then verify playback before submitting the application.
+
+## Live media connection — October 25, 2026
+
+Alan uploaded the three exports to his public Vercel Blob store and supplied the
+following ordinary playback URLs. The existing filenames determine the slots;
+no video binaries or credentials are added to the repository.
+
+| Slot | Public source |
+| --- | --- |
+| Captioned final (default) | https://qexewt9x6rtawul4.public.blob.vercel-storage.com/manifest_descript_subbed_v1.mp4 |
+| Descript edit | https://qexewt9x6rtawul4.public.blob.vercel-storage.com/manifest_descript_v1.mp4 |
+| Original cut | https://qexewt9x6rtawul4.public.blob.vercel-storage.com/manifest.mp4 |
+
+Separate caption tracks and the optional Descript share link remain unset. The
+captioned-final export is selected by default. Only the selected source is
+mounted, with no autoplay and `preload="none"`. Verify live playback after this
+configuration deployment; source configuration is not application submission.
