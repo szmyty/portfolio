@@ -10,6 +10,15 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  async redirects() {
+    return [
+      {
+        source: "/descript",
+        destination: "https://incomprisllc.github.io/.github/manifest/",
+        permanent: true,
+      },
+    ];
+  },
   transpilePackages: [
     "three",
     "@react-three/fiber",
