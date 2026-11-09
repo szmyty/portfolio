@@ -1,0 +1,82 @@
+/* Preserve the screening-room design while keeping each film's actual format. */
+.screen.screen {
+  width: 100%;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+}
+
+.screen.portrait {
+  width: min(100%, calc(68svh * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
+
+.formats.formats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 25%, #67518855, transparent 55%),
+    radial-gradient(ellipse at 20% 85%, #6b355d44, transparent 60%), #0c0912;
+}
+
+.emptyState {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: #0c091270;
+}
+
+.wordmark {
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 450;
+  letter-spacing: -0.075em;
+  line-height: 1;
+  color: #f5f0fa;
+}
+
+.wordmark > span {
+  color: #e5a0ce;
+}
+
+.emptyState strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.emptyState p {
+  max-width: 330px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.emptyState a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 640px) {
+  .formats.formats {
+    grid-template-columns: 1fr;
+  }
+
+  .emptyState {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .emptyState p {
+    font-size: 11px;
+  }
+}
